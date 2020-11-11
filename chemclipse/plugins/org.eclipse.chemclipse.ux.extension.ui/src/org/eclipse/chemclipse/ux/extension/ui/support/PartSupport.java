@@ -55,12 +55,8 @@ public class PartSupport {
 	public static final String PARTDESCRIPTOR_CHROMATOGRAM_OVERVIEW = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.chromatogramOverviewPartDescriptor";
 	public static final String PARTDESCRIPTOR_MISCELLANEOUS_INFO = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.miscellaneousInfoPartDescriptor";
 	public static final String PARTDESCRIPTOR_CHROMATOGRAM_SCAN_INFO = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.chromatogramScanInfoPartDescriptor";
-	public static final String PARTDESCRIPTOR_SCAN_CHART = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanChartPartDescriptor";
-	public static final String PARTDESCRIPTOR_SCAN_TABLE = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanTablePartDescriptor";
 	public static final String PARTDESCRIPTOR_SCAN_BROWSE = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanBrowsePartDescriptor";
 	public static final String PARTDESCRIPTOR_SYNONYMS = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.synonymsPartDescriptor";
-	public static final String PARTDESCRIPTOR_MOLECULE = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.moleculePartDescriptor";
-	public static final String PARTDESCRIPTOR_TARGETS = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.targetsPartDescriptor";
 	public static final String PARTDESCRIPTOR_PEAK_CHART = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakChartPartDescriptor";
 	public static final String PARTDESCRIPTOR_PEAK_DETAILS = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakDetailsPartDescriptor";
 	public static final String PARTDESCRIPTOR_PEAK_DETECTOR = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakDetectorPartDescriptor";
@@ -148,6 +144,30 @@ public class PartSupport {
 		}
 		//
 		return part;
+	}
+
+	public static boolean partStackContainsPart(String partId, String partStackId, EModelService modelService, MApplication application) {
+
+		MPartStack partStack = (MPartStack)modelService.find(partStackId, application);
+		if(partStack != null) {
+			for(MStackElement stackElement : partStack.getChildren()) {
+				if(partId.equals(stackElement.getElementId())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean isPartVisible(String partId, EPartService partService, EModelService modelService, MApplication application) {
+
+		MUIElement element = modelService.find(partId, application);
+		if(element instanceof MPart) {
+			MPart part = (MPart)element;
+			return part.isVisible();
+		}
+		//
+		return false;
 	}
 
 	/***
