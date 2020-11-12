@@ -91,8 +91,14 @@ public abstract class AbstractPartHandler implements IPartHandler {
 
 	protected boolean isPartVisible() {
 
+		boolean isVisible = false;
 		String partId = getPartId();
-		return PartSupport.isPartVisible(partId, modelService, application);
+		isVisible = PartSupport.isPartVisible(partId, modelService, application);
+		if(isVisible) {
+			isVisible = PartSupport.isPartToBeRendered(partId, modelService, application);
+		}
+		//
+		return isVisible;
 	}
 
 	protected void action(boolean show) {

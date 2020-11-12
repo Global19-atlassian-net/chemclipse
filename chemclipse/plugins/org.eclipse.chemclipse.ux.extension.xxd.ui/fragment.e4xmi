@@ -167,7 +167,7 @@
           <children xsi:type="menu:DirectMenuItem" xmi:id="_HrsZcCP1EeutTb-F-_fKDg" elementId="org.eclipse.chemclipse.ux.extension.xxd.ui.directmenuitem.molecule" label="Molecule" iconURI="platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/tag.gif" tooltip="Show the identified molecule and other molecule specific values. " contributionURI="bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.MoleculePartHandler">
             <visibleWhen xsi:type="ui:ImperativeExpression" xmi:id="_injYwCQ-EeutTb-F-_fKDg" contributionURI="bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.MoleculePartHandler"/>
           </children>
-          <children xsi:type="menu:DirectMenuItem" xmi:id="_8mOKwCP9EeutTb-F-_fKDg" elementId="org.eclipse.chemclipse.ux.extension.xxd.ui.directmenuitem.settings" label="Settings" iconURI="platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/preferences.gif" tooltip="Settings to show/hide parts." contributionURI="bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.PeakSettingsHandler"/>
+          <children xsi:type="menu:DirectMenuItem" xmi:id="_8mOKwCP9EeutTb-F-_fKDg" elementId="org.eclipse.chemclipse.ux.extension.xxd.ui.directmenuitem.settings" label="Settings" iconURI="platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/preferences.gif" tooltip="Settings to show/hide parts." contributionURI="bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerPeaks"/>
         </menu>
       </children>
     </elements>

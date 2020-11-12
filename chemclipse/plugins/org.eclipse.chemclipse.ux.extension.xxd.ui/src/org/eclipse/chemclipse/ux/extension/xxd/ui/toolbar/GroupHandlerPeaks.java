@@ -11,57 +11,81 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
-import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
-import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.chemclipse.support.ui.activator.ContextAddon;
+import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Display;
 
-public class GroupHandlerPeaks {
+public class GroupHandlerPeaks extends AbstractGroupHandler {
 
-	private static boolean active = false;
+	private static final String TOOL_ITEM_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.directtoolitem.peaks";
+	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_SELECTED_SCANS_ACTIVE;
+	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_SELECTED_SCANS_DEFAULT;
+	//
+	private static boolean partsAreActivated = false;
 
+	/**
+	 * This static method activates the referenced parts.
+	 */
 	public static void activateParts() {
 
-		System.out.println("TODO - Initially activate parts");
+		EPartService partService = ContextAddon.getPartService();
+		EModelService modelService = ContextAddon.getModelService();
+		MApplication application = ContextAddon.getApplication();
+		if(partService != null && modelService != null && application != null) {
+			/*
+			 * Try to get tool item to modify the tooltip and image.
+			 */
+			MDirectToolItem directToolItem = PartSupport.getDirectToolItem(TOOL_ITEM_ID, modelService, application);
+			Display display = Display.getDefault();
+			display.asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+
+					GroupHandlerPeaks groupHandler = new GroupHandlerPeaks();
+					groupHandler.activateParts(directToolItem, partService, modelService, application, groupHandler.toggleShow());
+				}
+			});
+		}
 	}
 
-	@Execute
-	public void execute(MDirectToolItem directToolItem, EPartService partService, EModelService modelService, MApplication application) {
+	@Override
+	public List<IPartHandler> getPartHandler() {
 
-		boolean show = !active;
-		adjustToolTip(directToolItem, show);
-		adjustIcon(directToolItem, show);
+		List<IPartHandler> partHandler = new ArrayList<>();
 		//
-		action(new TargetsPartHandler(), show, partService, modelService, application);
-		action(new ScanChartPartHandler(), show, partService, modelService, application);
-		action(new ScanTablePartHandler(), show, partService, modelService, application);
-		action(new MoleculePartHandler(), show, partService, modelService, application);
+		partHandler.add(new TargetsPartHandler());
+		partHandler.add(new ScanChartPartHandler());
+		partHandler.add(new ScanTablePartHandler());
+		partHandler.add(new MoleculePartHandler());
 		//
-		active = show;
+		return partHandler;
 	}
 
-	private void adjustToolTip(MDirectToolItem directToolItem, boolean show) {
+	@Override
+	public String getImageHide() {
 
-		directToolItem.setTooltip(show ? "Deactivate all parts" : "Activate all parts");
+		return IMAGE_HIDE;
 	}
 
-	private void adjustIcon(MDirectToolItem directToolItem, boolean show) {
+	@Override
+	public String getImageShow() {
 
-		ImageDescriptor imageDescriptor = ApplicationImageFactory.getInstance().getImageDescriptor(IApplicationImage.IMAGE_CHROMATOGRAM_OVERLAY_ACTIVE, IApplicationImage.SIZE_16x16);
-		/*
-		 * platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/comparisonScanDefault.gif
-		 */
-		// TODO - IApplicationImage: move path prefix "org.eclipse.chemclipse.rcp.ui.icons/" so that shortcuts can be used.
-		String location = "platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/";
-		directToolItem.setIconURI(show ? location + "selectedScansActive.gif" : location + "selectedScansDefault.gif");
+		return IMAGE_SHOW;
 	}
 
-	private void action(IPartHandler partHandler, boolean show, EPartService partService, EModelService modelService, MApplication application) {
+	@Override
+	public boolean toggleShow() {
 
-		partHandler.action(show, partService, modelService, application);
+		partsAreActivated = !partsAreActivated;
+		return partsAreActivated;
 	}
 }

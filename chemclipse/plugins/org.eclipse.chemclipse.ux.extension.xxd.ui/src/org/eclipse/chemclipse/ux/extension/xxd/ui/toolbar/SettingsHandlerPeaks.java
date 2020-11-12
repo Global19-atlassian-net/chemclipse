@@ -17,13 +17,15 @@ import java.util.List;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskScans;
 import org.eclipse.jface.preference.IPreferencePage;
 
-public class PeakSettingsHandler extends AbstractSettingsHandler {
+public class SettingsHandlerPeaks extends AbstractSettingsHandler {
 
 	@Override
-	List<IPreferencePage> getPreferencePages() {
+	public List<IPreferencePage> getPreferencePages() {
 
 		List<IPreferencePage> preferencePages = new ArrayList<>();
+		//
 		preferencePages.add(new PreferencePageTaskScans());
+		//
 		return preferencePages;
 	}
 }

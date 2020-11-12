@@ -23,7 +23,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.swt.widgets.Shell;
 
-public abstract class AbstractSettingsHandler {
+public abstract class AbstractSettingsHandler implements ISettingsHandler {
 
 	@Execute
 	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
@@ -41,6 +41,4 @@ public abstract class AbstractSettingsHandler {
 		preferenceDialog.setMessage("Settings");
 		preferenceDialog.open();
 	}
-
-	abstract List<IPreferencePage> getPreferencePages();
 }

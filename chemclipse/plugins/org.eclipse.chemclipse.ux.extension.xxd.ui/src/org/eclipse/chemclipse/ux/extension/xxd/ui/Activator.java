@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.chemclipse.msd.model.preferences.PreferenceSupplier;
@@ -20,6 +21,8 @@ import org.eclipse.chemclipse.support.preferences.IPreferenceSupplier;
 import org.eclipse.chemclipse.support.ui.activator.AbstractActivatorUI;
 import org.eclipse.chemclipse.swt.ui.services.IMoleculeImageService;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.DataUpdateSupport;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IDataUpdateListener;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerPeaks;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -32,18 +35,17 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends AbstractActivatorUI {
 
 	private static Activator plugin;
+	/*
+	 * This flag is used to show a set of parts initially
+	 * in the Data Analysis perspective.
+	 */
+	private static final String DATA_ANALYSIS_PERSPECTIVE_LABEL = "<Data Analysis (Main)>";
+	private static boolean activatePartsInitially = true;
 	//
 	private ScopedPreferenceStore preferenceStoreSubtract;
 	private DataUpdateSupport dataUpdateSupport;
 	//
 	private ServiceTracker<IMoleculeImageService, IMoleculeImageService> moleculeImageServiceTracker = null;
-
-	/**
-	 * The constructor
-	 */
-	public Activator() {
-
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -58,6 +60,27 @@ public class Activator extends AbstractActivatorUI {
 		//
 		moleculeImageServiceTracker = new ServiceTracker<>(context, IMoleculeImageService.class, null);
 		moleculeImageServiceTracker.open();
+		//
+		dataUpdateSupport = getDataUpdateSupport();
+		dataUpdateSupport.add(new IDataUpdateListener() {
+
+			@Override
+			public void update(String topic, List<Object> objects) {
+
+				if(activatePartsInitially) {
+					if(topic.equals(IChemClipseEvents.TOPIC_APPLICATION_SELECT_PERSPECTIVE)) {
+						Object object = objects.get(0);
+						if(object instanceof String) {
+							String label = (String)object;
+							if(DATA_ANALYSIS_PERSPECTIVE_LABEL.equals(label)) {
+								GroupHandlerPeaks.activateParts();
+								activatePartsInitially = false;
+							}
+						}
+					}
+				}
+			}
+		});
 	}
 
 	/*
@@ -127,6 +150,10 @@ public class Activator extends AbstractActivatorUI {
 		 * Subtract MS
 		 */
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_UPDATE_SESSION_SUBTRACT_MASS_SPECTRUM, IChemClipseEvents.PROPERTY_UPDATE_SESSION_SUBTRACT_MASS_SPECTRUM);
+		/*
+		 * Perspective
+		 */
+		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_APPLICATION_SELECT_PERSPECTIVE, IChemClipseEvents.IEVENTBROKER_DATA);
 		/*
 		 * Unload needed?
 		 */

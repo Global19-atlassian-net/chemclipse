@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
@@ -153,9 +154,19 @@ public class PartSupport {
 		return false;
 	}
 
+	public static MDirectToolItem getDirectToolItem(String toolItemId, EModelService modelService, MApplication application) {
+
+		MUIElement element = getElement(toolItemId, modelService, application);
+		if(element instanceof MDirectToolItem) {
+			return (MDirectToolItem)element;
+		}
+		//
+		return null;
+	}
+
 	public static MPart getPart(String partId, EModelService modelService, MApplication application) {
 
-		MUIElement element = modelService.find(partId, application);
+		MUIElement element = getElement(partId, modelService, application);
 		if(element instanceof MPart) {
 			return (MPart)element;
 		}
@@ -163,11 +174,26 @@ public class PartSupport {
 		return null;
 	}
 
+	public static MUIElement getElement(String elementId, EModelService modelService, MApplication application) {
+
+		return modelService.find(elementId, application);
+	}
+
 	public static boolean isPartVisible(String partId, EModelService modelService, MApplication application) {
 
 		MPart part = getPart(partId, modelService, application);
 		if(part != null) {
 			return part.isVisible();
+		}
+		//
+		return false;
+	}
+
+	public static boolean isPartToBeRendered(String partId, EModelService modelService, MApplication application) {
+
+		MPart part = getPart(partId, modelService, application);
+		if(part != null) {
+			return part.isToBeRendered();
 		}
 		//
 		return false;
