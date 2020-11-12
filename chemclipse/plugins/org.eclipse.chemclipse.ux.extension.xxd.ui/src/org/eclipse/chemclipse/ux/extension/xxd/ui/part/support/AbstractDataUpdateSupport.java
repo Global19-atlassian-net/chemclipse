@@ -123,7 +123,7 @@ public abstract class AbstractDataUpdateSupport extends AbstractUpdateSupport im
 						if(part.getElementId().equals(myPart.getElementId())) {
 							if(part.isCloseable()) {
 								if(!toBeRendered) {
-									PartSupport.setPartVisibility(part, false, eventBroker);
+									PartSupport.setPartVisibility(part, false);
 								}
 							}
 						}

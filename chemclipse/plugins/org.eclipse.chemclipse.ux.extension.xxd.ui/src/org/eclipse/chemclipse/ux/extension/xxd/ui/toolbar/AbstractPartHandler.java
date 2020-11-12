@@ -18,8 +18,8 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Evaluate;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -39,33 +39,48 @@ public abstract class AbstractPartHandler implements IPartHandler {
 	private EModelService modelService;
 	@Inject
 	private MApplication application;
-	@Inject
-	private IEventBroker eventBroker;
-
-	@Override
-	public String getPartId() {
-
-		return "";
-	}
-
-	@Override
-	public String getStackPositionKey() {
-
-		return "";
-	}
+	//
+	private IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 
 	@Evaluate
 	public boolean isVisible(IEclipseContext context) {
 
-		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
-		String partStackId = preferenceStore.getString(getStackPositionKey());
-		return !PartSupport.PARTSTACK_NONE.equals(partStackId);
+		return isPartStackAssigned();
 	}
 
 	@Execute
 	public void execute() {
 
 		toggleVisibility();
+	}
+
+	@Override
+	public void action(boolean show, EPartService partService, EModelService modelService, MApplication application) {
+
+		String partId = getPartId();
+		//
+		if(isPartStackAssigned()) {
+			/*
+			 * Part Stack
+			 */
+			String stackPositionKey = getStackPositionKey();
+			String partStackId = preferenceStore.getString(stackPositionKey);
+			/*
+			 * Show/Hide the part.
+			 */
+			PartSupport.setPartVisibility(partId, partStackId, false, partService, modelService, application);
+			if(show) {
+				PartSupport.togglePartVisibility(partId, partStackId, partService, modelService, application);
+			}
+		} else {
+			/*
+			 * If the part stack has been set to "--", hide it.
+			 */
+			MPart part = PartSupport.getPart(partId, modelService, application);
+			if(part != null && part.isVisible()) {
+				part.setVisible(false);
+			}
+		}
 	}
 
 	protected void toggleVisibility() {
@@ -77,32 +92,21 @@ public abstract class AbstractPartHandler implements IPartHandler {
 	protected boolean isPartVisible() {
 
 		String partId = getPartId();
-		//
-		boolean isVisible = PartSupport.isPartVisible(partId, partService, modelService, application);
-		if(isVisible) {
-			IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
-			String stackPositionKey = getStackPositionKey();
-			String partStackId = preferenceStore.getString(stackPositionKey);
-			isVisible = PartSupport.partStackContainsPart(partId, partStackId, modelService, application);
-		}
-		return isVisible;
+		return PartSupport.isPartVisible(partId, modelService, application);
 	}
 
 	protected void action(boolean show) {
 
-		String partId = getPartId();
-		String stackPositionKey = getStackPositionKey();
-		action(partId, stackPositionKey, show);
+		action(show, partService, modelService, application);
 	}
 
-	protected void action(String partId, String stackPositionKey, boolean show) {
+	private boolean isPartStackAssigned() {
 
-		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
-		String partStackId = preferenceStore.getString(stackPositionKey);
-		//
-		PartSupport.setPartVisibility(partId, partStackId, false, partService, modelService, application, eventBroker);
-		if(show) {
-			PartSupport.togglePartVisibility(partId, partStackId, partService, modelService, application, eventBroker);
+		String partStackId = preferenceStore.getString(getStackPositionKey());
+		if(partStackId.isEmpty() || PartSupport.PARTSTACK_NONE.equals(partStackId)) {
+			return false;
+		} else {
+			return true;
 		}
 	}
 }

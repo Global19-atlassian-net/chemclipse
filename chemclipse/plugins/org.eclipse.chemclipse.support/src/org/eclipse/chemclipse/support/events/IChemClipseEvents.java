@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2019 Lablicate GmbH.
+ * Copyright (c) 2012, 2020 Lablicate GmbH.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -188,12 +188,6 @@ public interface IChemClipseEvents {
 	String PROPERTY_RI_CALIBRATION_LIBRARY = IEVENTBROKER_DATA; // File
 	String TOPIC_RI_LIBRARY_ADD_ADD_TO_PROCESS = "ri/library/add/process";
 	String TOPIC_RI_LIBRARY_REMOVE_FROM_PROCESS = "ri/library/remove/process";
-	/*
-	 * Toggle Part Visibility
-	 */
-	String PROPERTY_TOGGLE_PART_VISIBILITY = IEVENTBROKER_DATA;
-	String TOPIC_TOGGLE_PART_VISIBILITY_TRUE = "toggle/part/visibility/true"; // $NON-NLS-1$
-	String TOPIC_TOGGLE_PART_VISIBILITY_FALSE = "toggle/part/visibility/false"; // $NON-NLS-1$
 	/*
 	 * IIdenticiation Targets
 	 */

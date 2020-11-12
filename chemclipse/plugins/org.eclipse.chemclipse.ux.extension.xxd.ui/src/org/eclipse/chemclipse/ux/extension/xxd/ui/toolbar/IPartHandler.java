@@ -11,7 +11,13 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+
 public interface IPartHandler {
+
+	void action(boolean show, EPartService partService, EModelService modelService, MApplication application);
 
 	String getPartId();
 
