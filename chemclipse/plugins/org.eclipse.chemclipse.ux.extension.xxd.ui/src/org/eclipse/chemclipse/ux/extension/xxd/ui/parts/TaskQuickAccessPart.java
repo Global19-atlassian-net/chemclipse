@@ -28,7 +28,6 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTask
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskISTD;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskLists;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskPCR;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskPeaks;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskQuantitation;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskResults;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskSubtract;
@@ -74,7 +73,6 @@ public class TaskQuickAccessPart {
 		 */
 		parent.setLayout(new RowLayout());
 		//
-		createPeaksTask(parent);
 		createListTask(parent);
 		createQuantitationTask(parent);
 		createInternalStandardsTask(parent);
@@ -85,28 +83,6 @@ public class TaskQuickAccessPart {
 		createMeasurementResultTask(parent);
 		createPcrTask(parent);
 		createSettingsTask(parent);
-	}
-
-	private void createPeaksTask(Composite parent) {
-
-		Image imageActive = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SELECTED_PEAKS_ACTIVE, IApplicationImage.SIZE_16x16);
-		Image imageDefault = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SELECTED_PEAKS_DEFAULT, IApplicationImage.SIZE_16x16);
-		//
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText("");
-		button.setToolTipText("Toggle the peak(s) modus");
-		button.setImage(imageDefault);
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_PEAK_CHART, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_PEAK_CHART), partService, modelService, application);
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_PEAK_DETAILS, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_PEAK_DETAILS), partService, modelService, application);
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_PEAK_DETECTOR, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_PEAK_DETECTOR), partService, modelService, application);
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_PEAK_TRACES, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_PEAK_TRACES), partService, modelService, application);
-			}
-		});
 	}
 
 	private void createListTask(Composite parent) {
@@ -309,7 +285,7 @@ public class TaskQuickAccessPart {
 				// preferencePages.add(new PreferencePageTaskOverview());
 				// preferencePages.add(new PreferencePageTaskOverlay());
 				// preferencePages.add(new PreferencePageTaskScans());
-				preferencePages.add(new PreferencePageTaskPeaks());
+				// preferencePages.add(new PreferencePageTaskPeaks());
 				preferencePages.add(new PreferencePageTaskLists());
 				preferencePages.add(new PreferencePageTaskQuantitation());
 				preferencePages.add(new PreferencePageTaskISTD());
