@@ -58,13 +58,7 @@
             class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskPeaks"
             id="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTaskPeaks"
             name="Peaks">
-      </page>  
-      <page
-            category="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTasks"
-            class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskLists"
-            id="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTaskLists"
-            name="Lists">
-      </page>  
+      </page> 
       <page
             category="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTasks"
             class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskQuantitation"

@@ -32,6 +32,7 @@ public class GroupHandlerPeaks extends AbstractGroupHandler {
 		partHandler.add(new PeakDetailsPartHandler());
 		partHandler.add(new PeakDetectorPartHandler());
 		partHandler.add(new PeakTracesPartHandler());
+		partHandler.add(new PeakScanListPartHandler());
 		//
 		return partHandler;
 	}

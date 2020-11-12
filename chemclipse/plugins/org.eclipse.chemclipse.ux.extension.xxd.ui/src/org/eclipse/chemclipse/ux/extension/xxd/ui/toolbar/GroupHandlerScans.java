@@ -18,7 +18,10 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.ui.activator.ContextAddon;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MImperativeExpression;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Display;
@@ -45,6 +48,8 @@ public class GroupHandlerScans extends AbstractGroupHandler {
 			 * Try to get tool item to modify the tooltip and image.
 			 */
 			MDirectToolItem directToolItem = PartSupport.getDirectToolItem(TOOL_ITEM_ID, modelService, application);
+			// extendToolItem(directToolItem, modelService);
+			//
 			Display display = Display.getDefault();
 			display.asyncExec(new Runnable() {
 
@@ -56,6 +61,24 @@ public class GroupHandlerScans extends AbstractGroupHandler {
 				}
 			});
 		}
+	}
+
+	private static void extendToolItem(MDirectToolItem directToolItem, EModelService modelService) {
+
+		MMenu menu = directToolItem.getMenu();
+		//
+		MDirectMenuItem dynamicItem = modelService.createModelElement(MDirectMenuItem.class);
+		dynamicItem.setElementId("org.eclipse.chemclipse.ux.extension.xxd.ui.directmenuitem.settings.scans.test");
+		dynamicItem.setLabel("Test");
+		dynamicItem.setTooltip("Hallo Welt");
+		dynamicItem.setIconURI("platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/preferences.gif");
+		dynamicItem.setContributionURI("bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerScans");
+		//
+		MImperativeExpression expression = modelService.createModelElement(MImperativeExpression.class);
+		expression.setContributionURI("bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.MoleculePartHandler");
+		dynamicItem.setVisibleWhen(expression);
+		//
+		menu.getChildren().add(dynamicItem);
 	}
 
 	@Override

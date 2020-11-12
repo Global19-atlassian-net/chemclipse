@@ -26,7 +26,6 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTask
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskComparison;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskESTD;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskISTD;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskLists;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskPCR;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskQuantitation;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskResults;
@@ -73,7 +72,6 @@ public class TaskQuickAccessPart {
 		 */
 		parent.setLayout(new RowLayout());
 		//
-		createListTask(parent);
 		createQuantitationTask(parent);
 		createInternalStandardsTask(parent);
 		createExternalStandardsTask(parent);
@@ -82,26 +80,8 @@ public class TaskQuickAccessPart {
 		createComparisonScanTask(parent);
 		createMeasurementResultTask(parent);
 		createPcrTask(parent);
-		createSettingsTask(parent);
-	}
-
-	private void createListTask(Composite parent) {
-
-		Image imageActive = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SCAN_PEAK_LIST_ACTIVE, IApplicationImage.SIZE_16x16);
-		Image imageDefault = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SCAN_PEAK_LIST_DEFAULT, IApplicationImage.SIZE_16x16);
 		//
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText("");
-		button.setToolTipText("Toggle the scan/peak list modus");
-		button.setImage(imageDefault);
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_PEAK_SCAN_LIST, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_PEAK_SCAN_LIST), partService, modelService, application);
-			}
-		});
+		createSettingsTask(parent);
 	}
 
 	private void createQuantitationTask(Composite parent) {
@@ -286,7 +266,7 @@ public class TaskQuickAccessPart {
 				// preferencePages.add(new PreferencePageTaskOverlay());
 				// preferencePages.add(new PreferencePageTaskScans());
 				// preferencePages.add(new PreferencePageTaskPeaks());
-				preferencePages.add(new PreferencePageTaskLists());
+				// preferencePages.add(new PreferencePageTaskLists());
 				preferencePages.add(new PreferencePageTaskQuantitation());
 				preferencePages.add(new PreferencePageTaskISTD());
 				preferencePages.add(new PreferencePageTaskESTD());

@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class PreferencePageTaskPeaks extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public PreferencePageTaskPeaks() {
+
 		super(GRID);
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 		setTitle("Peaks");
@@ -32,6 +33,7 @@ public class PreferencePageTaskPeaks extends FieldEditorPreferencePage implement
 		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_PEAK_DETAILS, "Peak Details:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
 		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_PEAK_DETECTOR, "Peak Detector:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
 		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_PEAK_TRACES, "Peak Traces:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_PEAK_SCAN_LIST, "Peak/Scan List:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
 	}
 
 	public void init(IWorkbench workbench) {
