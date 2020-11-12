@@ -25,10 +25,8 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstant
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskCombined;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskComparison;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskESTD;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskHeatmaps;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskISTD;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskLists;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskOverlay;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskPCR;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskPeaks;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskQuantitation;
@@ -76,7 +74,6 @@ public class TaskQuickAccessPart {
 		 */
 		parent.setLayout(new RowLayout());
 		//
-		createOverlayTask(parent);
 		createPeaksTask(parent);
 		createListTask(parent);
 		createQuantitationTask(parent);
@@ -86,32 +83,8 @@ public class TaskQuickAccessPart {
 		createCombinedScanTask(parent);
 		createComparisonScanTask(parent);
 		createMeasurementResultTask(parent);
-		createHeatmapTask(parent);
 		createPcrTask(parent);
 		createSettingsTask(parent);
-	}
-
-	private void createOverlayTask(Composite parent) {
-
-		Image imageActive = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_CHROMATOGRAM_OVERLAY_ACTIVE, IApplicationImage.SIZE_16x16);
-		Image imageDefault = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_CHROMATOGRAM_OVERLAY_DEFAULT, IApplicationImage.SIZE_16x16);
-		//
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText("");
-		button.setToolTipText("Toggle the overlay modus");
-		button.setImage(imageDefault);
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_OVERLAY_CHROMATOGRAM, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_OVERLAY_CHROMATOGRAM_DEFAULT), partService, modelService, application);
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_OVERLAY_NMR, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_OVERLAY_NMR), partService, modelService, application);
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_OVERLAY_XIR, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_OVERLAY_XIR), partService, modelService, application);
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_BASELINE, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_BASELINE), partService, modelService, application);
-			}
-		});
-		//
 	}
 
 	private void createPeaksTask(Composite parent) {
@@ -297,25 +270,6 @@ public class TaskQuickAccessPart {
 		});
 	}
 
-	private void createHeatmapTask(Composite parent) {
-
-		Image imageActive = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_HEATMAP_ACTIVE, IApplicationImage.SIZE_16x16);
-		Image imageDefault = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_HEATMAP_DEFAULT, IApplicationImage.SIZE_16x16);
-		//
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText("");
-		button.setToolTipText("Toggle the heatmap modus");
-		button.setImage(imageDefault);
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_CHROMATOGRAM_HEATMAP, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_HEATMAP), partService, modelService, application);
-			}
-		});
-	}
-
 	private void createPcrTask(Composite parent) {
 
 		Image imageActive = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_PCR_ACTIVE, IApplicationImage.SIZE_16x16);
@@ -353,7 +307,7 @@ public class TaskQuickAccessPart {
 				List<IPreferencePage> preferencePages = new ArrayList<>();
 				preferencePages.add(new PreferencePageTasks());
 				// preferencePages.add(new PreferencePageTaskOverview());
-				preferencePages.add(new PreferencePageTaskOverlay());
+				// preferencePages.add(new PreferencePageTaskOverlay());
 				// preferencePages.add(new PreferencePageTaskScans());
 				preferencePages.add(new PreferencePageTaskPeaks());
 				preferencePages.add(new PreferencePageTaskLists());
@@ -364,7 +318,7 @@ public class TaskQuickAccessPart {
 				preferencePages.add(new PreferencePageTaskCombined());
 				preferencePages.add(new PreferencePageTaskComparison());
 				preferencePages.add(new PreferencePageTaskResults());
-				preferencePages.add(new PreferencePageTaskHeatmaps());
+				// preferencePages.add(new PreferencePageTaskHeatmaps());
 				preferencePages.add(new PreferencePageTaskPCR());
 				//
 				int i = 1;

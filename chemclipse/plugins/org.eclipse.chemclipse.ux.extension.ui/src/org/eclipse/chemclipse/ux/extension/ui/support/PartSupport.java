@@ -45,10 +45,6 @@ public class PartSupport {
 	/*
 	 * Part Descriptors
 	 */
-	public static final String PARTDESCRIPTOR_OVERLAY_CHROMATOGRAM = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.chromatogramOverlayPartDescriptor";
-	public static final String PARTDESCRIPTOR_OVERLAY_NMR = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.nmrOverlayPartDescriptor";
-	public static final String PARTDESCRIPTOR_OVERLAY_XIR = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.xirOverlayPartDescriptor";
-	public static final String PARTDESCRIPTOR_BASELINE = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.baselinePartDescriptor";
 	public static final String PARTDESCRIPTOR_PEAK_CHART = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakChartPartDescriptor";
 	public static final String PARTDESCRIPTOR_PEAK_DETAILS = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakDetailsPartDescriptor";
 	public static final String PARTDESCRIPTOR_PEAK_DETECTOR = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakDetectorPartDescriptor";
@@ -62,7 +58,6 @@ public class PartSupport {
 	public static final String PARTDESCRIPTOR_QUANTITATION = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.quantitationPartDescriptor";
 	public static final String PARTDESCRIPTOR_INTERNAL_STANDARDS = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.internalStandardsPartDescriptor";
 	public static final String PARTDESCRIPTOR_MEASUREMENT_RESULTS = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.measurementResultsPartDescriptor";
-	public static final String PARTDESCRIPTOR_CHROMATOGRAM_HEATMAP = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.chromatogramHeatmapPartDescriptor";
 	public static final String PARTDESCRIPTOR_PEAK_QUANTITATION_REFERENCES = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.peakQuantitationReferencesPartDescriptor";
 	public static final String PARTDESCRIPTOR_PlATE_CHARTS = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.plateChartsPartDescriptor";
 	public static final String PARTDESCRIPTOR_WELL_DATA = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.wellDataPartDescriptor";

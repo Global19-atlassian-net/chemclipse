@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class PreferencePageTaskOverlay extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public PreferencePageTaskOverlay() {
+
 		super(GRID);
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 		setTitle("Overlay");
@@ -32,7 +33,8 @@ public class PreferencePageTaskOverlay extends FieldEditorPreferencePage impleme
 		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_OVERLAY_CHROMATOGRAM_EXTRA, "Overlay Chromatogram Extra:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
 		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_OVERLAY_NMR, "Overlay NMR:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
 		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_OVERLAY_XIR, "Overlay XIR:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_BASELINE, "Baseline:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_BASELINE_CHROMATOGRAM, "Baseline Chromatogram:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_HEATMAP, "Chromatogram Heatmap:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
 	}
 
 	public void init(IWorkbench workbench) {
