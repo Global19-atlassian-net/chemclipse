@@ -11,21 +11,22 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
 
-import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskScans;
-import org.eclipse.jface.preference.IPreferencePage;
+public class ChromatogramScanInfoPartHandler extends AbstractPartHandler {
 
-public class SettingsHandlerPeaks extends AbstractSettingsHandler {
+	public static final String PART_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.chromatogramScanInfoPartDescriptor";
+	public static final String STACK_POSITION_KEY = PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_SCAN_INFO;
 
 	@Override
-	public List<IPreferencePage> getPreferencePages() {
+	public String getPartId() {
 
-		List<IPreferencePage> preferencePages = new ArrayList<>();
-		//
-		preferencePages.add(new PreferencePageTaskScans());
-		//
-		return preferencePages;
+		return PART_ID;
+	}
+
+	@Override
+	public String getStackPositionKey() {
+
+		return STACK_POSITION_KEY;
 	}
 }

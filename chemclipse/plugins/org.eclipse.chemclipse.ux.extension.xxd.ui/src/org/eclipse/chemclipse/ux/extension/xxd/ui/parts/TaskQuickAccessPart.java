@@ -29,12 +29,10 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTask
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskISTD;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskLists;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskOverlay;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskOverview;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskPCR;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskPeaks;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskQuantitation;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskResults;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskScans;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskSubtract;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTasks;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -78,9 +76,7 @@ public class TaskQuickAccessPart {
 		 */
 		parent.setLayout(new RowLayout());
 		//
-		createOverviewTask(parent);
 		createOverlayTask(parent);
-		createScansTask(parent);
 		createPeaksTask(parent);
 		createListTask(parent);
 		createQuantitationTask(parent);
@@ -93,39 +89,6 @@ public class TaskQuickAccessPart {
 		createHeatmapTask(parent);
 		createPcrTask(parent);
 		createSettingsTask(parent);
-		//
-		showInitialViews();
-	}
-
-	private void showInitialViews() {
-
-		// PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_TARGETS, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_TARGETS), partService, modelService, application);
-		// PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_SCAN_CHART, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_SCAN_CHART), partService, modelService, application);
-		// PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_SCAN_TABLE, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_SCAN_TABLE), partService, modelService, application);
-		PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_SCAN_BROWSE, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_SCAN_BROWSE), partService, modelService, application);
-	}
-
-	private void createOverviewTask(Composite parent) {
-
-		Image imageActive = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_CHROMATOGRAM_OVERVIEW_ACTIVE, IApplicationImage.SIZE_16x16);
-		Image imageDefault = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_CHROMATOGRAM_OVERVIEW_DEFAULT, IApplicationImage.SIZE_16x16);
-		//
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText("");
-		button.setToolTipText("Toggle the overview modus");
-		button.setImage(imageDefault);
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_HEADER_DATA, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_HEADER_DATA), partService, modelService, application);
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_CHROMATOGRAM_OVERVIEW, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_OVERVIEW), partService, modelService, application);
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_MISCELLANEOUS_INFO, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_MISCELLANEOUS_INFO), partService, modelService, application);
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_CHROMATOGRAM_SCAN_INFO, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_SCAN_INFO), partService, modelService, application);
-			}
-		});
-		//
 	}
 
 	private void createOverlayTask(Composite parent) {
@@ -146,31 +109,6 @@ public class TaskQuickAccessPart {
 				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_OVERLAY_NMR, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_OVERLAY_NMR), partService, modelService, application);
 				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_OVERLAY_XIR, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_OVERLAY_XIR), partService, modelService, application);
 				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_BASELINE, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_BASELINE), partService, modelService, application);
-			}
-		});
-		//
-	}
-
-	private void createScansTask(Composite parent) {
-
-		Image imageActive = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SELECTED_SCANS_ACTIVE, IApplicationImage.SIZE_16x16);
-		Image imageDefault = ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SELECTED_SCANS_DEFAULT, IApplicationImage.SIZE_16x16);
-		//
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText("");
-		button.setToolTipText("Toggle the scan(s) modus");
-		button.setImage(imageDefault);
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				// PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_TARGETS, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_TARGETS), partService, modelService, application);
-				// PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_SCAN_CHART, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_SCAN_CHART), partService, modelService, application);
-				// PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_SCAN_TABLE, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_SCAN_TABLE), partService, modelService, application);
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_SCAN_BROWSE, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_SCAN_BROWSE), partService, modelService, application);
-				PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_SYNONYMS, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_SYNONYMS), partService, modelService, application);
-				// PartSupport.togglePartVisibility(PartSupport.PARTDESCRIPTOR_MOLECULE, preferenceStore.getString(PreferenceConstants.P_STACK_POSITION_MOLECULE_STRUCTURE), partService, modelService, application);
 			}
 		});
 		//
@@ -414,9 +352,9 @@ public class TaskQuickAccessPart {
 
 				List<IPreferencePage> preferencePages = new ArrayList<>();
 				preferencePages.add(new PreferencePageTasks());
-				preferencePages.add(new PreferencePageTaskOverview());
+				// preferencePages.add(new PreferencePageTaskOverview());
 				preferencePages.add(new PreferencePageTaskOverlay());
-				preferencePages.add(new PreferencePageTaskScans());
+				// preferencePages.add(new PreferencePageTaskScans());
 				preferencePages.add(new PreferencePageTaskPeaks());
 				preferencePages.add(new PreferencePageTaskLists());
 				preferencePages.add(new PreferencePageTaskQuantitation());

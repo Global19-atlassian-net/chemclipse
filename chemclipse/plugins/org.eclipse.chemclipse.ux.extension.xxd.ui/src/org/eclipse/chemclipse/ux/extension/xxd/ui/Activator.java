@@ -22,7 +22,7 @@ import org.eclipse.chemclipse.support.ui.activator.AbstractActivatorUI;
 import org.eclipse.chemclipse.swt.ui.services.IMoleculeImageService;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.DataUpdateSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IDataUpdateListener;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerPeaks;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerScans;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -73,7 +73,7 @@ public class Activator extends AbstractActivatorUI {
 						if(object instanceof String) {
 							String label = (String)object;
 							if(DATA_ANALYSIS_PERSPECTIVE_LABEL.equals(label)) {
-								GroupHandlerPeaks.activateParts();
+								GroupHandlerScans.activateParts();
 								activatePartsInitially = false;
 							}
 						}

@@ -23,9 +23,10 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Display;
 
-public class GroupHandlerPeaks extends AbstractGroupHandler {
+public class GroupHandlerScans extends AbstractGroupHandler {
 
-	private static final String TOOL_ITEM_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.directtoolitem.peaks";
+	private static final String TOOL_ITEM_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.directtoolitem.scans";
+	//
 	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_SELECTED_SCANS_ACTIVE;
 	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_SELECTED_SCANS_DEFAULT;
 	//
@@ -50,7 +51,7 @@ public class GroupHandlerPeaks extends AbstractGroupHandler {
 				@Override
 				public void run() {
 
-					GroupHandlerPeaks groupHandler = new GroupHandlerPeaks();
+					GroupHandlerScans groupHandler = new GroupHandlerScans();
 					groupHandler.activateParts(directToolItem, partService, modelService, application, groupHandler.toggleShow());
 				}
 			});
@@ -66,6 +67,8 @@ public class GroupHandlerPeaks extends AbstractGroupHandler {
 		partHandler.add(new ScanChartPartHandler());
 		partHandler.add(new ScanTablePartHandler());
 		partHandler.add(new MoleculePartHandler());
+		partHandler.add(new ScanBrowsePartHandler());
+		partHandler.add(new SynonymsPartHandler());
 		//
 		return partHandler;
 	}
