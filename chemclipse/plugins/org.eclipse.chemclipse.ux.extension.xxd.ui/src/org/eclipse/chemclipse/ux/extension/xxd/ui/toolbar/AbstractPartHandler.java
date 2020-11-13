@@ -13,6 +13,7 @@ package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
 import javax.inject.Inject;
 
+import org.eclipse.chemclipse.support.ui.activator.ContextAddon;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -42,6 +43,21 @@ public abstract class AbstractPartHandler implements IPartHandler {
 	//
 	private IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 
+	public EPartService getPartService() {
+
+		return partService != null ? partService : ContextAddon.getPartService();
+	}
+
+	public EModelService getModelService() {
+
+		return modelService != null ? modelService : ContextAddon.getModelService();
+	}
+
+	public MApplication getApplication() {
+
+		return application != null ? application : ContextAddon.getApplication();
+	}
+
 	@Evaluate
 	public boolean isVisible(IEclipseContext context) {
 
@@ -52,6 +68,30 @@ public abstract class AbstractPartHandler implements IPartHandler {
 	public void execute() {
 
 		toggleVisibility();
+	}
+
+	@Override
+	public boolean isPartStackAssigned() {
+
+		String partStackId = preferenceStore.getString(getStackPositionKey());
+		if(partStackId.isEmpty() || PartSupport.PARTSTACK_NONE.equals(partStackId)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public boolean isPartVisible() {
+
+		boolean isVisible = false;
+		String partId = getPartId();
+		isVisible = PartSupport.isPartVisible(partId, getModelService(), getApplication());
+		if(isVisible) {
+			isVisible = PartSupport.isPartToBeRendered(partId, getModelService(), getApplication());
+		}
+		//
+		return isVisible;
 	}
 
 	@Override
@@ -89,30 +129,8 @@ public abstract class AbstractPartHandler implements IPartHandler {
 		action(show);
 	}
 
-	protected boolean isPartVisible() {
-
-		boolean isVisible = false;
-		String partId = getPartId();
-		isVisible = PartSupport.isPartVisible(partId, modelService, application);
-		if(isVisible) {
-			isVisible = PartSupport.isPartToBeRendered(partId, modelService, application);
-		}
-		//
-		return isVisible;
-	}
-
 	protected void action(boolean show) {
 
-		action(show, partService, modelService, application);
-	}
-
-	private boolean isPartStackAssigned() {
-
-		String partStackId = preferenceStore.getString(getStackPositionKey());
-		if(partStackId.isEmpty() || PartSupport.PARTSTACK_NONE.equals(partStackId)) {
-			return false;
-		} else {
-			return true;
-		}
+		action(show, getPartService(), getModelService(), getApplication());
 	}
 }

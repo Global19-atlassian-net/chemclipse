@@ -69,15 +69,19 @@ public class Activator extends AbstractActivatorUI {
 			@Override
 			public void update(String topic, List<Object> objects) {
 
-				if(activatePartsInitially) {
-					if(topic.equals(IChemClipseEvents.TOPIC_APPLICATION_SELECT_PERSPECTIVE)) {
-						Object object = objects.get(0);
-						if(object instanceof String) {
-							String label = (String)object;
-							if(DATA_ANALYSIS_PERSPECTIVE_LABEL.equals(label)) {
+				GroupHandlerScans.updateMenu();
+				if(topic.equals(IChemClipseEvents.TOPIC_APPLICATION_SELECT_PERSPECTIVE)) {
+					Object object = objects.get(0);
+					if(object instanceof String) {
+						String label = (String)object;
+						if(DATA_ANALYSIS_PERSPECTIVE_LABEL.equals(label)) {
+							GroupHandlerScans.enableToolBar(true);
+							if(activatePartsInitially) {
 								GroupHandlerScans.activateParts();
 								activatePartsInitially = false;
 							}
+						} else {
+							GroupHandlerScans.enableToolBar(false);
 						}
 					}
 				}

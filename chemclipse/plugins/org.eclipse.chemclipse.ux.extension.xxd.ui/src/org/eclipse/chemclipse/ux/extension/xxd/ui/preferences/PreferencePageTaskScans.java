@@ -12,6 +12,7 @@
 package org.eclipse.chemclipse.ux.extension.xxd.ui.preferences;
 
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerScans;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
@@ -39,5 +40,13 @@ public class PreferencePageTaskScans extends FieldEditorPreferencePage implement
 
 	public void init(IWorkbench workbench) {
 
+	}
+
+	@Override
+	public boolean performOk() {
+
+		boolean ok = super.performOk();
+		GroupHandlerScans.updateMenu();
+		return ok;
 	}
 }

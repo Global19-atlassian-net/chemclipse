@@ -17,7 +17,26 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
 public interface IPartHandler {
 
+	boolean isPartStackAssigned();
+
+	boolean isPartVisible();
+
 	void action(boolean show, EPartService partService, EModelService modelService, MApplication application);
+
+	default String getId() {
+
+		return "";
+	}
+
+	default String getName() {
+
+		return "";
+	}
+
+	default String getIconURI() {
+
+		return "platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/tag.gif";
+	}
 
 	String getPartId();
 
