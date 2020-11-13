@@ -60,7 +60,9 @@ public class Activator extends AbstractActivatorUI {
 		//
 		moleculeImageServiceTracker = new ServiceTracker<>(context, IMoleculeImageService.class, null);
 		moleculeImageServiceTracker.open();
-		//
+		/*
+		 * Toolbar
+		 */
 		dataUpdateSupport = getDataUpdateSupport();
 		dataUpdateSupport.add(new IDataUpdateListener() {
 

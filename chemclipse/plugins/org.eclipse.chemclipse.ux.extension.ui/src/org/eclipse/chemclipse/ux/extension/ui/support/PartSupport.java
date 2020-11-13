@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
@@ -127,7 +128,7 @@ public class PartSupport {
 
 	public static boolean partStackContainsPart(String partId, String partStackId, EModelService modelService, MApplication application) {
 
-		MPartStack partStack = (MPartStack)modelService.find(partStackId, application);
+		MPartStack partStack = getPartStack(partStackId, modelService, application);
 		if(partStack != null) {
 			for(MStackElement stackElement : partStack.getChildren()) {
 				if(partId.equals(stackElement.getElementId())) {
@@ -136,6 +137,26 @@ public class PartSupport {
 			}
 		}
 		return false;
+	}
+
+	public static MPartStack getPartStack(String partStackId, EModelService modelService, MApplication application) {
+
+		MUIElement element = getElement(partStackId, modelService, application);
+		if(element instanceof MPartStack) {
+			return (MPartStack)element;
+		}
+		//
+		return null;
+	}
+
+	public static MToolBar getToolBar(String toolBarId, EModelService modelService, MApplication application) {
+
+		MUIElement element = getElement(toolBarId, modelService, application);
+		if(element instanceof MToolBar) {
+			return (MToolBar)element;
+		}
+		//
+		return null;
 	}
 
 	public static MDirectToolItem getDirectToolItem(String toolItemId, EModelService modelService, MApplication application) {
@@ -195,11 +216,9 @@ public class PartSupport {
 		boolean isVisible = false;
 		if(part != null) {
 			if(part.isVisible()) {
-				setPartVisibility(part, false);
-				partService.hidePart(part);
+				setPartVisibility(part, partService, false);
 			} else {
-				setPartVisibility(part, true);
-				partService.showPart(part, PartState.ACTIVATE);
+				setPartVisibility(part, partService, true);
 				isVisible = true;
 			}
 		}
@@ -263,11 +282,6 @@ public class PartSupport {
 		}
 	}
 
-	public static MPartStack getPartStack(String partStackId, EModelService modelService, MApplication application) {
-
-		return (MPartStack)modelService.find(partStackId, application);
-	}
-
 	public static void setAreaVisibility(String areaId, boolean visible, EModelService modelService, MApplication application) {
 
 		MArea area = (MArea)modelService.find(areaId, application);
@@ -326,15 +340,23 @@ public class PartSupport {
 	public static void setPartVisibility(String partId, String partStackId, boolean visible, EPartService partService, EModelService modelService, MApplication application) {
 
 		MPart part = getPart(partId, partStackId, partService, modelService, application);
-		setPartVisibility(part, visible);
+		setPartVisibility(part, partService, visible);
 	}
 
-	public static void setPartVisibility(MPart part, boolean visible) {
+	public static void setPartVisibility(MPart part, EPartService partService, boolean visible) {
 
 		if(part != null) {
+			/*
+			 * Show/Hide the part.
+			 */
 			part.setVisible(visible);
-			String partId = part.getElementId();
-			logger.info("Visibility changed to '" + visible + "' for the part id: " + partId);
+			if(visible) {
+				showPart(part, partService);
+			} else {
+				hidePart(part, partService);
+			}
+			//
+			logger.info("Visibility changed to '" + visible + "' for the part id: " + part.getElementId());
 		}
 	}
 
