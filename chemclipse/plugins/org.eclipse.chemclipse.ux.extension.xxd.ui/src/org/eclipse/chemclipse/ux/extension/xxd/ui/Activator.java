@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,12 +20,22 @@ import org.eclipse.chemclipse.msd.model.preferences.PreferenceSupplier;
 import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.preferences.IPreferenceSupplier;
 import org.eclipse.chemclipse.support.ui.activator.AbstractActivatorUI;
+import org.eclipse.chemclipse.support.ui.activator.ContextAddon;
 import org.eclipse.chemclipse.swt.ui.services.IMoleculeImageService;
+import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.DataUpdateSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IDataUpdateListener;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerOverlay;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerOverview;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerPeaks;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerScans;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.IGroupHandler;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
@@ -40,10 +51,12 @@ public class Activator extends AbstractActivatorUI {
 	 * in the Data Analysis perspective.
 	 */
 	private static final String DATA_ANALYSIS_PERSPECTIVE_LABEL = "<Data Analysis (Main)>";
+	private static final String TOOLBAR_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.dataanalysis";
 	private static boolean activatePartsInitially = true;
 	//
 	private ScopedPreferenceStore preferenceStoreSubtract;
 	private DataUpdateSupport dataUpdateSupport;
+	private List<IGroupHandler> groupHandlers = new ArrayList<>();
 	//
 	private ServiceTracker<IMoleculeImageService, IMoleculeImageService> moleculeImageServiceTracker = null;
 
@@ -63,6 +76,11 @@ public class Activator extends AbstractActivatorUI {
 		/*
 		 * Toolbar
 		 */
+		groupHandlers.add(new GroupHandlerOverview());
+		groupHandlers.add(new GroupHandlerOverlay());
+		groupHandlers.add(new GroupHandlerScans());
+		groupHandlers.add(new GroupHandlerPeaks());
+		//
 		dataUpdateSupport = getDataUpdateSupport();
 		dataUpdateSupport.add(new IDataUpdateListener() {
 
@@ -72,20 +90,23 @@ public class Activator extends AbstractActivatorUI {
 				if(topic.equals(IChemClipseEvents.TOPIC_APPLICATION_SELECT_PERSPECTIVE)) {
 					Object object = objects.get(0);
 					if(object instanceof String) {
-						GroupHandlerScans.updateMenu();
 						String label = (String)object;
 						if(DATA_ANALYSIS_PERSPECTIVE_LABEL.equals(label)) {
-							GroupHandlerScans.enableToolBar(true);
+							/*
+							 * Show parts initially.
+							 */
+							enableToolBar(true);
 							if(activatePartsInitially) {
-								GroupHandlerScans.activateParts();
+								GroupHandlerScans.activateReferencedParts();
 								activatePartsInitially = false;
 							}
 						} else {
-							GroupHandlerScans.enableToolBar(false);
+							enableToolBar(false);
 						}
+						updateGroupHandlerMenu();
 					}
 				} else if(topic.equals(IChemClipseEvents.TOPIC_PART_CLOSED)) {
-					GroupHandlerScans.updateMenu();
+					updateGroupHandlerMenu();
 				}
 			}
 		});
@@ -138,6 +159,13 @@ public class Activator extends AbstractActivatorUI {
 		return moleculeImageServiceTracker.getServices();
 	}
 
+	public void updateGroupHandlerMenu() {
+
+		for(IGroupHandler groupHandler : groupHandlers) {
+			groupHandler.updateMenu();
+		}
+	}
+
 	private void initialize(DataUpdateSupport dataUpdateSupport) {
 
 		/*
@@ -183,6 +211,26 @@ public class Activator extends AbstractActivatorUI {
 			for(Map.Entry<String, String> entry : initializationEntries.entrySet()) {
 				preferenceStoreSubtract.setDefault(entry.getKey(), entry.getValue());
 			}
+		}
+	}
+
+	private static void enableToolBar(boolean show) {
+
+		EModelService modelService = ContextAddon.getModelService();
+		MApplication application = ContextAddon.getApplication();
+		//
+		if(modelService != null && application != null) {
+			Display display = Display.getDefault();
+			display.asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+
+					MToolBar toolBar = PartSupport.getToolBar(TOOLBAR_ID, modelService, application);
+					toolBar.setToBeRendered(show);
+					toolBar.setVisible(show);
+				}
+			});
 		}
 	}
 }

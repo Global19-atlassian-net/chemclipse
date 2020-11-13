@@ -15,24 +15,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
 
 public class GroupHandlerPeaks extends AbstractGroupHandler {
 
+	//
+	private static final String TOOL_ITEM_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.directtoolitem.peaks";
+	private static final String MENU_SETTINGS_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.directmenuitem.settings.peaks";
+	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerPeaks";
 	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_SELECTED_PEAKS_ACTIVE;
 	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_SELECTED_PEAKS_DEFAULT;
 	//
 	private static boolean partsAreActivated = false;
+
+	public static void activateReferencedParts() {
+
+		IGroupHandler groupHandler = new GroupHandlerScans();
+		groupHandler.activateParts();
+	}
 
 	@Override
 	public List<IPartHandler> getPartHandler() {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
-		partHandler.add(new PeakChartPartHandler());
-		partHandler.add(new PeakDetailsPartHandler());
-		partHandler.add(new PeakDetectorPartHandler());
-		partHandler.add(new PeakTracesPartHandler());
-		partHandler.add(new PeakScanListPartHandler());
+		partHandler.add(new PartHandler("Targets", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.targetsPartDescriptor", PreferenceConstants.P_STACK_POSITION_TARGETS));
 		//
 		return partHandler;
 	}
@@ -47,6 +54,24 @@ public class GroupHandlerPeaks extends AbstractGroupHandler {
 	public String getImageShow() {
 
 		return IMAGE_SHOW;
+	}
+
+	@Override
+	public String getToolItemId() {
+
+		return TOOL_ITEM_ID;
+	}
+
+	@Override
+	public String getMenuSettingsId() {
+
+		return MENU_SETTINGS_ID;
+	}
+
+	@Override
+	public String getSettingsContributionURI() {
+
+		return SETTINGS_CONTRIBUTION_URI;
 	}
 
 	@Override

@@ -17,9 +17,19 @@ public interface IGroupHandler {
 
 	List<IPartHandler> getPartHandler();
 
+	void activateParts();
+
+	void updateMenu();
+
 	String getImageHide();
 
 	String getImageShow();
+
+	String getToolItemId();
+
+	String getMenuSettingsId();
+
+	String getSettingsContributionURI();
 
 	boolean toggleShow();
 }

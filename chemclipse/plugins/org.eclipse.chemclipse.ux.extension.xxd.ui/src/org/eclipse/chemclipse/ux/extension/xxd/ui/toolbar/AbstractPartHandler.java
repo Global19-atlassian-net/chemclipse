@@ -86,18 +86,24 @@ public abstract class AbstractPartHandler implements IPartHandler {
 
 		boolean isVisible = false;
 		String partId = getPartId();
-		isVisible = PartSupport.isPartVisible(partId, getModelService(), getApplication());
+		EModelService modelService = getModelService();
+		MApplication application = getApplication();
+		//
+		isVisible = PartSupport.isPartVisible(partId, modelService, application);
 		if(isVisible) {
-			isVisible = PartSupport.isPartToBeRendered(partId, getModelService(), getApplication());
+			isVisible = PartSupport.isPartToBeRendered(partId, modelService, application);
 		}
 		//
 		return isVisible;
 	}
 
 	@Override
-	public void action(boolean show, EPartService partService, EModelService modelService, MApplication application) {
+	public void action(boolean show) {
 
 		String partId = getPartId();
+		EPartService partService = getPartService();
+		EModelService modelService = getModelService();
+		MApplication application = getApplication();
 		//
 		if(isPartStackAssigned()) {
 			/*
@@ -127,10 +133,5 @@ public abstract class AbstractPartHandler implements IPartHandler {
 
 		boolean show = !isPartVisible();
 		action(show);
-	}
-
-	protected void action(boolean show) {
-
-		action(show, getPartService(), getModelService(), getApplication());
 	}
 }

@@ -15,23 +15,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
 
 public class GroupHandlerOverview extends AbstractGroupHandler {
 
+	//
+	private static final String TOOL_ITEM_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.directtoolitem.overview";
+	private static final String MENU_SETTINGS_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.directmenuitem.settings.overview";
+	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerOverview";
 	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_CHROMATOGRAM_OVERVIEW_ACTIVE;
 	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_CHROMATOGRAM_OVERVIEW_DEFAULT;
 	//
 	private static boolean partsAreActivated = false;
+
+	public static void activateReferencedParts() {
+
+		IGroupHandler groupHandler = new GroupHandlerScans();
+		groupHandler.activateParts();
+	}
 
 	@Override
 	public List<IPartHandler> getPartHandler() {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
-		partHandler.add(new HeaderPartHandler());
-		partHandler.add(new ChromatogramOverviewPartHandler());
-		partHandler.add(new MiscellaneousInfoPartHandler());
-		partHandler.add(new ChromatogramScanInfoPartHandler());
+		partHandler.add(new PartHandler("Targets", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.targetsPartDescriptor", PreferenceConstants.P_STACK_POSITION_TARGETS));
 		//
 		return partHandler;
 	}
@@ -46,6 +54,24 @@ public class GroupHandlerOverview extends AbstractGroupHandler {
 	public String getImageShow() {
 
 		return IMAGE_SHOW;
+	}
+
+	@Override
+	public String getToolItemId() {
+
+		return TOOL_ITEM_ID;
+	}
+
+	@Override
+	public String getMenuSettingsId() {
+
+		return MENU_SETTINGS_ID;
+	}
+
+	@Override
+	public String getSettingsContributionURI() {
+
+		return SETTINGS_CONTRIBUTION_URI;
 	}
 
 	@Override

@@ -33,7 +33,7 @@ public class PreferencePageTaskScans extends FieldEditorPreferencePage implement
 
 	public void createFieldEditors() {
 
-		List<IPartHandler> partHandlers = GroupHandlerScans.getHandler();
+		List<IPartHandler> partHandlers = new GroupHandlerScans().getPartHandler();
 		for(IPartHandler partHandler : partHandlers) {
 			addField(new ComboFieldEditor(partHandler.getStackPositionKey(), partHandler.getName() + ":", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
 		}
@@ -47,7 +47,7 @@ public class PreferencePageTaskScans extends FieldEditorPreferencePage implement
 	public boolean performOk() {
 
 		boolean ok = super.performOk();
-		GroupHandlerScans.updateMenu();
+		Activator.getDefault().updateGroupHandlerMenu();
 		return ok;
 	}
 }
