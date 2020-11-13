@@ -38,7 +38,11 @@ public class GroupHandlerOverlay extends AbstractGroupHandler {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
-		partHandler.add(new PartHandler("Targets", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.targetsPartDescriptor", PreferenceConstants.P_STACK_POSITION_TARGETS));
+		partHandler.add(new PartHandler("Overlay (Chromatogram)", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.chromatogramOverlayPartDescriptor", PreferenceConstants.P_STACK_POSITION_OVERLAY_CHROMATOGRAM_DEFAULT));
+		partHandler.add(new PartHandler("Overlay (NMR)", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.nmrOverlayPartDescriptor", PreferenceConstants.P_STACK_POSITION_OVERLAY_NMR));
+		partHandler.add(new PartHandler("Overlay (XIR)", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.xirOverlayPartDescriptor", PreferenceConstants.P_STACK_POSITION_OVERLAY_XIR));
+		partHandler.add(new PartHandler("Baseline (Chromatogram)", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.baselinePartDescriptor", PreferenceConstants.P_STACK_POSITION_BASELINE_CHROMATOGRAM));
+		partHandler.add(new PartHandler("Heatmap (Chromatogram)", "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.chromatogramHeatmapPartDescriptor", PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_HEATMAP));
 		//
 		return partHandler;
 	}

@@ -11,7 +11,11 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.preferences;
 
+import java.util.List;
+
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerPeaks;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.IPartHandler;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
@@ -29,11 +33,10 @@ public class PreferencePageTaskPeaks extends FieldEditorPreferencePage implement
 
 	public void createFieldEditors() {
 
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_PEAK_CHART, "Peak Chart:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_PEAK_DETAILS, "Peak Details:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_PEAK_DETECTOR, "Peak Detector:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_PEAK_TRACES, "Peak Traces:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_PEAK_SCAN_LIST, "Peak/Scan List:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		List<IPartHandler> partHandlers = new GroupHandlerPeaks().getPartHandler();
+		for(IPartHandler partHandler : partHandlers) {
+			addField(new ComboFieldEditor(partHandler.getStackPositionKey(), partHandler.getName() + ":", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		}
 	}
 
 	public void init(IWorkbench workbench) {

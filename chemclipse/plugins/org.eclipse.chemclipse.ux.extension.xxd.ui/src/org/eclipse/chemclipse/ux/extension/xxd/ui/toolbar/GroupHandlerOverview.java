@@ -39,7 +39,10 @@ public class GroupHandlerOverview extends AbstractGroupHandler {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
-		partHandler.add(new PartHandler("Targets", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.targetsPartDescriptor", PreferenceConstants.P_STACK_POSITION_TARGETS));
+		partHandler.add(new PartHandler("Header", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.headerDataPartDescriptor", PreferenceConstants.P_STACK_POSITION_HEADER_DATA));
+		partHandler.add(new PartHandler("Overview (Chromatogram)", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.chromatogramOverviewPartDescriptor", PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_OVERVIEW));
+		partHandler.add(new PartHandler("Header (Miscellaneous)", "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.miscellaneousInfoPartDescriptor", PreferenceConstants.P_STACK_POSITION_MISCELLANEOUS_INFO));
+		partHandler.add(new PartHandler("Scan Info (Chromatogram)", "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.chromatogramScanInfoPartDescriptor", PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_SCAN_INFO));
 		//
 		return partHandler;
 	}

@@ -39,7 +39,11 @@ public class GroupHandlerPeaks extends AbstractGroupHandler {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
-		partHandler.add(new PartHandler("Targets", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.targetsPartDescriptor", PreferenceConstants.P_STACK_POSITION_TARGETS));
+		partHandler.add(new PartHandler("Peak Chart", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakChartPartDescriptor", PreferenceConstants.P_STACK_POSITION_PEAK_CHART));
+		partHandler.add(new PartHandler("Peak Details", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakDetailsPartDescriptor", PreferenceConstants.P_STACK_POSITION_PEAK_DETAILS));
+		partHandler.add(new PartHandler("Peak Detector", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakDetectorPartDescriptor", PreferenceConstants.P_STACK_POSITION_PEAK_DETECTOR));
+		partHandler.add(new PartHandler("Peak List", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakScanListPartDescriptor", PreferenceConstants.P_STACK_POSITION_PEAK_SCAN_LIST));
+		partHandler.add(new PartHandler("Peak Traces", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakTracesPartDescriptor", PreferenceConstants.P_STACK_POSITION_PEAK_TRACES));
 		//
 		return partHandler;
 	}
