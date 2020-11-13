@@ -43,6 +43,20 @@ public class GroupHandlerScans extends AbstractGroupHandler {
 	//
 	private static boolean partsAreActivated = false;
 
+	public static List<IPartHandler> getHandler() {
+
+		List<IPartHandler> partHandler = new ArrayList<>();
+		//
+		partHandler.add(new PartHandler("Targets", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.targetsPartDescriptor", PreferenceConstants.P_STACK_POSITION_TARGETS));
+		partHandler.add(new PartHandler("Scan Chart", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanChartPartDescriptor", PreferenceConstants.P_STACK_POSITION_SCAN_CHART));
+		partHandler.add(new PartHandler("Scan Table", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanTablePartDescriptor", PreferenceConstants.P_STACK_POSITION_SCAN_TABLE));
+		partHandler.add(new PartHandler("Molecule", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.moleculePartDescriptor", PreferenceConstants.P_STACK_POSITION_MOLECULE));
+		partHandler.add(new PartHandler("Scan Browse", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanBrowsePartDescriptor", PreferenceConstants.P_STACK_POSITION_SCAN_BROWSE));
+		partHandler.add(new PartHandler("Synonyms", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.synonymsPartDescriptor", PreferenceConstants.P_STACK_POSITION_SYNONYMS));
+		//
+		return partHandler;
+	}
+
 	public static void enableToolBar(boolean show) {
 
 		EModelService modelService = ContextAddon.getModelService();
@@ -98,12 +112,11 @@ public class GroupHandlerScans extends AbstractGroupHandler {
 					menu.getChildren().add(i, menuItem);
 				}
 				/*
-				 * Adjust the label. It is currently not updated if the user has
-				 * closed the part manually. Hence, only show the part name.
+				 * Adjust the label.
 				 */
-				// String prefix = partHandler.isPartVisible() ? "Hide " : "Show ";
-				// String label = prefix + partHandler.getName();
-				// menuItem.setLabel(label);
+				String prefix = partHandler.isPartVisible() ? "Hide " : "Show ";
+				String label = prefix + partHandler.getName();
+				menuItem.setLabel(label);
 				/*
 				 * If the user has defined to use the part, show it.
 				 */
@@ -222,19 +235,5 @@ public class GroupHandlerScans extends AbstractGroupHandler {
 
 		partsAreActivated = !partsAreActivated;
 		return partsAreActivated;
-	}
-
-	private static List<IPartHandler> getHandler() {
-
-		List<IPartHandler> partHandler = new ArrayList<>();
-		//
-		partHandler.add(new PartHandler("Targets", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.targetsPartDescriptor", PreferenceConstants.P_STACK_POSITION_TARGETS));
-		partHandler.add(new PartHandler("Scan Chart", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanChartPartDescriptor", PreferenceConstants.P_STACK_POSITION_SCAN_CHART));
-		partHandler.add(new PartHandler("Scan Table", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanTablePartDescriptor", PreferenceConstants.P_STACK_POSITION_SCAN_TABLE));
-		partHandler.add(new PartHandler("Molecule", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.moleculePartDescriptor", PreferenceConstants.P_STACK_POSITION_MOLECULE));
-		partHandler.add(new PartHandler("Scan Browse", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanBrowsePartDescriptor", PreferenceConstants.P_STACK_POSITION_SCAN_BROWSE));
-		partHandler.add(new PartHandler("Synonyms", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.synonymsPartDescriptor", PreferenceConstants.P_STACK_POSITION_SYNONYMS));
-		//
-		return partHandler;
 	}
 }

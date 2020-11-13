@@ -69,10 +69,10 @@ public class Activator extends AbstractActivatorUI {
 			@Override
 			public void update(String topic, List<Object> objects) {
 
-				GroupHandlerScans.updateMenu();
 				if(topic.equals(IChemClipseEvents.TOPIC_APPLICATION_SELECT_PERSPECTIVE)) {
 					Object object = objects.get(0);
 					if(object instanceof String) {
+						GroupHandlerScans.updateMenu();
 						String label = (String)object;
 						if(DATA_ANALYSIS_PERSPECTIVE_LABEL.equals(label)) {
 							GroupHandlerScans.enableToolBar(true);
@@ -84,6 +84,8 @@ public class Activator extends AbstractActivatorUI {
 							GroupHandlerScans.enableToolBar(false);
 						}
 					}
+				} else if(topic.equals(IChemClipseEvents.TOPIC_PART_CLOSED)) {
+					GroupHandlerScans.updateMenu();
 				}
 			}
 		});
@@ -157,9 +159,10 @@ public class Activator extends AbstractActivatorUI {
 		 */
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_UPDATE_SESSION_SUBTRACT_MASS_SPECTRUM, IChemClipseEvents.PROPERTY_UPDATE_SESSION_SUBTRACT_MASS_SPECTRUM);
 		/*
-		 * Perspective
+		 * Perspective / Parts
 		 */
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_APPLICATION_SELECT_PERSPECTIVE, IChemClipseEvents.IEVENTBROKER_DATA);
+		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_PART_CLOSED, IChemClipseEvents.IEVENTBROKER_DATA);
 		/*
 		 * Unload needed?
 		 */

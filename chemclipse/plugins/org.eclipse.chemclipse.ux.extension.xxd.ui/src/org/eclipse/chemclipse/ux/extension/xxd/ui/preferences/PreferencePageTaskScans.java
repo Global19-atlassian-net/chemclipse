@@ -11,8 +11,11 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.preferences;
 
+import java.util.List;
+
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerScans;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.IPartHandler;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
@@ -30,12 +33,10 @@ public class PreferencePageTaskScans extends FieldEditorPreferencePage implement
 
 	public void createFieldEditors() {
 
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_TARGETS, "Targets:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_SCAN_CHART, "Scan Chart:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_SCAN_TABLE, "Scan Table:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_SCAN_BROWSE, "Scan Browse:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_SYNONYMS, "Synonyms:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_MOLECULE, "Molecule:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		List<IPartHandler> partHandlers = GroupHandlerScans.getHandler();
+		for(IPartHandler partHandler : partHandlers) {
+			addField(new ComboFieldEditor(partHandler.getStackPositionKey(), partHandler.getName() + ":", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		}
 	}
 
 	public void init(IWorkbench workbench) {

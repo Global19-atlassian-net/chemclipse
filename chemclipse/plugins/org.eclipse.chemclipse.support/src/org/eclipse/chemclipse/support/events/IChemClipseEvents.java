@@ -198,4 +198,8 @@ public interface IChemClipseEvents {
 	String TOPIC_METHOD_CREATED = "methods/create";
 	String TOPIC_METHOD_UPDATE = "methods/update";
 	String PROPERTY_METHOD_OLD_OBJECT = IEVENTBROKER_DATA + ".olditem";
+	/*
+	 * Close Parts
+	 */
+	String TOPIC_PART_CLOSED = "part/closed";
 }

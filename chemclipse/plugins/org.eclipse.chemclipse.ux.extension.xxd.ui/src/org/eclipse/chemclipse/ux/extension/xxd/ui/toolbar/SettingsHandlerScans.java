@@ -23,9 +23,7 @@ public class SettingsHandlerScans extends AbstractSettingsHandler {
 	public List<IPreferencePage> getPreferencePages() {
 
 		List<IPreferencePage> preferencePages = new ArrayList<>();
-		//
 		preferencePages.add(new PreferencePageTaskScans());
-		//
 		return preferencePages;
 	}
 }
