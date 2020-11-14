@@ -46,6 +46,25 @@ public class PartSupport {
 	/*
 	 * Part Descriptors
 	 */
+	public static final String PARTDESCRIPTOR_OVERLAY_CHROMATOGRAM = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.chromatogramOverlayPartDescriptor";
+	public static final String PARTDESCRIPTOR_OVERLAY_NMR = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.nmrOverlayPartDescriptor";
+	public static final String PARTDESCRIPTOR_OVERLAY_XIR = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.xirOverlayPartDescriptor";
+	public static final String PARTDESCRIPTOR_BASELINE = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.baselinePartDescriptor";
+	public static final String PARTDESCRIPTOR_HEADER_DATA = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.headerDataPartDescriptor";
+	public static final String PARTDESCRIPTOR_CHROMATOGRAM_OVERVIEW = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.chromatogramOverviewPartDescriptor";
+	public static final String PARTDESCRIPTOR_MISCELLANEOUS_INFO = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.miscellaneousInfoPartDescriptor";
+	public static final String PARTDESCRIPTOR_CHROMATOGRAM_SCAN_INFO = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.chromatogramScanInfoPartDescriptor";
+	public static final String PARTDESCRIPTOR_SCAN_CHART = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanChartPartDescriptor";
+	public static final String PARTDESCRIPTOR_SCAN_TABLE = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanTablePartDescriptor";
+	public static final String PARTDESCRIPTOR_SCAN_BROWSE = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanBrowsePartDescriptor";
+	public static final String PARTDESCRIPTOR_SYNONYMS = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.synonymsPartDescriptor";
+	public static final String PARTDESCRIPTOR_MOLECULE_STRUCTURE = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.moleculeStructurePartDescriptor";
+	public static final String PARTDESCRIPTOR_TARGETS = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.targetsPartDescriptor";
+	public static final String PARTDESCRIPTOR_PEAK_CHART = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakChartPartDescriptor";
+	public static final String PARTDESCRIPTOR_PEAK_DETAILS = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakDetailsPartDescriptor";
+	public static final String PARTDESCRIPTOR_PEAK_DETECTOR = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakDetectorPartDescriptor";
+	public static final String PARTDESCRIPTOR_PEAK_TRACES = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakTracesPartDescriptor";
+	public static final String PARTDESCRIPTOR_PEAK_SCAN_LIST = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.peakScanListPartDescriptor";
 	public static final String PARTDESCRIPTOR_PEAK_QUANTITATION_LIST = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.peakQuantitationListPartDescriptor";
 	public static final String PARTDESCRIPTOR_SUBTRACT_SCAN = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.subtractScanPartDescriptor";
 	public static final String PARTDESCRIPTOR_COMBINED_SCAN = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.combinedScanPartDescriptor";
@@ -54,6 +73,7 @@ public class PartSupport {
 	public static final String PARTDESCRIPTOR_QUANTITATION = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.quantitationPartDescriptor";
 	public static final String PARTDESCRIPTOR_INTERNAL_STANDARDS = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.internalStandardsPartDescriptor";
 	public static final String PARTDESCRIPTOR_MEASUREMENT_RESULTS = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.measurementResultsPartDescriptor";
+	public static final String PARTDESCRIPTOR_CHROMATOGRAM_HEATMAP = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.chromatogramHeatmapPartDescriptor";
 	public static final String PARTDESCRIPTOR_PEAK_QUANTITATION_REFERENCES = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.peakQuantitationReferencesPartDescriptor";
 	public static final String PARTDESCRIPTOR_PlATE_CHARTS = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.plateChartsPartDescriptor";
 	public static final String PARTDESCRIPTOR_WELL_DATA = "org.eclipse.chemclipse.ux.extension.xxd.ui.partdescriptor.wellDataPartDescriptor";
@@ -67,7 +87,6 @@ public class PartSupport {
 	public static final String PARTDESCRIPTOR_QUANT_SIGNALS_LIST = "org.eclipse.chemclipse.ux.extension.xxd.ui.part.quantSignalsListPartDescriptor";
 	//
 	public static final String PARTSTACK_NONE = "";
-	public static final String PARTSTACK_QUICKACCESS = "org.eclipse.chemclipse.ux.extension.xxd.ui.partstack.quickaccess";
 	public static final String PARTSTACK_LEFT_TOP = "org.eclipse.chemclipse.ux.extension.xxd.ui.partstack.left.top";
 	public static final String PARTSTACK_LEFT_CENTER = "org.eclipse.chemclipse.ux.extension.xxd.ui.partstack.left.center"; // Default hidden
 	public static final String PARTSTACK_RIGHT_TOP = "org.eclipse.chemclipse.ux.extension.xxd.ui.partstack.right.top"; // Default hidden

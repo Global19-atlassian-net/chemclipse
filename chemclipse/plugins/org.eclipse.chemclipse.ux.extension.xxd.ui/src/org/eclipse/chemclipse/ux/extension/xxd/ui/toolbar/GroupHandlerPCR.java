@@ -18,13 +18,12 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
 
-public class GroupHandlerOverview extends AbstractGroupHandler {
+public class GroupHandlerPCR extends AbstractGroupHandler {
 
-	//
-	private static final String NAME = "Overview";
-	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerOverview";
-	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_CHROMATOGRAM_OVERVIEW_ACTIVE;
-	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_CHROMATOGRAM_OVERVIEW_DEFAULT;
+	private static final String NAME = "PCR";
+	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerPCR";
+	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_PCR_ACTIVE;
+	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_PCR_DEFAULT;
 	//
 	private static boolean partsAreActivated = false;
 
@@ -39,10 +38,11 @@ public class GroupHandlerOverview extends AbstractGroupHandler {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
-		partHandler.add(new PartHandler("Header", PartSupport.PARTDESCRIPTOR_HEADER_DATA, PreferenceConstants.P_STACK_POSITION_HEADER_DATA));
-		partHandler.add(new PartHandler("Overview (Chromatogram)", PartSupport.PARTDESCRIPTOR_CHROMATOGRAM_OVERVIEW, PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_OVERVIEW));
-		partHandler.add(new PartHandler("Header (Miscellaneous)", PartSupport.PARTDESCRIPTOR_MISCELLANEOUS_INFO, PreferenceConstants.P_STACK_POSITION_MISCELLANEOUS_INFO));
-		partHandler.add(new PartHandler("Scan Info (Chromatogram)", PartSupport.PARTDESCRIPTOR_CHROMATOGRAM_SCAN_INFO, PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_SCAN_INFO));
+		partHandler.add(new PartHandler("Plate Charts", PartSupport.PARTDESCRIPTOR_PlATE_CHARTS, PreferenceConstants.P_STACK_POSITION_PLATE_CHARTS));
+		partHandler.add(new PartHandler("Well Data", PartSupport.PARTDESCRIPTOR_WELL_DATA, PreferenceConstants.P_STACK_POSITION_WELL_DATA));
+		partHandler.add(new PartHandler("Well Chart", PartSupport.PARTDESCRIPTOR_WELL_CHART, PreferenceConstants.P_STACK_POSITION_WELL_CHART));
+		partHandler.add(new PartHandler("Well Channels", PartSupport.PARTDESCRIPTOR_WELL_CHANNELS, PreferenceConstants.P_STACK_POSITION_WELL_CHANNELS));
+		partHandler.add(new PartHandler("Plate Data", PartSupport.PARTDESCRIPTOR_PlATE_DATA, PreferenceConstants.P_STACK_POSITION_PLATE_DATA));
 		//
 		return partHandler;
 	}

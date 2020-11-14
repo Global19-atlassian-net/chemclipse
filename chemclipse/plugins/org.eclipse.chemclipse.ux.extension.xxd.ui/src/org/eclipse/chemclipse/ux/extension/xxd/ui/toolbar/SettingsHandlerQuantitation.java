@@ -11,27 +11,19 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface IGroupHandler {
+import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskQuantitation;
+import org.eclipse.jface.preference.IPreferencePage;
 
-	List<IPartHandler> getPartHandler();
+public class SettingsHandlerQuantitation extends AbstractSettingsHandler {
 
-	void activateParts();
+	@Override
+	public List<IPreferencePage> getPreferencePages() {
 
-	void updateMenu();
-
-	String getImageHide();
-
-	String getImageShow();
-
-	String getName();
-
-	String getDirectToolItemId();
-
-	String getDirectMenuItemId();
-
-	String getSettingsContributionURI();
-
-	boolean toggleShow();
+		List<IPreferencePage> preferencePages = new ArrayList<>();
+		preferencePages.add(new PreferencePageTaskQuantitation());
+		return preferencePages;
+	}
 }

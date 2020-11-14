@@ -18,13 +18,12 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
 
-public class GroupHandlerOverview extends AbstractGroupHandler {
+public class GroupHandlerMiscellaneous extends AbstractGroupHandler {
 
-	//
-	private static final String NAME = "Overview";
-	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerOverview";
-	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_CHROMATOGRAM_OVERVIEW_ACTIVE;
-	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_CHROMATOGRAM_OVERVIEW_DEFAULT;
+	private static final String NAME = "Miscellaneous";
+	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerMiscellaneous";
+	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_MEASUREMENT_RESULTS_ACTIVE;
+	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_MEASUREMENT_RESULTS_DEFAULT;
 	//
 	private static boolean partsAreActivated = false;
 
@@ -39,10 +38,10 @@ public class GroupHandlerOverview extends AbstractGroupHandler {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
-		partHandler.add(new PartHandler("Header", PartSupport.PARTDESCRIPTOR_HEADER_DATA, PreferenceConstants.P_STACK_POSITION_HEADER_DATA));
-		partHandler.add(new PartHandler("Overview (Chromatogram)", PartSupport.PARTDESCRIPTOR_CHROMATOGRAM_OVERVIEW, PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_OVERVIEW));
-		partHandler.add(new PartHandler("Header (Miscellaneous)", PartSupport.PARTDESCRIPTOR_MISCELLANEOUS_INFO, PreferenceConstants.P_STACK_POSITION_MISCELLANEOUS_INFO));
-		partHandler.add(new PartHandler("Scan Info (Chromatogram)", PartSupport.PARTDESCRIPTOR_CHROMATOGRAM_SCAN_INFO, PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_SCAN_INFO));
+		partHandler.add(new PartHandler("Scan Subtract", PartSupport.PARTDESCRIPTOR_SUBTRACT_SCAN, PreferenceConstants.P_STACK_POSITION_SUBTRACT_SCAN_PART));
+		partHandler.add(new PartHandler("Scan Combined", PartSupport.PARTDESCRIPTOR_COMBINED_SCAN, PreferenceConstants.P_STACK_POSITION_COMBINED_SCAN_PART));
+		partHandler.add(new PartHandler("Scan Comparison", PartSupport.PARTDESCRIPTOR_COMPARISON_SCAN, PreferenceConstants.P_STACK_POSITION_COMPARISON_SCAN_CHART));
+		partHandler.add(new PartHandler("Measurement Results", PartSupport.PARTDESCRIPTOR_MEASUREMENT_RESULTS, PreferenceConstants.P_STACK_POSITION_MEASUREMENT_RESULTS));
 		//
 		return partHandler;
 	}

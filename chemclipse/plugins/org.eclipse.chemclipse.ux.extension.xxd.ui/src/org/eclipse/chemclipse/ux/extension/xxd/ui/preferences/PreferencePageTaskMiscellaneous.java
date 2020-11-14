@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 Lablicate GmbH.
+ * Copyright (c) 2017, 2020 Lablicate GmbH.
  * 
  * All rights reserved.
  * This program and the accompanying materials are made available under the
@@ -11,24 +11,32 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.preferences;
 
+import java.util.List;
+
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerOverlay;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.IPartHandler;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class PreferencePageTaskSubtract extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class PreferencePageTaskMiscellaneous extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public PreferencePageTaskSubtract() {
+	public PreferencePageTaskMiscellaneous() {
+
 		super(GRID);
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setTitle("Subtract Scan");
+		setTitle("Miscellaneous");
 		setDescription("");
 	}
 
 	public void createFieldEditors() {
 
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_SUBTRACT_SCAN_PART, "Subtract Scan:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		List<IPartHandler> partHandlers = new GroupHandlerOverlay().getPartHandler();
+		for(IPartHandler partHandler : partHandlers) {
+			addField(new ComboFieldEditor(partHandler.getStackPositionKey(), partHandler.getName() + ":", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		}
 	}
 
 	public void init(IWorkbench workbench) {

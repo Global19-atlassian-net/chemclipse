@@ -18,13 +18,12 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
 
-public class GroupHandlerOverview extends AbstractGroupHandler {
+public class GroupHandlerESTD extends AbstractGroupHandler {
 
-	//
-	private static final String NAME = "Overview";
-	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerOverview";
-	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_CHROMATOGRAM_OVERVIEW_ACTIVE;
-	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_CHROMATOGRAM_OVERVIEW_DEFAULT;
+	private static final String NAME = "ESTD";
+	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerESTD";
+	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_EXTERNAL_STANDARDS_ACTIVE;
+	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_EXTERNAL_STANDARDS_DEFAULT;
 	//
 	private static boolean partsAreActivated = false;
 
@@ -39,10 +38,11 @@ public class GroupHandlerOverview extends AbstractGroupHandler {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
-		partHandler.add(new PartHandler("Header", PartSupport.PARTDESCRIPTOR_HEADER_DATA, PreferenceConstants.P_STACK_POSITION_HEADER_DATA));
-		partHandler.add(new PartHandler("Overview (Chromatogram)", PartSupport.PARTDESCRIPTOR_CHROMATOGRAM_OVERVIEW, PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_OVERVIEW));
-		partHandler.add(new PartHandler("Header (Miscellaneous)", PartSupport.PARTDESCRIPTOR_MISCELLANEOUS_INFO, PreferenceConstants.P_STACK_POSITION_MISCELLANEOUS_INFO));
-		partHandler.add(new PartHandler("Scan Info (Chromatogram)", PartSupport.PARTDESCRIPTOR_CHROMATOGRAM_SCAN_INFO, PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_SCAN_INFO));
+		partHandler.add(new PartHandler("Quant Peak List", PartSupport.PARTDESCRIPTOR_QUANT_PEAKS_LIST, PreferenceConstants.P_STACK_POSITION_QUANT_PEAKS_LIST));
+		partHandler.add(new PartHandler("Quant Peak Chart", PartSupport.PARTDESCRIPTOR_QUANT_PEAKS_CHART, PreferenceConstants.P_STACK_POSITION_QUANT_PEAKS_CHART));
+		partHandler.add(new PartHandler("Quant Signals List", PartSupport.PARTDESCRIPTOR_QUANT_SIGNALS_LIST, PreferenceConstants.P_STACK_POSITION_QUANT_SIGNALS_LIST));
+		partHandler.add(new PartHandler("Quant Response List", PartSupport.PARTDESCRIPTOR_QUANT_RESPONSE_LIST, PreferenceConstants.P_STACK_POSITION_QUANT_RESPONSE_LIST));
+		partHandler.add(new PartHandler("Quant Response Chart", PartSupport.PARTDESCRIPTOR_QUANT_RESPONSE_CHART, PreferenceConstants.P_STACK_POSITION_QUANT_RESPONSE_CHART));
 		//
 		return partHandler;
 	}

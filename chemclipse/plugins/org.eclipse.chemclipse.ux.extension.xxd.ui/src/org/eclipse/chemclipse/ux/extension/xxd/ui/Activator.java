@@ -25,9 +25,14 @@ import org.eclipse.chemclipse.swt.ui.services.IMoleculeImageService;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.DataUpdateSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IDataUpdateListener;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerESTD;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerISTD;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerMiscellaneous;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerOverlay;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerOverview;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerPCR;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerPeaks;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerQuantitation;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerScans;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.IGroupHandler;
 import org.eclipse.core.runtime.Platform;
@@ -80,36 +85,14 @@ public class Activator extends AbstractActivatorUI {
 		groupHandlers.add(new GroupHandlerOverlay());
 		groupHandlers.add(new GroupHandlerScans());
 		groupHandlers.add(new GroupHandlerPeaks());
+		groupHandlers.add(new GroupHandlerQuantitation());
+		groupHandlers.add(new GroupHandlerISTD());
+		groupHandlers.add(new GroupHandlerESTD());
+		groupHandlers.add(new GroupHandlerPCR());
+		groupHandlers.add(new GroupHandlerMiscellaneous());
 		//
 		dataUpdateSupport = getDataUpdateSupport();
-		dataUpdateSupport.add(new IDataUpdateListener() {
-
-			@Override
-			public void update(String topic, List<Object> objects) {
-
-				if(topic.equals(IChemClipseEvents.TOPIC_APPLICATION_SELECT_PERSPECTIVE)) {
-					Object object = objects.get(0);
-					if(object instanceof String) {
-						String label = (String)object;
-						if(DATA_ANALYSIS_PERSPECTIVE_LABEL.equals(label)) {
-							/*
-							 * Show parts initially.
-							 */
-							enableToolBar(true);
-							if(activatePartsInitially) {
-								GroupHandlerScans.activateReferencedParts();
-								activatePartsInitially = false;
-							}
-						} else {
-							enableToolBar(false);
-						}
-						updateGroupHandlerMenu();
-					}
-				} else if(topic.equals(IChemClipseEvents.TOPIC_PART_CLOSED)) {
-					updateGroupHandlerMenu();
-				}
-			}
-		});
+		handleToolbarUpdates(dataUpdateSupport);
 	}
 
 	/*
@@ -212,6 +195,38 @@ public class Activator extends AbstractActivatorUI {
 				preferenceStoreSubtract.setDefault(entry.getKey(), entry.getValue());
 			}
 		}
+	}
+
+	private void handleToolbarUpdates(DataUpdateSupport dataUpdateSupport) {
+
+		dataUpdateSupport.add(new IDataUpdateListener() {
+
+			@Override
+			public void update(String topic, List<Object> objects) {
+
+				if(topic.equals(IChemClipseEvents.TOPIC_APPLICATION_SELECT_PERSPECTIVE)) {
+					Object object = objects.get(0);
+					if(object instanceof String) {
+						String label = (String)object;
+						if(DATA_ANALYSIS_PERSPECTIVE_LABEL.equals(label)) {
+							/*
+							 * Show parts initially.
+							 */
+							enableToolBar(true);
+							if(activatePartsInitially) {
+								GroupHandlerScans.activateReferencedParts();
+								activatePartsInitially = false;
+							}
+						} else {
+							enableToolBar(false);
+						}
+						updateGroupHandlerMenu();
+					}
+				} else if(topic.equals(IChemClipseEvents.TOPIC_PART_CLOSED)) {
+					updateGroupHandlerMenu();
+				}
+			}
+		});
 	}
 
 	private static void enableToolBar(boolean show) {

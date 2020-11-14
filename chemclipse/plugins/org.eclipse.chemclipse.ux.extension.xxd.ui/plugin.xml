@@ -79,27 +79,9 @@
       </page>
       <page
             category="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTasks"
-            class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskSubtract"
-            id="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTaskSubtract"
-            name="Subtract">
-      </page>  
-      <page
-            category="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTasks"
-            class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskCombined"
-            id="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTaskCombined"
-            name="Combined Scans">
-      </page>  
-      <page
-            category="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTasks"
-            class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskComparison"
-            id="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTaskComparison"
-            name="Comparison">
-      </page> 
-      <page
-            category="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTasks"
-            class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskResults"
-            id="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTaskResults"
-            name="Results">
+            class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskMiscellaneous"
+            id="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTaskMiscellaneous"
+            name="Miscellaneous">
       </page>           
       <page
             category="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTasks"

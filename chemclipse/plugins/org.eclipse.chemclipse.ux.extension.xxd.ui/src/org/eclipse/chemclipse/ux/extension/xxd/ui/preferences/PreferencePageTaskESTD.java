@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Lablicate GmbH.
+ * Copyright (c) 2018, 2020 Lablicate GmbH.
  * 
  * All rights reserved.
  * This program and the accompanying materials are made available under the
@@ -11,7 +11,11 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.preferences;
 
+import java.util.List;
+
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerESTD;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.IPartHandler;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
@@ -20,6 +24,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class PreferencePageTaskESTD extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public PreferencePageTaskESTD() {
+
 		super(GRID);
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 		setTitle("External Standards (ESTD)");
@@ -28,11 +33,10 @@ public class PreferencePageTaskESTD extends FieldEditorPreferencePage implements
 
 	public void createFieldEditors() {
 
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_QUANT_RESPONSE_CHART, "Quantitation Response Chart:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_QUANT_RESPONSE_LIST, "Quantitation Response List:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_QUANT_PEAKS_CHART, "Quantitation Peaks Chart:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_QUANT_PEAKS_LIST, "Quantitation Peaks List:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		addField(new ComboFieldEditor(PreferenceConstants.P_STACK_POSITION_QUANT_SIGNALS_LIST, "Quantitation Signals List:", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		List<IPartHandler> partHandlers = new GroupHandlerESTD().getPartHandler();
+		for(IPartHandler partHandler : partHandlers) {
+			addField(new ComboFieldEditor(partHandler.getStackPositionKey(), partHandler.getName() + ":", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		}
 	}
 
 	public void init(IWorkbench workbench) {

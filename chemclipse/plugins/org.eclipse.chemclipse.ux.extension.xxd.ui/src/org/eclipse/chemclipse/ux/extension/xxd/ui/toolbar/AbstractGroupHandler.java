@@ -12,7 +12,9 @@
 package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.ui.activator.ContextAddon;
@@ -25,12 +27,15 @@ import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractGroupHandler implements IGroupHandler {
 
 	private static final String COMMAND_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.command.partHandler";
+	private static final String TOOL_ITEM_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.directtoolitem";
+	private static final String DIRECT_MENU_ITEM = "org.eclipse.chemclipse.ux.extension.xxd.ui.directmenuitem";
 
 	@Execute
 	public void execute(MDirectToolItem directToolItem) {
@@ -49,7 +54,6 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 			 * Try to get tool item to modify the tooltip and image.
 			 */
 			MDirectToolItem directToolItem = getDirectToolItem();
-			//
 			Display display = Display.getDefault();
 			display.asyncExec(new Runnable() {
 
@@ -67,71 +71,33 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 	public void updateMenu() {
 
 		EModelService modelService = ContextAddon.getModelService();
-		MApplication application = ContextAddon.getApplication();
-		if(modelService != null && application != null) {
+		if(modelService != null) {
 			/*
 			 * Adjust the menu.
 			 */
 			MDirectToolItem directToolItem = getDirectToolItem();
-			MCommand command = getCommand();
-			MMenu menu = directToolItem.getMenu();
-			/*
-			 * Parts
-			 */
-			List<IPartHandler> partHandlers = getPartHandler();
-			int size = partHandlers.size();
-			for(int i = 0; i < size; i++) {
-				IPartHandler partHandler = partHandlers.get(i);
-				MHandledMenuItem menuItem = getHandledItem(menu, partHandler.getId());
-				if(menuItem == null) {
-					/*
-					 * Create a new menu item.
-					 * Workaround!!!
-					 * The element id is used to store the partId and stackPositionId, have a look at partHandler.getId()
-					 * All approaches to create a specific parameterized command failed.
-					 * Frankly, I don't know how to do this without getting tons of errors.
-					 */
-					menuItem = modelService.createModelElement(MHandledMenuItem.class);
-					menuItem.setElementId(partHandler.getId());
-					menuItem.setLabel(partHandler.getName());
-					menuItem.setTooltip("");
-					menuItem.setIconURI(partHandler.getIconURI());
-					menuItem.setCommand(command);
-					/*
-					 * Place the items in the correct order.
-					 */
-					menu.getChildren().add(i, menuItem);
+			Display display = Display.getDefault();
+			display.asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+
+					updateMenuItems(directToolItem, modelService);
 				}
-				/*
-				 * Adjust the label.
-				 */
-				String prefix = partHandler.isPartVisible() ? "Hide " : "Show ";
-				String label = prefix + partHandler.getName();
-				menuItem.setLabel(label);
-				/*
-				 * If the user has defined to use the part, show it.
-				 */
-				menuItem.setVisible(partHandler.isPartStackAssigned());
-			}
-			/*
-			 * Settings
-			 */
-			String menuSettingsId = getMenuSettingsId();
-			MDirectMenuItem settingsMenuItem = getDirectItem(menu, menuSettingsId);
-			if(settingsMenuItem == null) {
-				/*
-				 * Create a new settings item.
-				 */
-				MDirectMenuItem menuItem = modelService.createModelElement(MDirectMenuItem.class);
-				menuItem.setElementId(menuSettingsId);
-				menuItem.setLabel("Settings");
-				menuItem.setTooltip("Settings to show/hide parts.");
-				menuItem.setIconURI("platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/preferences.gif");
-				menuItem.setContributionURI(getSettingsContributionURI());
-				//
-				menu.getChildren().add(menuItem);
-			}
+			});
 		}
+	}
+
+	@Override
+	public String getDirectToolItemId() {
+
+		return TOOL_ITEM_ID + "." + getName().toLowerCase();
+	}
+
+	@Override
+	public String getDirectMenuItemId() {
+
+		return DIRECT_MENU_ITEM + "." + getName().toLowerCase();
 	}
 
 	private void adjustToolTip(MDirectToolItem directToolItem, boolean show) {
@@ -166,7 +132,7 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 		EModelService modelService = ContextAddon.getModelService();
 		MApplication application = ContextAddon.getApplication();
 		if(modelService != null && application != null) {
-			String toolItemId = getToolItemId();
+			String toolItemId = getDirectToolItemId();
 			return PartSupport.getDirectToolItem(toolItemId, modelService, application);
 		}
 		//
@@ -217,5 +183,81 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 		}
 		//
 		return null;
+	}
+
+	private void updateMenuItems(MDirectToolItem directToolItem, EModelService modelService) {
+
+		Map<Integer, MMenuItem> menuItemsAdd = new HashMap<>();
+		MCommand command = getCommand();
+		MMenu menu = directToolItem.getMenu();
+		/*
+		 * Part Menu Items
+		 */
+		List<IPartHandler> partHandlers = getPartHandler();
+		int size = partHandlers.size();
+		for(int i = 0; i < size; i++) {
+			IPartHandler partHandler = partHandlers.get(i);
+			MHandledMenuItem menuItem = getHandledItem(menu, partHandler.getId());
+			if(menuItem == null) {
+				/*
+				 * Create a new menu item.
+				 * Workaround!!!
+				 * The element id is used to store the partId and stackPositionId, have a look at partHandler.getId()
+				 * All approaches to create a specific parameterized command failed.
+				 * Frankly, I don't know how to do this without getting tons of errors.
+				 */
+				menuItem = modelService.createModelElement(MHandledMenuItem.class);
+				menuItem.setElementId(partHandler.getId());
+				menuItem.setLabel(partHandler.getName());
+				menuItem.setTooltip("");
+				menuItem.setIconURI(partHandler.getIconURI());
+				menuItem.setCommand(command);
+				/*
+				 * Place the items in the correct order.
+				 */
+				menuItemsAdd.put(i, menuItem);
+			}
+			/*
+			 * Adjust the label.
+			 */
+			String prefix = partHandler.isPartVisible() ? "Hide " : "Show ";
+			String label = prefix + partHandler.getName();
+			menuItem.setLabel(label);
+			/*
+			 * If the user has defined to use the part, show it.
+			 */
+			menuItem.setVisible(partHandler.isPartStackAssigned());
+		}
+		/*
+		 * Settings Menu Item
+		 */
+		String menuSettingsId = getDirectMenuItemId();
+		MDirectMenuItem settingsMenuItem = getDirectItem(menu, menuSettingsId);
+		if(settingsMenuItem == null) {
+			/*
+			 * Create a new settings item.
+			 */
+			MDirectMenuItem menuItem = modelService.createModelElement(MDirectMenuItem.class);
+			menuItem.setElementId(menuSettingsId);
+			menuItem.setLabel("Settings");
+			menuItem.setTooltip("Settings to show/hide parts.");
+			menuItem.setIconURI("platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/preferences.gif");
+			menuItem.setContributionURI(getSettingsContributionURI());
+			//
+			menuItemsAdd.put(-1, menuItem);
+		}
+		/*
+		 * Add New Menu Item(s)
+		 */
+		List<MMenuElement> menuElements = menu.getChildren();
+		for(Map.Entry<Integer, MMenuItem> entry : menuItemsAdd.entrySet()) {
+			int position = entry.getKey();
+			MMenuItem menuItem = entry.getValue();
+			if(position >= 0) {
+				menuElements.add(position, menuItem);
+			} else {
+				menuElements.add(menuItem);
+			}
+		}
 	}
 }
