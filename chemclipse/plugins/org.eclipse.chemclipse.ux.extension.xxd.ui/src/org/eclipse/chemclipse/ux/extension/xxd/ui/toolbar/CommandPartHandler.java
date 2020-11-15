@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
-import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 
@@ -23,6 +22,6 @@ public class CommandPartHandler {
 		String id = menuItem.getElementId();
 		PartHandler partHandler = new PartHandler(id);
 		partHandler.toggleVisibility();
-		Activator.getDefault().updateGroupHandlerMenu();
+		GroupHandler.updateGroupHandlerMenu();
 	}
 }

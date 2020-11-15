@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,16 +25,7 @@ import org.eclipse.chemclipse.swt.ui.services.IMoleculeImageService;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.DataUpdateSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IDataUpdateListener;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerESTD;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerISTD;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerMiscellaneous;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerOverlay;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerOverview;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerPCR;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerPeaks;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerQuantitation;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerScans;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.IGroupHandler;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandler;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -63,7 +53,6 @@ public class Activator extends AbstractActivatorUI {
 	//
 	private ScopedPreferenceStore preferenceStoreSubtract;
 	private DataUpdateSupport dataUpdateSupport;
-	private List<IGroupHandler> groupHandlers = new ArrayList<>();
 	//
 	private ServiceTracker<IMoleculeImageService, IMoleculeImageService> moleculeImageServiceTracker = null;
 
@@ -83,16 +72,6 @@ public class Activator extends AbstractActivatorUI {
 		/*
 		 * Toolbar
 		 */
-		groupHandlers.add(new GroupHandlerOverview());
-		groupHandlers.add(new GroupHandlerOverlay());
-		groupHandlers.add(new GroupHandlerScans());
-		groupHandlers.add(new GroupHandlerPeaks());
-		groupHandlers.add(new GroupHandlerQuantitation());
-		groupHandlers.add(new GroupHandlerISTD());
-		groupHandlers.add(new GroupHandlerESTD());
-		groupHandlers.add(new GroupHandlerPCR());
-		groupHandlers.add(new GroupHandlerMiscellaneous());
-		//
 		dataUpdateSupport = getDataUpdateSupport();
 		handleToolbarUpdates(dataUpdateSupport);
 	}
@@ -142,13 +121,6 @@ public class Activator extends AbstractActivatorUI {
 	public Object[] getMoleculeImageServices() {
 
 		return moleculeImageServiceTracker.getServices();
-	}
-
-	public void updateGroupHandlerMenu() {
-
-		for(IGroupHandler groupHandler : groupHandlers) {
-			groupHandler.updateMenu();
-		}
 	}
 
 	private void initialize(DataUpdateSupport dataUpdateSupport) {
@@ -216,18 +188,18 @@ public class Activator extends AbstractActivatorUI {
 							 */
 							enableToolBar(true);
 							if(activatePartsInitially) {
-								GroupHandlerScans.activateReferencedParts();
+								GroupHandler.activateReferencedParts();
 								activatePartsInitially = false;
 							}
 						} else {
 							enableToolBar(false);
 						}
-						updateGroupHandlerMenu();
+						GroupHandler.updateGroupHandlerMenu();
 					}
 				} else if(topic.equals(IChemClipseEvents.TOPIC_PART_CLOSED)) {
 					Object object = objects.get(0);
 					logger.info("Part has been closed: " + object);
-					updateGroupHandlerMenu();
+					GroupHandler.updateGroupHandlerMenu();
 				}
 			}
 		});

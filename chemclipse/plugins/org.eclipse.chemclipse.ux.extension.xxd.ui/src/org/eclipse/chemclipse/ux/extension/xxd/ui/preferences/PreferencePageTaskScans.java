@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.chemclipse.support.ui.preferences.fieldeditors.LabelFieldEditor;
 import org.eclipse.chemclipse.support.ui.preferences.fieldeditors.SpacerFieldEditor;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandler;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerScans;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.IPartHandler;
 import org.eclipse.jface.preference.ComboFieldEditor;
@@ -56,7 +57,7 @@ public class PreferencePageTaskScans extends FieldEditorPreferencePage implement
 	public boolean performOk() {
 
 		boolean ok = super.performOk();
-		Activator.getDefault().updateGroupHandlerMenu();
+		GroupHandler.updateGroupHandlerMenu();
 		return ok;
 	}
 }

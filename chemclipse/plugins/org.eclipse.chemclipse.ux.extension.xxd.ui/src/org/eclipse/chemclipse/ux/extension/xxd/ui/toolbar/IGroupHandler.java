@@ -13,7 +13,11 @@ package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
 import java.util.List;
 
+import org.eclipse.jface.preference.IPreferencePage;
+
 public interface IGroupHandler {
+
+	List<IPreferencePage> getPreferencePages();
 
 	List<IPartHandler> getPartHandler();
 
@@ -25,17 +29,13 @@ public interface IGroupHandler {
 
 	void updateMenu();
 
+	String getSettingsMenuId();
+
 	String getImageHide();
 
 	String getImageShow();
 
 	String getName();
-
-	String getDirectToolItemId();
-
-	String getDirectMenuItemId();
-
-	String getSettingsContributionURI();
 
 	boolean toggleShow();
 }

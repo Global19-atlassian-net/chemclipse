@@ -17,20 +17,23 @@ import java.util.List;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskScans;
+import org.eclipse.jface.preference.IPreferencePage;
 
 public class GroupHandlerScans extends AbstractGroupHandler {
 
 	private static final String NAME = "Scans";
-	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerScans";
 	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_SELECTED_SCANS_ACTIVE;
 	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_SELECTED_SCANS_DEFAULT;
 	//
 	private static boolean partsAreActivated = false;
 
-	public static void activateReferencedParts() {
+	@Override
+	public List<IPreferencePage> getPreferencePages() {
 
-		IGroupHandler groupHandler = new GroupHandlerScans();
-		groupHandler.activateParts();
+		List<IPreferencePage> preferencePages = new ArrayList<>();
+		preferencePages.add(new PreferencePageTaskScans());
+		return preferencePages;
 	}
 
 	@Override
@@ -62,12 +65,6 @@ public class GroupHandlerScans extends AbstractGroupHandler {
 	public String getName() {
 
 		return NAME;
-	}
-
-	@Override
-	public String getSettingsContributionURI() {
-
-		return SETTINGS_CONTRIBUTION_URI;
 	}
 
 	@Override

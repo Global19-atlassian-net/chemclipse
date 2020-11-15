@@ -17,20 +17,23 @@ import java.util.List;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskPCR;
+import org.eclipse.jface.preference.IPreferencePage;
 
 public class GroupHandlerPCR extends AbstractGroupHandler {
 
 	private static final String NAME = "PCR";
-	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandlerPCR";
 	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_PCR_ACTIVE;
 	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_PCR_DEFAULT;
 	//
 	private static boolean partsAreActivated = false;
 
-	public static void activateReferencedParts() {
+	@Override
+	public List<IPreferencePage> getPreferencePages() {
 
-		IGroupHandler groupHandler = new GroupHandlerScans();
-		groupHandler.activateParts();
+		List<IPreferencePage> preferencePages = new ArrayList<>();
+		preferencePages.add(new PreferencePageTaskPCR());
+		return preferencePages;
 	}
 
 	@Override
@@ -58,12 +61,6 @@ public class GroupHandlerPCR extends AbstractGroupHandler {
 	public String getName() {
 
 		return NAME;
-	}
-
-	@Override
-	public String getSettingsContributionURI() {
-
-		return SETTINGS_CONTRIBUTION_URI;
 	}
 
 	@Override

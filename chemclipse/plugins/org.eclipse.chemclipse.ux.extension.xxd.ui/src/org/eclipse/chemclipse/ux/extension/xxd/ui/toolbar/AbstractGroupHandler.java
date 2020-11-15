@@ -33,6 +33,8 @@ import org.eclipse.swt.widgets.Display;
 public abstract class AbstractGroupHandler implements IGroupHandler {
 
 	private static final String COMMAND_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.command.partHandler";
+	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandler";
+	//
 	private static final String TOOL_ITEM_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.directtoolitem";
 	private static final String DIRECT_MENU_ITEM = "org.eclipse.chemclipse.ux.extension.xxd.ui.directmenuitem";
 	private static final String PREFIX_MENU_SEPARATOR = "org.eclipse.chemclipse.ux.extension.xxd.ui.menuseparator";
@@ -98,15 +100,9 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 	}
 
 	@Override
-	public String getDirectToolItemId() {
+	public String getSettingsMenuId() {
 
-		return TOOL_ITEM_ID + "." + getName().toLowerCase();
-	}
-
-	@Override
-	public String getDirectMenuItemId() {
-
-		return DIRECT_MENU_ITEM + "." + getName().toLowerCase();
+		return DIRECT_MENU_ITEM + "." + getNameId();
 	}
 
 	private void adjustToolTip(MDirectToolItem directToolItem, boolean show) {
@@ -296,7 +292,7 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 
 	private void populateSettingsMenu(MMenu menu, EModelService modelService, List<MenuContribution> menuContributions) {
 
-		String menuSettingsId = getDirectMenuItemId();
+		String menuSettingsId = getSettingsMenuId();
 		MDirectMenuItem settingsMenuItem = getDirectItem(menu, menuSettingsId);
 		if(settingsMenuItem == null) {
 			/*
@@ -307,7 +303,7 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 			menuItem.setLabel("Settings");
 			menuItem.setTooltip("Settings to show/hide parts.");
 			menuItem.setIconURI("platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/preferences.gif");
-			menuItem.setContributionURI(getSettingsContributionURI());
+			menuItem.setContributionURI(SETTINGS_CONTRIBUTION_URI);
 			menuContributions.add(new MenuContribution(menuItem));
 		}
 	}
@@ -329,13 +325,23 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 		}
 	}
 
+	private String getDirectToolItemId() {
+
+		return TOOL_ITEM_ID + "." + getNameId();
+	}
+
 	private String getAdditionalSeparatorId() {
 
-		return PREFIX_MENU_SEPARATOR + "." + getName().toLowerCase() + ".additional";
+		return PREFIX_MENU_SEPARATOR + "." + getNameId() + ".additional";
 	}
 
 	private String getSettingsSeparatorId() {
 
-		return PREFIX_MENU_SEPARATOR + "." + getName().toLowerCase() + ".settings";
+		return PREFIX_MENU_SEPARATOR + "." + getNameId() + ".settings";
+	}
+
+	private String getNameId() {
+
+		return getName().replaceAll(" ", "").toLowerCase().trim();
 	}
 }
