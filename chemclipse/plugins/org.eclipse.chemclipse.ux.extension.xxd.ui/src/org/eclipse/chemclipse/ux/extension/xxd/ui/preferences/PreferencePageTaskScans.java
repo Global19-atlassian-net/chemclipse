@@ -13,6 +13,8 @@ package org.eclipse.chemclipse.ux.extension.xxd.ui.preferences;
 
 import java.util.List;
 
+import org.eclipse.chemclipse.support.ui.preferences.fieldeditors.LabelFieldEditor;
+import org.eclipse.chemclipse.support.ui.preferences.fieldeditors.SpacerFieldEditor;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerScans;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.IPartHandler;
@@ -33,8 +35,15 @@ public class PreferencePageTaskScans extends FieldEditorPreferencePage implement
 
 	public void createFieldEditors() {
 
-		List<IPartHandler> partHandlers = new GroupHandlerScans().getPartHandler();
-		for(IPartHandler partHandler : partHandlers) {
+		addField(new LabelFieldEditor("Mandatory", getFieldEditorParent()));
+		List<IPartHandler> partHandlersMandatory = new GroupHandlerScans().getPartHandlerMandatory();
+		for(IPartHandler partHandler : partHandlersMandatory) {
+			addField(new ComboFieldEditor(partHandler.getStackPositionKey(), partHandler.getName() + ":", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
+		}
+		addField(new SpacerFieldEditor(getFieldEditorParent()));
+		addField(new LabelFieldEditor("Additional", getFieldEditorParent()));
+		List<IPartHandler> partHandlersAdditional = new GroupHandlerScans().getPartHandlerAdditional();
+		for(IPartHandler partHandler : partHandlersAdditional) {
 			addField(new ComboFieldEditor(partHandler.getStackPositionKey(), partHandler.getName() + ":", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
 		}
 	}

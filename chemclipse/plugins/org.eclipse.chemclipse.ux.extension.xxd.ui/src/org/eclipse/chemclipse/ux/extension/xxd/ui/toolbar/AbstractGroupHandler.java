@@ -11,10 +11,9 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.ui.activator.ContextAddon;
@@ -27,7 +26,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Display;
 
@@ -36,11 +35,21 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 	private static final String COMMAND_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.command.partHandler";
 	private static final String TOOL_ITEM_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.directtoolitem";
 	private static final String DIRECT_MENU_ITEM = "org.eclipse.chemclipse.ux.extension.xxd.ui.directmenuitem";
+	private static final String PREFIX_MENU_SEPARATOR = "org.eclipse.chemclipse.ux.extension.xxd.ui.menuseparator";
 
 	@Execute
 	public void execute(MDirectToolItem directToolItem) {
 
 		activateParts(directToolItem, toggleShow());
+	}
+
+	@Override
+	public List<IPartHandler> getPartHandler() {
+
+		List<IPartHandler> partHandler = new ArrayList<>();
+		partHandler.addAll(getPartHandlerMandatory());
+		partHandler.addAll(getPartHandlerAdditional());
+		return partHandler;
 	}
 
 	@Override
@@ -120,8 +129,17 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 
 		adjustToolTip(directToolItem, show);
 		adjustIcon(directToolItem, show);
+		/*
+		 * If parts are activated, only activate the manadatory parts.
+		 * When disable parts, disable all parts.
+		 */
+		List<IPartHandler> partHandlers;
+		if(show) {
+			partHandlers = getPartHandlerMandatory();
+		} else {
+			partHandlers = getPartHandler();
+		}
 		//
-		List<IPartHandler> partHandlers = getPartHandler();
 		for(IPartHandler partHandler : partHandlers) {
 			partHandler.action(show);
 		}
@@ -174,10 +192,20 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 		return null;
 	}
 
+	private MMenuSeparator getSeparatorItem(MMenu menu, String id) {
+
+		MMenuElement menuElement = get(menu, id);
+		if(menuElement instanceof MMenuSeparator) {
+			return (MMenuSeparator)menuElement;
+		}
+		//
+		return null;
+	}
+
 	private MMenuElement get(MMenu menu, String id) {
 
 		for(MMenuElement menuElement : menu.getChildren()) {
-			if(menuElement.getElementId().equals(id)) {
+			if(id.equals(menuElement.getElementId())) {
 				return menuElement;
 			}
 		}
@@ -187,13 +215,27 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 
 	private void updateMenuItems(MDirectToolItem directToolItem, EModelService modelService) {
 
-		Map<Integer, MMenuItem> menuItemsAdd = new HashMap<>();
-		MCommand command = getCommand();
+		List<MenuContribution> menuContributions = new ArrayList<>();
 		MMenu menu = directToolItem.getMenu();
-		/*
-		 * Part Menu Items
-		 */
-		List<IPartHandler> partHandlers = getPartHandler();
+		//
+		List<IPartHandler> partHandlersMandatory = getPartHandlerMandatory();
+		List<IPartHandler> partHandlersAdditional = getPartHandlerAdditional();
+		int offset = partHandlersMandatory.size();
+		//
+		populateHandler(menu, modelService, partHandlersMandatory, menuContributions, 0);
+		if(partHandlersAdditional.size() > 0) {
+			populateAdditonalSeparator(menu, offset, modelService, menuContributions);
+			populateHandler(menu, modelService, partHandlersAdditional, menuContributions, offset + 1);
+		}
+		populateSettingsSeparator(menu, modelService, menuContributions);
+		populateSettingsMenu(menu, modelService, menuContributions);
+		//
+		addMenuItems(menu, menuContributions);
+	}
+
+	private void populateHandler(MMenu menu, EModelService modelService, List<IPartHandler> partHandlers, List<MenuContribution> menuContributions, int offset) {
+
+		MCommand command = getCommand();
 		int size = partHandlers.size();
 		for(int i = 0; i < size; i++) {
 			IPartHandler partHandler = partHandlers.get(i);
@@ -215,7 +257,7 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 				/*
 				 * Place the items in the correct order.
 				 */
-				menuItemsAdd.put(i, menuItem);
+				menuContributions.add(new MenuContribution(menuItem, offset + i));
 			}
 			/*
 			 * Adjust the label.
@@ -228,9 +270,32 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 			 */
 			menuItem.setVisible(partHandler.isPartStackAssigned());
 		}
-		/*
-		 * Settings Menu Item
-		 */
+	}
+
+	private void populateAdditonalSeparator(MMenu menu, int offset, EModelService modelService, List<MenuContribution> menuContributions) {
+
+		String separatorId = getAdditionalSeparatorId();
+		MMenuSeparator menuSeparator = getSeparatorItem(menu, separatorId);
+		if(menuSeparator == null) {
+			menuSeparator = modelService.createModelElement(MMenuSeparator.class);
+			menuSeparator.setElementId(separatorId);
+			menuContributions.add(new MenuContribution(menuSeparator, offset));
+		}
+	}
+
+	private void populateSettingsSeparator(MMenu menu, EModelService modelService, List<MenuContribution> menuContributions) {
+
+		String separatorId = getSettingsSeparatorId();
+		MMenuSeparator menuSeparator = getSeparatorItem(menu, separatorId);
+		if(menuSeparator == null) {
+			menuSeparator = modelService.createModelElement(MMenuSeparator.class);
+			menuSeparator.setElementId(separatorId);
+			menuContributions.add(new MenuContribution(menuSeparator));
+		}
+	}
+
+	private void populateSettingsMenu(MMenu menu, EModelService modelService, List<MenuContribution> menuContributions) {
+
 		String menuSettingsId = getDirectMenuItemId();
 		MDirectMenuItem settingsMenuItem = getDirectItem(menu, menuSettingsId);
 		if(settingsMenuItem == null) {
@@ -243,21 +308,34 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 			menuItem.setTooltip("Settings to show/hide parts.");
 			menuItem.setIconURI("platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/preferences.gif");
 			menuItem.setContributionURI(getSettingsContributionURI());
-			//
-			menuItemsAdd.put(-1, menuItem);
+			menuContributions.add(new MenuContribution(menuItem));
 		}
-		/*
-		 * Add New Menu Item(s)
-		 */
+	}
+
+	private void addMenuItems(MMenu menu, List<MenuContribution> menuContributions) {
+
 		List<MMenuElement> menuElements = menu.getChildren();
-		for(Map.Entry<Integer, MMenuItem> entry : menuItemsAdd.entrySet()) {
-			int position = entry.getKey();
-			MMenuItem menuItem = entry.getValue();
+		for(MenuContribution menuContribution : menuContributions) {
+			/*
+			 * Add menu item at the given position or append it at the end.
+			 */
+			MMenuElement menuElement = menuContribution.getMenuElement();
+			int position = menuContribution.getIndex();
 			if(position >= 0) {
-				menuElements.add(position, menuItem);
+				menuElements.add(position, menuElement);
 			} else {
-				menuElements.add(menuItem);
+				menuElements.add(menuElement);
 			}
 		}
+	}
+
+	private String getAdditionalSeparatorId() {
+
+		return PREFIX_MENU_SEPARATOR + "." + getName().toLowerCase() + ".additional";
+	}
+
+	private String getSettingsSeparatorId() {
+
+		return PREFIX_MENU_SEPARATOR + "." + getName().toLowerCase() + ".settings";
 	}
 }

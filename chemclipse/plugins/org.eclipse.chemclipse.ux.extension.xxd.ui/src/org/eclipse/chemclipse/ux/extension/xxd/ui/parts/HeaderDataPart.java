@@ -11,16 +11,12 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.parts;
 
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.chemclipse.model.core.IMeasurementInfo;
-import org.eclipse.chemclipse.support.events.IChemClipseEvents;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.AbstractOverviewUpdateSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IOverviewUpdateSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ExtendedHeaderDataUI;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.widgets.Composite;
@@ -50,15 +46,6 @@ public class HeaderDataPart extends AbstractOverviewUpdateSupport implements IOv
 			extendedHeaderDataUI.update(measurementInfo);
 		} else {
 			extendedHeaderDataUI.update(null);
-		}
-	}
-
-	@PreDestroy
-	protected void preDestroy() {
-
-		IEventBroker eventBroker = Activator.getDefault().getEventBroker();
-		if(eventBroker != null) {
-			eventBroker.send(IChemClipseEvents.TOPIC_PART_CLOSED, getClass().getSimpleName());
 		}
 	}
 }

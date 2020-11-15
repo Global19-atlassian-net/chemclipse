@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.msd.model.preferences.PreferenceSupplier;
 import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.preferences.IPreferenceSupplier;
@@ -51,6 +52,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends AbstractActivatorUI {
 
 	private static Activator plugin;
+	private static final Logger logger = Logger.getLogger(Activator.class);
 	/*
 	 * This flag is used to show a set of parts initially
 	 * in the Data Analysis perspective.
@@ -223,6 +225,8 @@ public class Activator extends AbstractActivatorUI {
 						updateGroupHandlerMenu();
 					}
 				} else if(topic.equals(IChemClipseEvents.TOPIC_PART_CLOSED)) {
+					Object object = objects.get(0);
+					logger.info("Part has been closed: " + object);
 					updateGroupHandlerMenu();
 				}
 			}

@@ -34,7 +34,7 @@ public class GroupHandlerQuantitation extends AbstractGroupHandler {
 	}
 
 	@Override
-	public List<IPartHandler> getPartHandler() {
+	public List<IPartHandler> getPartHandlerMandatory() {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
@@ -42,6 +42,13 @@ public class GroupHandlerQuantitation extends AbstractGroupHandler {
 		partHandler.add(new PartHandler("Quantitation", PartSupport.PARTDESCRIPTOR_QUANTITATION, PreferenceConstants.P_STACK_POSITION_QUANTITATION));
 		partHandler.add(new PartHandler("Integration", PartSupport.PARTDESCRIPTOR_INTEGRATION_AREA, PreferenceConstants.P_STACK_POSITION_INTEGRATION_AREA));
 		//
+		return partHandler;
+	}
+
+	@Override
+	public List<IPartHandler> getPartHandlerAdditional() {
+
+		List<IPartHandler> partHandler = new ArrayList<>();
 		return partHandler;
 	}
 

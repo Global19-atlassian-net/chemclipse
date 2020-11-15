@@ -11,31 +11,31 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
-import java.util.List;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 
-public interface IGroupHandler {
+public class MenuContribution {
 
-	List<IPartHandler> getPartHandler();
+	private MMenuElement menuElement = null;
+	private int index = -1;
 
-	List<IPartHandler> getPartHandlerMandatory();
+	public MenuContribution(MMenuElement menuElement) {
 
-	List<IPartHandler> getPartHandlerAdditional();
+		this(menuElement, -1);
+	}
 
-	void activateParts();
+	public MenuContribution(MMenuElement menuElement, int index) {
 
-	void updateMenu();
+		this.menuElement = menuElement;
+		this.index = index;
+	}
 
-	String getImageHide();
+	public MMenuElement getMenuElement() {
 
-	String getImageShow();
+		return menuElement;
+	}
 
-	String getName();
+	public int getIndex() {
 
-	String getDirectToolItemId();
-
-	String getDirectMenuItemId();
-
-	String getSettingsContributionURI();
-
-	boolean toggleShow();
+		return index;
+	}
 }

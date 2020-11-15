@@ -34,13 +34,20 @@ public class GroupHandlerISTD extends AbstractGroupHandler {
 	}
 
 	@Override
-	public List<IPartHandler> getPartHandler() {
+	public List<IPartHandler> getPartHandlerMandatory() {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
 		partHandler.add(new PartHandler("Internal Standards", PartSupport.PARTDESCRIPTOR_INTERNAL_STANDARDS, PreferenceConstants.P_STACK_POSITION_INTERNAL_STANDARDS));
 		partHandler.add(new PartHandler("Quantitation References", PartSupport.PARTDESCRIPTOR_PEAK_QUANTITATION_REFERENCES, PreferenceConstants.P_STACK_POSITION_PEAK_QUANTITATION_REFERENCES));
 		//
+		return partHandler;
+	}
+
+	@Override
+	public List<IPartHandler> getPartHandlerAdditional() {
+
+		List<IPartHandler> partHandler = new ArrayList<>();
 		return partHandler;
 	}
 

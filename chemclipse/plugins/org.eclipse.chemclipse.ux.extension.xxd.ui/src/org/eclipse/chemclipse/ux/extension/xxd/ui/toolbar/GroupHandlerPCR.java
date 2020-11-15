@@ -34,7 +34,7 @@ public class GroupHandlerPCR extends AbstractGroupHandler {
 	}
 
 	@Override
-	public List<IPartHandler> getPartHandler() {
+	public List<IPartHandler> getPartHandlerMandatory() {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
@@ -44,6 +44,13 @@ public class GroupHandlerPCR extends AbstractGroupHandler {
 		partHandler.add(new PartHandler("Well Channels", PartSupport.PARTDESCRIPTOR_WELL_CHANNELS, PreferenceConstants.P_STACK_POSITION_WELL_CHANNELS));
 		partHandler.add(new PartHandler("Plate Data", PartSupport.PARTDESCRIPTOR_PlATE_DATA, PreferenceConstants.P_STACK_POSITION_PLATE_DATA));
 		//
+		return partHandler;
+	}
+
+	@Override
+	public List<IPartHandler> getPartHandlerAdditional() {
+
+		List<IPartHandler> partHandler = new ArrayList<>();
 		return partHandler;
 	}
 

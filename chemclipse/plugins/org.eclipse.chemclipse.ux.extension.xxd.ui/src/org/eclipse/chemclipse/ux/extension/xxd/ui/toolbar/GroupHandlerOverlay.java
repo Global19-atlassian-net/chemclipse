@@ -34,7 +34,7 @@ public class GroupHandlerOverlay extends AbstractGroupHandler {
 	}
 
 	@Override
-	public List<IPartHandler> getPartHandler() {
+	public List<IPartHandler> getPartHandlerMandatory() {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
@@ -44,6 +44,13 @@ public class GroupHandlerOverlay extends AbstractGroupHandler {
 		partHandler.add(new PartHandler("Baseline (Chromatogram)", PartSupport.PARTDESCRIPTOR_BASELINE, PreferenceConstants.P_STACK_POSITION_BASELINE_CHROMATOGRAM));
 		partHandler.add(new PartHandler("Heatmap (Chromatogram)", PartSupport.PARTDESCRIPTOR_CHROMATOGRAM_HEATMAP, PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_HEATMAP));
 		//
+		return partHandler;
+	}
+
+	@Override
+	public List<IPartHandler> getPartHandlerAdditional() {
+
+		List<IPartHandler> partHandler = new ArrayList<>();
 		return partHandler;
 	}
 

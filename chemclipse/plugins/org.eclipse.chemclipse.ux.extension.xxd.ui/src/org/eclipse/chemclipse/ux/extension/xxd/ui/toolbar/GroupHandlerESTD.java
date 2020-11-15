@@ -34,7 +34,7 @@ public class GroupHandlerESTD extends AbstractGroupHandler {
 	}
 
 	@Override
-	public List<IPartHandler> getPartHandler() {
+	public List<IPartHandler> getPartHandlerMandatory() {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
@@ -44,6 +44,13 @@ public class GroupHandlerESTD extends AbstractGroupHandler {
 		partHandler.add(new PartHandler("Quant Response List", PartSupport.PARTDESCRIPTOR_QUANT_RESPONSE_LIST, PreferenceConstants.P_STACK_POSITION_QUANT_RESPONSE_LIST));
 		partHandler.add(new PartHandler("Quant Response Chart", PartSupport.PARTDESCRIPTOR_QUANT_RESPONSE_CHART, PreferenceConstants.P_STACK_POSITION_QUANT_RESPONSE_CHART));
 		//
+		return partHandler;
+	}
+
+	@Override
+	public List<IPartHandler> getPartHandlerAdditional() {
+
+		List<IPartHandler> partHandler = new ArrayList<>();
 		return partHandler;
 	}
 

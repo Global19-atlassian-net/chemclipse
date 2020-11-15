@@ -34,7 +34,7 @@ public class GroupHandlerMiscellaneous extends AbstractGroupHandler {
 	}
 
 	@Override
-	public List<IPartHandler> getPartHandler() {
+	public List<IPartHandler> getPartHandlerMandatory() {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
@@ -43,6 +43,13 @@ public class GroupHandlerMiscellaneous extends AbstractGroupHandler {
 		partHandler.add(new PartHandler("Scan Comparison", PartSupport.PARTDESCRIPTOR_COMPARISON_SCAN, PreferenceConstants.P_STACK_POSITION_COMPARISON_SCAN_CHART));
 		partHandler.add(new PartHandler("Measurement Results", PartSupport.PARTDESCRIPTOR_MEASUREMENT_RESULTS, PreferenceConstants.P_STACK_POSITION_MEASUREMENT_RESULTS));
 		//
+		return partHandler;
+	}
+
+	@Override
+	public List<IPartHandler> getPartHandlerAdditional() {
+
+		List<IPartHandler> partHandler = new ArrayList<>();
 		return partHandler;
 	}
 

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
+import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
 
 public class GroupHandlerScans extends AbstractGroupHandler {
@@ -33,7 +34,7 @@ public class GroupHandlerScans extends AbstractGroupHandler {
 	}
 
 	@Override
-	public List<IPartHandler> getPartHandler() {
+	public List<IPartHandler> getPartHandlerMandatory() {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
@@ -43,6 +44,16 @@ public class GroupHandlerScans extends AbstractGroupHandler {
 		partHandler.add(new PartHandler("Molecule", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.moleculePartDescriptor", PreferenceConstants.P_STACK_POSITION_MOLECULE));
 		partHandler.add(new PartHandler("Scan Browse", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.scanBrowsePartDescriptor", PreferenceConstants.P_STACK_POSITION_SCAN_BROWSE));
 		partHandler.add(new PartHandler("Synonyms", "org.eclipse.chemclipse.ux.extension.xxd.ui.part.synonymsPartDescriptor", PreferenceConstants.P_STACK_POSITION_SYNONYMS));
+		//
+		return partHandler;
+	}
+
+	@Override
+	public List<IPartHandler> getPartHandlerAdditional() {
+
+		List<IPartHandler> partHandler = new ArrayList<>();
+		//
+		partHandler.add(new PartHandler("Scan List", PartSupport.PARTDESCRIPTOR_PEAK_SCAN_LIST, PreferenceConstants.P_STACK_POSITION_PEAK_SCAN_LIST));
 		//
 		return partHandler;
 	}

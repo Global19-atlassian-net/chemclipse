@@ -35,7 +35,7 @@ public class GroupHandlerPeaks extends AbstractGroupHandler {
 	}
 
 	@Override
-	public List<IPartHandler> getPartHandler() {
+	public List<IPartHandler> getPartHandlerMandatory() {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
 		//
@@ -45,6 +45,13 @@ public class GroupHandlerPeaks extends AbstractGroupHandler {
 		partHandler.add(new PartHandler("Peak List", PartSupport.PARTDESCRIPTOR_PEAK_SCAN_LIST, PreferenceConstants.P_STACK_POSITION_PEAK_SCAN_LIST));
 		partHandler.add(new PartHandler("Peak Traces", PartSupport.PARTDESCRIPTOR_PEAK_TRACES, PreferenceConstants.P_STACK_POSITION_PEAK_TRACES));
 		//
+		return partHandler;
+	}
+
+	@Override
+	public List<IPartHandler> getPartHandlerAdditional() {
+
+		List<IPartHandler> partHandler = new ArrayList<>();
 		return partHandler;
 	}
 
