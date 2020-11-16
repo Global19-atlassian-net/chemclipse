@@ -196,12 +196,6 @@
             class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageQuantitationAxes"
             id="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageQuantitationAxes"
             name="Quantitation Axes">
-      </page>              
-      <page
-            category="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePage"
-            class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePagePCR"
-            id="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePagePCR"
-            name="PCR">
       </page>
       <page
             category="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePage"
@@ -251,5 +245,13 @@
          </adapter>
       </factory>
    </extension>   
-
+   <extension
+         point="org.eclipse.chemclipse.ux.extension.ui.welcometile">
+      <WelcomeTile
+            Description="Polymerace Chain Reaction (PCR)"
+            PerspectiveId="org.eclipse.chemclipse.ux.extension.xxd.ui.perspective.pcr"
+            Section="PCR"
+            defaultShow="true">
+      </WelcomeTile>
+   </extension> 
 </plugin>

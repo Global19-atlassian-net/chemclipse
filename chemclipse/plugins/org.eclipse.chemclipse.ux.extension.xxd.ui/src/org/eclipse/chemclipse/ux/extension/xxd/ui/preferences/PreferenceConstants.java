@@ -131,16 +131,6 @@ public class PreferenceConstants extends ChartOptions {
 	public static final String DEF_STACK_POSITION_CHROMATOGRAM_HEATMAP = PartSupport.PARTSTACK_BOTTOM_CENTER;
 	public static final String P_STACK_POSITION_PEAK_QUANTITATION_REFERENCES = "stackPositionPeakQuantitationReferences";
 	public static final String DEF_STACK_POSITION_PEAK_QUANTITATION_REFERENCES = PartSupport.PARTSTACK_BOTTOM_RIGHT;
-	public static final String P_STACK_POSITION_PLATE_CHARTS = "stackPositionPlateCharts";
-	public static final String DEF_STACK_POSITION_PLATE_CHARTS = PartSupport.PARTSTACK_BOTTOM_LEFT;
-	public static final String P_STACK_POSITION_WELL_DATA = "stackPositionWellData";
-	public static final String DEF_STACK_POSITION_WELL_DATA = PartSupport.PARTSTACK_BOTTOM_RIGHT;
-	public static final String P_STACK_POSITION_WELL_CHART = "stackPositionWellChart";
-	public static final String DEF_STACK_POSITION_WELL_CHART = PartSupport.PARTSTACK_BOTTOM_CENTER;
-	public static final String P_STACK_POSITION_WELL_CHANNELS = "stackPositionWellChannels";
-	public static final String DEF_STACK_POSITION_WELL_CHANNELS = PartSupport.PARTSTACK_BOTTOM_RIGHT;
-	public static final String P_STACK_POSITION_PLATE_DATA = "stackPositionPlateData";
-	public static final String DEF_STACK_POSITION_PLATE_DATA = PartSupport.PARTSTACK_RIGHT_TOP;
 	public static final String P_STACK_POSITION_QUANT_RESPONSE_CHART = "stackPositionQuantResponseChart";
 	public static final String DEF_STACK_POSITION_QUANT_RESPONSE_CHART = PartSupport.PARTSTACK_BOTTOM_RIGHT;
 	public static final String P_STACK_POSITION_QUANT_RESPONSE_LIST = "stackPositionQuantResponseList";

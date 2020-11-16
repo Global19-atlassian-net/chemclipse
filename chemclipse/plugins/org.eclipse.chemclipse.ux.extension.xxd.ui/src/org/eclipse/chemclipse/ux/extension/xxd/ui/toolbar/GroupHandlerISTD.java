@@ -50,6 +50,9 @@ public class GroupHandlerISTD extends AbstractGroupHandler {
 	public List<IPartHandler> getPartHandlerAdditional() {
 
 		List<IPartHandler> partHandler = new ArrayList<>();
+		//
+		partHandler.add(new PartHandler("Quantitation", PartSupport.PARTDESCRIPTOR_QUANTITATION, PreferenceConstants.P_STACK_POSITION_QUANTITATION));
+		//
 		return partHandler;
 	}
 

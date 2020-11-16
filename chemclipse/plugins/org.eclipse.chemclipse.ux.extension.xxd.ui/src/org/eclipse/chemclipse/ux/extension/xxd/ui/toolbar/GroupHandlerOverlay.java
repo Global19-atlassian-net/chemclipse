@@ -43,8 +43,6 @@ public class GroupHandlerOverlay extends AbstractGroupHandler {
 		partHandler.add(new PartHandler("Overlay (Chromatogram)", PartSupport.PARTDESCRIPTOR_OVERLAY_CHROMATOGRAM, PreferenceConstants.P_STACK_POSITION_OVERLAY_CHROMATOGRAM_DEFAULT));
 		partHandler.add(new PartHandler("Overlay (NMR)", PartSupport.PARTDESCRIPTOR_OVERLAY_NMR, PreferenceConstants.P_STACK_POSITION_OVERLAY_NMR));
 		partHandler.add(new PartHandler("Overlay (XIR)", PartSupport.PARTDESCRIPTOR_OVERLAY_XIR, PreferenceConstants.P_STACK_POSITION_OVERLAY_XIR));
-		partHandler.add(new PartHandler("Baseline (Chromatogram)", PartSupport.PARTDESCRIPTOR_BASELINE, PreferenceConstants.P_STACK_POSITION_BASELINE_CHROMATOGRAM));
-		partHandler.add(new PartHandler("Heatmap (Chromatogram)", PartSupport.PARTDESCRIPTOR_CHROMATOGRAM_HEATMAP, PreferenceConstants.P_STACK_POSITION_CHROMATOGRAM_HEATMAP));
 		//
 		return partHandler;
 	}

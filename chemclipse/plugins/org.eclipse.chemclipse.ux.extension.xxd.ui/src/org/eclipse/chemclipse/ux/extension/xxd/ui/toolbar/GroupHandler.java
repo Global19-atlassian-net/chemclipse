@@ -35,7 +35,6 @@ public class GroupHandler {
 		initialize(new GroupHandlerChromatogram());
 		initialize(new GroupHandlerISTD());
 		initialize(new GroupHandlerESTD());
-		initialize(new GroupHandlerPCR());
 		initialize(new GroupHandlerMiscellaneous());
 	}
 
