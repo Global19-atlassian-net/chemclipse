@@ -11,31 +11,24 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
-import java.util.List;
+public class PartStackReference {
 
-import org.eclipse.jface.preference.IPreferencePage;
+	private String partId = "";
+	private String stackPositionKey = "";
 
-public interface IGroupHandler {
+	public PartStackReference(String partId, String stackPositionKey) {
 
-	List<IPreferencePage> getPreferencePages();
+		this.partId = partId;
+		this.stackPositionKey = stackPositionKey;
+	}
 
-	List<IPartHandler> getPartHandler();
+	public String getPartId() {
 
-	List<IPartHandler> getPartHandlerMandatory();
+		return partId;
+	}
 
-	List<IPartHandler> getPartHandlerAdditional();
+	public String getStackPositionKey() {
 
-	void activateParts();
-
-	void updateMenu();
-
-	String getPartElementId(IPartHandler partHandler);
-
-	String getSettingsElementId();
-
-	String getImageHide();
-
-	String getImageShow();
-
-	String getName();
+		return stackPositionKey;
+	}
 }

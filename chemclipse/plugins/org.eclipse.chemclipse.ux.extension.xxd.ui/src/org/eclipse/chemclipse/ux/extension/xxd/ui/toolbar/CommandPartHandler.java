@@ -19,9 +19,11 @@ public class CommandPartHandler {
 	@Execute
 	public void execute(MMenuItem menuItem) {
 
-		String id = menuItem.getElementId();
-		PartHandler partHandler = new PartHandler(id);
-		partHandler.toggleVisibility();
-		GroupHandler.updateGroupHandlerMenu();
+		String elementId = menuItem.getElementId();
+		IPartHandler partHandler = GroupHandler.getPartHandler(elementId);
+		if(partHandler != null) {
+			partHandler.toggleVisibility();
+			GroupHandler.updateGroupHandlerMenu();
+		}
 	}
 }

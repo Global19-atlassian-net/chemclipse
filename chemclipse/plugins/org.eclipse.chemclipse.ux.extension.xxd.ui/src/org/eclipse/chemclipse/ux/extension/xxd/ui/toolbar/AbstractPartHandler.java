@@ -73,7 +73,7 @@ public abstract class AbstractPartHandler implements IPartHandler {
 	@Override
 	public boolean isPartStackAssigned() {
 
-		String partStackId = preferenceStore.getString(getStackPositionKey());
+		String partStackId = preferenceStore.getString(getPartStackReference().getStackPositionKey());
 		if(partStackId.isEmpty() || PartSupport.PARTSTACK_NONE.equals(partStackId)) {
 			return false;
 		} else {
@@ -85,7 +85,7 @@ public abstract class AbstractPartHandler implements IPartHandler {
 	public boolean isPartVisible() {
 
 		boolean isVisible = false;
-		String partId = getPartId();
+		String partId = getPartStackReference().getPartId();
 		EModelService modelService = getModelService();
 		MApplication application = getApplication();
 		//
@@ -100,7 +100,7 @@ public abstract class AbstractPartHandler implements IPartHandler {
 	@Override
 	public void action(boolean show) {
 
-		String partId = getPartId();
+		String partId = getPartStackReference().getPartId();
 		EPartService partService = getPartService();
 		EModelService modelService = getModelService();
 		MApplication application = getApplication();
@@ -109,7 +109,7 @@ public abstract class AbstractPartHandler implements IPartHandler {
 			/*
 			 * Part Stack
 			 */
-			String stackPositionKey = getStackPositionKey();
+			String stackPositionKey = getPartStackReference().getStackPositionKey();
 			String partStackId = preferenceStore.getString(stackPositionKey);
 			/*
 			 * Show/Hide the part.
@@ -129,7 +129,8 @@ public abstract class AbstractPartHandler implements IPartHandler {
 		}
 	}
 
-	protected void toggleVisibility() {
+	@Override
+	public void toggleVisibility() {
 
 		boolean show = !isPartVisible();
 		action(show);

@@ -12,12 +12,12 @@
 package org.eclipse.chemclipse.ux.extension.xxd.ui.preferences;
 
 import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandler;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerOverview;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerChromatogram;
 
-public class PreferencePageTaskOverview extends AbstractPreferencePageTask {
+public class PreferencePageTaskChromatogram extends AbstractPreferencePageTask {
 
-	public PreferencePageTaskOverview() {
+	public PreferencePageTaskChromatogram() {
 
-		super(GroupHandler.getGroupHandler(GroupHandlerOverview.NAME));
+		super(GroupHandler.getGroupHandler(GroupHandlerChromatogram.NAME));
 	}
 }

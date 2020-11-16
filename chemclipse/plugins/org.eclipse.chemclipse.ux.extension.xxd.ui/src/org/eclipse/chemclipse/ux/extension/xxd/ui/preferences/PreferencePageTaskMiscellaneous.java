@@ -11,35 +11,13 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.preferences;
 
-import java.util.List;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandler;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerMiscellaneous;
 
-import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.GroupHandlerOverlay;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.IPartHandler;
-import org.eclipse.jface.preference.ComboFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-
-public class PreferencePageTaskMiscellaneous extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class PreferencePageTaskMiscellaneous extends AbstractPreferencePageTask {
 
 	public PreferencePageTaskMiscellaneous() {
 
-		super(GRID);
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setTitle("Miscellaneous");
-		setDescription("");
-	}
-
-	public void createFieldEditors() {
-
-		List<IPartHandler> partHandlers = new GroupHandlerOverlay().getPartHandler();
-		for(IPartHandler partHandler : partHandlers) {
-			addField(new ComboFieldEditor(partHandler.getStackPositionKey(), partHandler.getName() + ":", PreferenceConstants.PART_STACKS, getFieldEditorParent()));
-		}
-	}
-
-	public void init(IWorkbench workbench) {
-
+		super(GroupHandler.getGroupHandler(GroupHandlerMiscellaneous.NAME));
 	}
 }

@@ -11,28 +11,32 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferencePage;
 
 public class GroupHandler {
 
-	private static List<IGroupHandler> groupHandlers = new ArrayList<>();
+	private static Map<String, IGroupHandler> groupHandlerMap = new HashMap<>();
+	private static Map<String, Boolean> visibilityMap = new HashMap<>();
+	private static Map<String, IPartHandler> partHandlerMap = new HashMap<>();
+	//
 	static {
 		/*
 		 * Group Handlers
 		 */
-		groupHandlers.add(new GroupHandlerOverview());
-		groupHandlers.add(new GroupHandlerOverlay());
-		groupHandlers.add(new GroupHandlerScans());
-		groupHandlers.add(new GroupHandlerPeaks());
-		groupHandlers.add(new GroupHandlerQuantitation());
-		groupHandlers.add(new GroupHandlerISTD());
-		groupHandlers.add(new GroupHandlerESTD());
-		groupHandlers.add(new GroupHandlerPCR());
-		groupHandlers.add(new GroupHandlerMiscellaneous());
+		initialize(new GroupHandlerOverview());
+		initialize(new GroupHandlerOverlay());
+		initialize(new GroupHandlerScans());
+		initialize(new GroupHandlerPeaks());
+		initialize(new GroupHandlerChromatogram());
+		initialize(new GroupHandlerISTD());
+		initialize(new GroupHandlerESTD());
+		initialize(new GroupHandlerPCR());
+		initialize(new GroupHandlerMiscellaneous());
 	}
 
 	/*
@@ -44,25 +48,63 @@ public class GroupHandler {
 
 	public static void activateReferencedParts() {
 
-		IGroupHandler groupHandler = new GroupHandlerScans();
-		groupHandler.activateParts();
+		IGroupHandler groupHandler = getGroupHandler(GroupHandlerScans.NAME);
+		if(groupHandler != null) {
+			groupHandler.activateParts();
+		}
 	}
 
 	public static void updateGroupHandlerMenu() {
 
-		for(IGroupHandler groupHandler : groupHandlers) {
+		for(IGroupHandler groupHandler : groupHandlerMap.values()) {
 			groupHandler.updateMenu();
 		}
 	}
 
+	/**
+	 * Returns the group handler, identified by the name or null
+	 * if none exists with the given name.
+	 * 
+	 * @param name
+	 * @return {@link IGroupHandler}
+	 */
+	public static IGroupHandler getGroupHandler(String name) {
+
+		return groupHandlerMap.get(name);
+	}
+
 	public static List<IPreferencePage> getPreferencePages(String elementId) {
 
-		for(IGroupHandler groupHandler : groupHandlers) {
-			if(groupHandler.getSettingsMenuId().equals(elementId)) {
+		for(IGroupHandler groupHandler : groupHandlerMap.values()) {
+			if(groupHandler.getSettingsElementId().equals(elementId)) {
 				return groupHandler.getPreferencePages();
 			}
 		}
 		//
 		return Collections.emptyList();
+	}
+
+	public static boolean toggleShow(String name) {
+
+		boolean partsAreActivated = !visibilityMap.getOrDefault(name, false);
+		visibilityMap.put(name, partsAreActivated);
+		return partsAreActivated;
+	}
+
+	public static IPartHandler getPartHandler(String elementId) {
+
+		return partHandlerMap.get(elementId);
+	}
+
+	private static void initialize(IGroupHandler groupHandler) {
+
+		String name = groupHandler.getName();
+		groupHandlerMap.put(name, groupHandler);
+		visibilityMap.put(name, false);
+		//
+		for(IPartHandler partHandler : groupHandler.getPartHandler()) {
+			String elementId = groupHandler.getPartElementId(partHandler);
+			partHandlerMap.put(elementId, partHandler);
+		}
 	}
 }

@@ -17,22 +17,21 @@ import java.util.List;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskQuantitation;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskChromatogram;
 import org.eclipse.jface.preference.IPreferencePage;
 
-public class GroupHandlerQuantitation extends AbstractGroupHandler {
+public class GroupHandlerChromatogram extends AbstractGroupHandler {
 
-	private static final String NAME = "Quantitation";
-	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_QUANTITATION_ACTIVE;
-	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_QUANTITATION_DEFAULT;
+	public static final String NAME = "Chromatogram";
 	//
-	private static boolean partsAreActivated = false;
+	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_CHROMATOGRAM_ACTIVE;
+	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_CHROMATOGRAM_DEFAULT;
 
 	@Override
 	public List<IPreferencePage> getPreferencePages() {
 
 		List<IPreferencePage> preferencePages = new ArrayList<>();
-		preferencePages.add(new PreferencePageTaskQuantitation());
+		preferencePages.add(new PreferencePageTaskChromatogram());
 		return preferencePages;
 	}
 
@@ -71,12 +70,5 @@ public class GroupHandlerQuantitation extends AbstractGroupHandler {
 	public String getImageShow() {
 
 		return IMAGE_SHOW;
-	}
-
-	@Override
-	public boolean toggleShow() {
-
-		partsAreActivated = !partsAreActivated;
-		return partsAreActivated;
 	}
 }

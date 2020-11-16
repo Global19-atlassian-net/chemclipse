@@ -22,11 +22,10 @@ import org.eclipse.jface.preference.IPreferencePage;
 
 public class GroupHandlerMiscellaneous extends AbstractGroupHandler {
 
-	private static final String NAME = "Miscellaneous";
+	public static final String NAME = "Miscellaneous";
+	//
 	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_MEASUREMENT_RESULTS_ACTIVE;
 	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_MEASUREMENT_RESULTS_DEFAULT;
-	//
-	private static boolean partsAreActivated = false;
 
 	@Override
 	public List<IPreferencePage> getPreferencePages() {
@@ -72,12 +71,5 @@ public class GroupHandlerMiscellaneous extends AbstractGroupHandler {
 	public String getImageShow() {
 
 		return IMAGE_SHOW;
-	}
-
-	@Override
-	public boolean toggleShow() {
-
-		partsAreActivated = !partsAreActivated;
-		return partsAreActivated;
 	}
 }

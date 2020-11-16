@@ -19,22 +19,17 @@ public interface IPartHandler {
 
 	void action(boolean show);
 
-	default String getId() {
-
-		return "";
-	}
-
 	default String getName() {
 
 		return "";
 	}
+
+	PartStackReference getPartStackReference();
 
 	default String getIconURI() {
 
 		return "platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/tag.gif";
 	}
 
-	String getPartId();
-
-	String getStackPositionKey();
+	void toggleVisibility();
 }

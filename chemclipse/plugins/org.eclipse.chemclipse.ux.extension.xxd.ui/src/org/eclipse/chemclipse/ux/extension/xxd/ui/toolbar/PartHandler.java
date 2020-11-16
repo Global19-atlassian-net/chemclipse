@@ -13,29 +13,13 @@ package org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar;
 
 public class PartHandler extends AbstractPartHandler {
 
-	private static final String DELIMITER = "_";
-	//
 	private String name = "";
-	private String partId = "";
-	private String stackPositionKey = "";
-
-	public PartHandler(String id) {
-
-		String[] values = id.split(DELIMITER);
-		this.partId = values[0];
-		this.stackPositionKey = values[1];
-	}
+	private PartStackReference partStackReference;
 
 	public PartHandler(String name, String partId, String stackPositionKey) {
 
 		this.name = name;
-		this.partId = partId;
-		this.stackPositionKey = stackPositionKey;
-	}
-
-	public String getId() {
-
-		return getPartId() + DELIMITER + getStackPositionKey();
+		this.partStackReference = new PartStackReference(partId, stackPositionKey);
 	}
 
 	@Override
@@ -45,14 +29,8 @@ public class PartHandler extends AbstractPartHandler {
 	}
 
 	@Override
-	public String getPartId() {
+	public PartStackReference getPartStackReference() {
 
-		return partId;
-	}
-
-	@Override
-	public String getStackPositionKey() {
-
-		return stackPositionKey;
+		return partStackReference;
 	}
 }

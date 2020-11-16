@@ -36,13 +36,14 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 	private static final String SETTINGS_CONTRIBUTION_URI = "bundleclass://org.eclipse.chemclipse.ux.extension.xxd.ui/org.eclipse.chemclipse.ux.extension.xxd.ui.toolbar.SettingsHandler";
 	//
 	private static final String TOOL_ITEM_ID = "org.eclipse.chemclipse.ux.extension.xxd.ui.directtoolitem";
+	private static final String HANDLED_MENU_ITEM = "org.eclipse.chemclipse.ux.extension.xxd.ui.handledmenuitem";
 	private static final String DIRECT_MENU_ITEM = "org.eclipse.chemclipse.ux.extension.xxd.ui.directmenuitem";
 	private static final String PREFIX_MENU_SEPARATOR = "org.eclipse.chemclipse.ux.extension.xxd.ui.menuseparator";
 
 	@Execute
 	public void execute(MDirectToolItem directToolItem) {
 
-		activateParts(directToolItem, toggleShow());
+		activateParts(directToolItem, GroupHandler.toggleShow(getName()));
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 				@Override
 				public void run() {
 
-					activateParts(directToolItem, toggleShow());
+					activateParts(directToolItem, GroupHandler.toggleShow(getName()));
 					updateMenu();
 				}
 			});
@@ -100,9 +101,15 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 	}
 
 	@Override
-	public String getSettingsMenuId() {
+	public String getPartElementId(IPartHandler partHandler) {
 
-		return DIRECT_MENU_ITEM + "." + getNameId();
+		return HANDLED_MENU_ITEM + "." + getGroupHandlerId() + "." + getPartHandlerId(partHandler);
+	}
+
+	@Override
+	public String getSettingsElementId() {
+
+		return DIRECT_MENU_ITEM + "." + getGroupHandlerId();
 	}
 
 	private void adjustToolTip(MDirectToolItem directToolItem, boolean show) {
@@ -153,13 +160,12 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	private MCommand getCommand() {
 
 		EModelService modelService = ContextAddon.getModelService();
 		MApplication application = ContextAddon.getApplication();
 		if(modelService != null && application != null) {
-			Object object = modelService.findElements(application, COMMAND_ID, MCommand.class, Collections.EMPTY_LIST).get(0);
+			Object object = modelService.findElements(application, COMMAND_ID, MCommand.class, Collections.emptyList()).get(0);
 			if(object instanceof MCommand) {
 				return (MCommand)object;
 			}
@@ -219,10 +225,7 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 		int offset = partHandlersMandatory.size();
 		//
 		populateHandler(menu, modelService, partHandlersMandatory, menuContributions, 0);
-		if(partHandlersAdditional.size() > 0) {
-			populateAdditonalSeparator(menu, offset, modelService, menuContributions);
-			populateHandler(menu, modelService, partHandlersAdditional, menuContributions, offset + 1);
-		}
+		populateHandlerAdditional(menu, modelService, partHandlersAdditional, menuContributions, offset);
 		populateSettingsSeparator(menu, modelService, menuContributions);
 		populateSettingsMenu(menu, modelService, menuContributions);
 		//
@@ -235,17 +238,14 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 		int size = partHandlers.size();
 		for(int i = 0; i < size; i++) {
 			IPartHandler partHandler = partHandlers.get(i);
-			MHandledMenuItem menuItem = getHandledItem(menu, partHandler.getId());
+			String partElementId = getPartElementId(partHandler);
+			MHandledMenuItem menuItem = getHandledItem(menu, partElementId);
 			if(menuItem == null) {
 				/*
 				 * Create a new menu item.
-				 * Workaround!!!
-				 * The element id is used to store the partId and stackPositionId, have a look at partHandler.getId()
-				 * All approaches to create a specific parameterized command failed.
-				 * Frankly, I don't know how to do this without getting tons of errors.
 				 */
 				menuItem = modelService.createModelElement(MHandledMenuItem.class);
-				menuItem.setElementId(partHandler.getId());
+				menuItem.setElementId(partElementId);
 				menuItem.setLabel(partHandler.getName());
 				menuItem.setTooltip("");
 				menuItem.setIconURI(partHandler.getIconURI());
@@ -265,6 +265,14 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 			 * If the user has defined to use the part, show it.
 			 */
 			menuItem.setVisible(partHandler.isPartStackAssigned());
+		}
+	}
+
+	private void populateHandlerAdditional(MMenu menu, EModelService modelService, List<IPartHandler> partHandlers, List<MenuContribution> menuContributions, int offset) {
+
+		if(partHandlers.size() > 0) {
+			populateAdditonalSeparator(menu, offset, modelService, menuContributions);
+			populateHandler(menu, modelService, partHandlers, menuContributions, offset + 1);
 		}
 	}
 
@@ -292,14 +300,14 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 
 	private void populateSettingsMenu(MMenu menu, EModelService modelService, List<MenuContribution> menuContributions) {
 
-		String menuSettingsId = getSettingsMenuId();
-		MDirectMenuItem settingsMenuItem = getDirectItem(menu, menuSettingsId);
+		String settingsElementId = getSettingsElementId();
+		MDirectMenuItem settingsMenuItem = getDirectItem(menu, settingsElementId);
 		if(settingsMenuItem == null) {
 			/*
 			 * Create a new settings item.
 			 */
 			MDirectMenuItem menuItem = modelService.createModelElement(MDirectMenuItem.class);
-			menuItem.setElementId(menuSettingsId);
+			menuItem.setElementId(settingsElementId);
 			menuItem.setLabel("Settings");
 			menuItem.setTooltip("Settings to show/hide parts.");
 			menuItem.setIconURI("platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/preferences.gif");
@@ -327,21 +335,33 @@ public abstract class AbstractGroupHandler implements IGroupHandler {
 
 	private String getDirectToolItemId() {
 
-		return TOOL_ITEM_ID + "." + getNameId();
+		return TOOL_ITEM_ID + "." + getGroupHandlerId();
 	}
 
 	private String getAdditionalSeparatorId() {
 
-		return PREFIX_MENU_SEPARATOR + "." + getNameId() + ".additional";
+		return PREFIX_MENU_SEPARATOR + "." + getGroupHandlerId() + ".additional";
 	}
 
 	private String getSettingsSeparatorId() {
 
-		return PREFIX_MENU_SEPARATOR + "." + getNameId() + ".settings";
+		return PREFIX_MENU_SEPARATOR + "." + getGroupHandlerId() + ".settings";
 	}
 
-	private String getNameId() {
+	private String getPartHandlerId(IPartHandler partHandler) {
 
-		return getName().replaceAll(" ", "").toLowerCase().trim();
+		String name = normalize(partHandler.getName());
+		return name;
+	}
+
+	private String getGroupHandlerId() {
+
+		String name = normalize(getName());
+		return name;
+	}
+
+	private String normalize(String value) {
+
+		return value.toLowerCase().replaceAll("[^a-z]", "").trim();
 	}
 }

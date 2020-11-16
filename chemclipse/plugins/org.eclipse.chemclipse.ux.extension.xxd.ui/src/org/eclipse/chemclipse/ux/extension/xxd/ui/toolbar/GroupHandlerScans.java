@@ -22,11 +22,10 @@ import org.eclipse.jface.preference.IPreferencePage;
 
 public class GroupHandlerScans extends AbstractGroupHandler {
 
-	private static final String NAME = "Scans";
+	public static final String NAME = "Scans";
+	//
 	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_SELECTED_SCANS_ACTIVE;
 	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_SELECTED_SCANS_DEFAULT;
-	//
-	private static boolean partsAreActivated = false;
 
 	@Override
 	public List<IPreferencePage> getPreferencePages() {
@@ -77,12 +76,5 @@ public class GroupHandlerScans extends AbstractGroupHandler {
 	public String getImageShow() {
 
 		return IMAGE_SHOW;
-	}
-
-	@Override
-	public boolean toggleShow() {
-
-		partsAreActivated = !partsAreActivated;
-		return partsAreActivated;
 	}
 }

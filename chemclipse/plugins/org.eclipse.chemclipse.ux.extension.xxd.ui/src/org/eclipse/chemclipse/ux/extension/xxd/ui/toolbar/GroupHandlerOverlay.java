@@ -22,11 +22,10 @@ import org.eclipse.jface.preference.IPreferencePage;
 
 public class GroupHandlerOverlay extends AbstractGroupHandler {
 
-	private static final String NAME = "Overlay";
+	public static final String NAME = "Overlay";
+	//
 	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_CHROMATOGRAM_OVERLAY_ACTIVE;
 	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_CHROMATOGRAM_OVERLAY_DEFAULT;
-	//
-	private static boolean partsAreActivated = false;
 
 	@Override
 	public List<IPreferencePage> getPreferencePages() {
@@ -73,12 +72,5 @@ public class GroupHandlerOverlay extends AbstractGroupHandler {
 	public String getImageShow() {
 
 		return IMAGE_SHOW;
-	}
-
-	@Override
-	public boolean toggleShow() {
-
-		partsAreActivated = !partsAreActivated;
-		return partsAreActivated;
 	}
 }

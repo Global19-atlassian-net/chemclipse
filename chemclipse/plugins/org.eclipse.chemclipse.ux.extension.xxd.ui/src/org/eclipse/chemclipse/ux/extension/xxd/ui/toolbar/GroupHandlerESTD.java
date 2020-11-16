@@ -22,11 +22,10 @@ import org.eclipse.jface.preference.IPreferencePage;
 
 public class GroupHandlerESTD extends AbstractGroupHandler {
 
-	private static final String NAME = "ESTD";
+	public static final String NAME = "ESTD";
+	//
 	private static final String IMAGE_HIDE = IApplicationImage.IMAGE_EXTERNAL_STANDARDS_ACTIVE;
 	private static final String IMAGE_SHOW = IApplicationImage.IMAGE_EXTERNAL_STANDARDS_DEFAULT;
-	//
-	private static boolean partsAreActivated = false;
 
 	@Override
 	public List<IPreferencePage> getPreferencePages() {
@@ -73,12 +72,5 @@ public class GroupHandlerESTD extends AbstractGroupHandler {
 	public String getImageShow() {
 
 		return IMAGE_SHOW;
-	}
-
-	@Override
-	public boolean toggleShow() {
-
-		partsAreActivated = !partsAreActivated;
-		return partsAreActivated;
 	}
 }

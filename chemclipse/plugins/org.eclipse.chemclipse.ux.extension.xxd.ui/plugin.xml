@@ -61,9 +61,9 @@
       </page> 
       <page
             category="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTasks"
-            class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskQuantitation"
-            id="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTaskQuantitation"
-            name="Quantitation">
+            class="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageTaskChromatogram"
+            id="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTaskChromatogram"
+            name="Chromatogram">
       </page> 
       <page
             category="org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.preferencePageTasks"
