@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.parts;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
@@ -20,7 +22,7 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Composite;
 
-public class NMROverlayPart extends AbstractPart {
+public class NMROverlayPart extends AbstractPart<Composite> {
 
 	private ExtendedNMROverlayUI extendedNMROverlayUI;
 
@@ -35,4 +37,24 @@ public class NMROverlayPart extends AbstractPart {
 
 		extendedNMROverlayUI.update();
 	}
+
+	// REMOVE-------------------------------------------------TEST
+	@Override
+	protected Composite createControl(Composite parent) {
+
+		return parent;
+	}
+
+	@Override
+	protected boolean updateData(List<Object> objects, String topic) {
+
+		return false;
+	}
+
+	@Override
+	protected boolean isUpdateTopic(String topic) {
+
+		return false;
+	}
+	// REMOVE-------------------------------------------------TEST
 }

@@ -11,10 +11,12 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
+import org.eclipse.chemclipse.support.ui.swt.ExtendedTableViewer;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,7 +26,24 @@ import org.eclipse.swt.widgets.Composite;
 
 public interface IExtendedPartUI {
 
-	default Button createButtonToggleToolbar(Composite parent, AtomicReference<Composite> toolbar, String image, String tooltip) {
+	String PREFIX_SHOW = "Show";
+	String PREFIX_HIDE = "Hide";
+	//
+	String PREFIX_ENABLE = "Enable";
+	String PREFIX_DISABLE = "Disable";
+	String TOOLTIP_TABLE = "the table content edit modus.";
+
+	default Button createButton(Composite parent, String text, String tooltip, String image) {
+
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText("");
+		button.setToolTipText("Delete the selected header entrie(s).");
+		button.setImage(ApplicationImageFactory.getInstance().getImage(image, IApplicationImage.SIZE_16x16));
+		//
+		return button;
+	}
+
+	default Button createButtonToggleToolbar(Composite parent, AtomicReference<? extends Composite> toolbar, String image, String tooltip) {
 
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("");
@@ -36,7 +55,7 @@ public interface IExtendedPartUI {
 				Composite composite = toolbar.get();
 				if(composite != null) {
 					boolean active = PartSupport.toggleCompositeVisibility(composite);
-					setButtonImage(button, image, tooltip, active);
+					setButtonImage(button, image, PREFIX_SHOW, PREFIX_HIDE, tooltip, active);
 				}
 			}
 		});
@@ -44,18 +63,82 @@ public interface IExtendedPartUI {
 		return button;
 	}
 
-	default void enableToolbar(AtomicReference<Composite> toolbar, Button button, String image, String tooltip, boolean active) {
+	default Button createButtonToggleEditTable(Composite parent, AtomicReference<? extends ExtendedTableViewer> viewer, String image) {
+
+		AtomicBoolean editable = new AtomicBoolean();
+		editable.set(true);
+		return createButtonToggleEditTable(parent, viewer, editable, image);
+	}
+
+	default Button createButtonToggleEditTable(Composite parent, AtomicReference<? extends ExtendedTableViewer> viewer, AtomicBoolean editable, String image) {
+
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText("");
+		button.setEnabled(editable.get());
+		button.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				if(editable.get()) {
+					ExtendedTableViewer tableViewer = viewer.get();
+					if(tableViewer != null) {
+						/*
+						 * Partly, tables must not be edited.
+						 */
+						boolean edit = editable.get();
+						if(edit) {
+							edit = !tableViewer.isEditEnabled();
+							tableViewer.setEditEnabled(edit);
+						}
+						//
+						setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_TABLE, edit);
+					}
+				}
+			}
+		});
+		//
+		return button;
+	}
+
+	default void enableToolbar(AtomicReference<? extends Composite> toolbar, Button button, String image, String tooltip, boolean active) {
 
 		Composite composite = toolbar.get();
 		if(composite != null) {
 			PartSupport.setCompositeVisibility(composite, active);
-			setButtonImage(button, image, tooltip, active);
+			setButtonImage(button, image, PREFIX_SHOW, PREFIX_HIDE, tooltip, active);
 		}
 	}
 
-	default void setButtonImage(Button button, String image, String tooltip, boolean active) {
+	default void enableEdit(AtomicReference<? extends ExtendedTableViewer> viewer, Button button, String image, boolean edit) {
 
-		button.setImage(ApplicationImageFactory.getInstance().getImage(image, IApplicationImage.SIZE_16x16, active));
-		button.setToolTipText(active ? "Hide " + tooltip : "Show " + tooltip);
+		AtomicBoolean editable = new AtomicBoolean();
+		editable.set(true);
+		enableEdit(viewer, button, editable, image, edit);
+	}
+
+	default void enableEdit(AtomicReference<? extends ExtendedTableViewer> viewer, Button button, AtomicBoolean editable, String image, boolean edit) {
+
+		boolean enabled = editable.get();
+		setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_TABLE, false);
+		button.setEnabled(enabled);
+		//
+		if(enabled) {
+			ExtendedTableViewer tableViewer = viewer.get();
+			if(tableViewer != null) {
+				tableViewer.setEditEnabled(edit);
+				setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_TABLE, edit);
+			}
+		}
+	}
+
+	default void setButtonImage(Button button, String image, String prefixActivate, String prefixDeactivate, String tooltip, boolean enabled) {
+
+		button.setImage(ApplicationImageFactory.getInstance().getImage(image, IApplicationImage.SIZE_16x16, enabled));
+		StringBuilder builder = new StringBuilder();
+		builder.append(enabled ? prefixDeactivate : prefixActivate);
+		builder.append(" ");
+		builder.append(tooltip);
+		button.setToolTipText(builder.toString());
 	}
 }

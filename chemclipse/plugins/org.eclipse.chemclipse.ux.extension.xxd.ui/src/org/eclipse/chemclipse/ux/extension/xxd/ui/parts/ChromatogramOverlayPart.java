@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.parts;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.EditorUpdateSupport;
@@ -25,7 +27,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Composite;
 
-public class ChromatogramOverlayPart extends AbstractPart {
+public class ChromatogramOverlayPart extends AbstractPart<Composite> {
 
 	private final ExtendedChromatogramOverlayUI extendedChromatogramOverlayUI;
 	private final EditorUpdateSupport editorUpdateSupport = new EditorUpdateSupport();
@@ -55,4 +57,24 @@ public class ChromatogramOverlayPart extends AbstractPart {
 			}
 		}
 	}
+
+	// REMOVE-------------------------------------------------TEST
+	@Override
+	protected Composite createControl(Composite parent) {
+
+		return parent;
+	}
+
+	@Override
+	protected boolean updateData(List<Object> objects, String topic) {
+
+		return false;
+	}
+
+	@Override
+	protected boolean isUpdateTopic(String topic) {
+
+		return false;
+	}
+	// REMOVE-------------------------------------------------TEST
 }

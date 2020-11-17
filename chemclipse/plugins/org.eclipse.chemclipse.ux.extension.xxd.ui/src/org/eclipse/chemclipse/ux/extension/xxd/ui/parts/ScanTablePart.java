@@ -26,7 +26,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class ScanTablePart extends AbstractPart {
+public class ScanTablePart extends AbstractPart<Composite> {
 
 	private static final String TOPIC = IChemClipseEvents.TOPIC_SCAN_XXD_UPDATE_SELECTION;
 	//
@@ -102,4 +102,24 @@ public class ScanTablePart extends AbstractPart {
 			return false;
 		}
 	}
+
+	// REMOVE-------------------------------------------------TEST
+	@Override
+	protected Composite createControl(Composite parent) {
+
+		return parent;
+	}
+
+	@Override
+	protected boolean updateData(List<Object> objects, String topic) {
+
+		return false;
+	}
+
+	@Override
+	protected boolean isUpdateTopic(String topic) {
+
+		return false;
+	}
+	// REMOVE-------------------------------------------------TEST
 }

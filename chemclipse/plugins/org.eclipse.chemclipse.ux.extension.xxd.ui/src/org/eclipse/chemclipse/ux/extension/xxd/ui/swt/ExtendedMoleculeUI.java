@@ -13,11 +13,13 @@ package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.identifier.ILibraryInformation;
 import org.eclipse.chemclipse.model.identifier.LibraryInformation;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.ui.provider.AbstractLabelProvider;
+import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.swt.ui.services.IMoleculeImageService;
 import org.eclipse.chemclipse.swt.ui.services.ImageServiceInput;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
@@ -56,19 +58,20 @@ import org.eclipse.swt.widgets.Text;
 
 public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 
+	private static final Logger logger = Logger.getLogger(ExtendedMoleculeUI.class);
+	//
 	private static final ILibraryInformation LIBRARY_INFORMATION_THIAMIN = createLibraryInformationDefault();
 	private static final String THIAMINE_NAME = "Thiamine";
 	private static final String THIAMINE_CAS = "70-16-6";
 	private static final String THIAMINE_SMILES = "OCCc1c(C)[n+](=cs1)Cc2cnc(C)nc(N)2";
 	//
-	private static final String TOOLTIP_INFO = "additional information."; // "Show/Hide ..."
-	private static final String TOOLTIP_EDIT = "the edit toolbar."; // "Show/Hide ..."
+	private static final String TOOLTIP_INFO = "additional information.";
+	private static final String TOOLTIP_EDIT = "the edit toolbar.";
 	//
 	private Button buttonToolbarInfo;
-	private AtomicReference<Composite> toolbarInfo = new AtomicReference<>();
+	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
 	private Button buttonToolbarEdit;
 	private AtomicReference<Composite> toolbarEdit = new AtomicReference<>();
-	private Label labelInfo;
 	private TabFolder tabFolder;
 	private ComboViewer comboViewerServices;
 	private Text textInput;
@@ -146,16 +149,10 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 
 	private void createToolbarInfo(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayoutData(gridData);
-		composite.setLayout(new GridLayout(1, false));
+		InformationUI informationUI = new InformationUI(parent, SWT.NONE);
+		informationUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		//
-		labelInfo = new Label(composite, SWT.NONE);
-		labelInfo.setText("");
-		labelInfo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		//
-		toolbarInfo.set(composite);
+		toolbarInfo.set(informationUI);
 	}
 
 	private void createToolbarEdit(Composite parent) {
@@ -275,6 +272,7 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 	private Label createLabelMolecule(Composite parent) {
 
 		Label label = new Label(parent, SWT.CENTER);
+		label.setLayoutData(new GridData(GridData.FILL_BOTH));
 		label.setBackground(Colors.WHITE);
 		label.addControlListener(new ControlAdapter() {
 
@@ -472,24 +470,39 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 			}
 			//
 			moleculeInfo = getMoleculeInformation(libraryInformation);
-			imageMolecule = moleculeImageService.create(display, libraryInformation, width, height);
+			if(libraryInformation.getName().isEmpty() || libraryInformation.getCasNumber().isEmpty()) {
+				logger.info("The library information doesn't contain data to create a molecule image.");
+			} else {
+				imageMolecule = moleculeImageService.create(display, libraryInformation, width, height);
+			}
 		}
 		//
-		labelInfo.setText(moleculeInfo);
-		labelMolecule.setImage(imageMolecule);
+		toolbarInfo.get().setText(moleculeInfo);
+		if(imageMolecule != null) {
+			labelMolecule.setText("");
+			labelMolecule.setImage(imageMolecule);
+		} else {
+			labelMolecule.setText("The molecule image couldn't be created.");
+			labelMolecule.setImage(null);
+		}
 	}
 
 	private String getMoleculeInformation(ILibraryInformation libraryInformation) {
 
 		StringBuilder builder = new StringBuilder();
 		//
-		builder.append(libraryInformation.getName());
+		builder.append(getInfo(libraryInformation.getName()));
 		builder.append(" | ");
-		builder.append(libraryInformation.getCasNumber());
+		builder.append(getInfo(libraryInformation.getCasNumber()));
 		builder.append(" | ");
-		builder.append(libraryInformation.getSmiles());
+		builder.append(getInfo(libraryInformation.getSmiles()));
 		//
 		return builder.toString();
+	}
+
+	private String getInfo(String value) {
+
+		return value.isEmpty() ? "--" : value;
 	}
 
 	private IMoleculeImageService getMoleculeImageService() {

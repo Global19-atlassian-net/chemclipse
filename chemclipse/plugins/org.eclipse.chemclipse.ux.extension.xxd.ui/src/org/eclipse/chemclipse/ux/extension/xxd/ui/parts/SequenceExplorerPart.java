@@ -18,7 +18,7 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.widgets.Composite;
 
-public class SequenceExplorerPart extends AbstractPart {
+public class SequenceExplorerPart {
 
 	private ExtendedSequenceExplorerUI extendedSequenceExplorerUI;
 
