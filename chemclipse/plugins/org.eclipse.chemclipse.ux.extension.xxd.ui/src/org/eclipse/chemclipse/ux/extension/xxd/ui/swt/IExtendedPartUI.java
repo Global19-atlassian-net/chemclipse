@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
@@ -65,35 +64,18 @@ public interface IExtendedPartUI {
 
 	default Button createButtonToggleEditTable(Composite parent, AtomicReference<? extends ExtendedTableViewer> viewer, String image) {
 
-		AtomicBoolean editable = new AtomicBoolean();
-		editable.set(true);
-		return createButtonToggleEditTable(parent, viewer, editable, image);
-	}
-
-	default Button createButtonToggleEditTable(Composite parent, AtomicReference<? extends ExtendedTableViewer> viewer, AtomicBoolean editable, String image) {
-
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("");
-		button.setEnabled(editable.get());
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				if(editable.get()) {
-					ExtendedTableViewer tableViewer = viewer.get();
-					if(tableViewer != null) {
-						/*
-						 * Partly, tables must not be edited.
-						 */
-						boolean edit = editable.get();
-						if(edit) {
-							edit = !tableViewer.isEditEnabled();
-							tableViewer.setEditEnabled(edit);
-						}
-						//
-						setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_TABLE, edit);
-					}
+				ExtendedTableViewer tableViewer = viewer.get();
+				if(tableViewer != null) {
+					boolean edit = !tableViewer.isEditEnabled();
+					tableViewer.setEditEnabled(edit);
+					setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_TABLE, edit);
 				}
 			}
 		});
@@ -112,23 +94,10 @@ public interface IExtendedPartUI {
 
 	default void enableEdit(AtomicReference<? extends ExtendedTableViewer> viewer, Button button, String image, boolean edit) {
 
-		AtomicBoolean editable = new AtomicBoolean();
-		editable.set(true);
-		enableEdit(viewer, button, editable, image, edit);
-	}
-
-	default void enableEdit(AtomicReference<? extends ExtendedTableViewer> viewer, Button button, AtomicBoolean editable, String image, boolean edit) {
-
-		boolean enabled = editable.get();
-		setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_TABLE, false);
-		button.setEnabled(enabled);
-		//
-		if(enabled) {
-			ExtendedTableViewer tableViewer = viewer.get();
-			if(tableViewer != null) {
-				tableViewer.setEditEnabled(edit);
-				setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_TABLE, edit);
-			}
+		ExtendedTableViewer tableViewer = viewer.get();
+		if(tableViewer != null) {
+			tableViewer.setEditEnabled(edit);
+			setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_TABLE, edit);
 		}
 	}
 

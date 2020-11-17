@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.chemclipse.model.core.IMeasurementInfo;
 import org.eclipse.chemclipse.support.ui.provider.ListContentProvider;
 import org.eclipse.chemclipse.support.ui.swt.ExtendedTableViewer;
+import org.eclipse.chemclipse.swt.ui.support.Colors;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.internal.provider.HeaderDataEditingSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.internal.provider.HeaderDataLabelProvider;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.internal.provider.HeaderDataListFilter;
@@ -108,10 +109,9 @@ public class HeaderDataListUI extends ExtendedTableViewer {
 							Map.Entry entry = (Map.Entry)object;
 							String key = entry.getKey().toString();
 							if(measurementInfo.isKeyProtected(key)) {
-								cell.setText(key + "*");
-							} else {
-								cell.setText(key);
+								cell.setForeground(Colors.DARK_GRAY);
 							}
+							cell.setText(key);
 						}
 						super.update(cell);
 					}

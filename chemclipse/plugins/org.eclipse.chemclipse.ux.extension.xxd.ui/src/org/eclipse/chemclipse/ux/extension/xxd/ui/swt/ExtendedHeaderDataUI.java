@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.chemclipse.model.core.IChromatogram;
@@ -36,6 +35,8 @@ import org.eclipse.chemclipse.swt.ui.components.SearchSupportUI;
 import org.eclipse.chemclipse.xir.model.core.IScanXIR;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -63,7 +64,6 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 	private AtomicReference<Composite> toolbarSearch = new AtomicReference<>();
 	private Button buttonToolbarEdit;
 	private AtomicReference<HeaderSupportUI> toolbarEdit = new AtomicReference<>();
-	private AtomicBoolean editable = new AtomicBoolean();
 	private Button buttonTableEdit;
 	private Button buttonDelete;
 	//
@@ -103,7 +103,7 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 		enableToolbar(toolbarInfo, buttonToolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO, true);
 		enableToolbar(toolbarSearch, buttonToolbarSearch, IApplicationImage.IMAGE_SEARCH, TOOLTIP_EDIT, false);
 		enableToolbar(toolbarEdit, buttonToolbarEdit, IApplicationImage.IMAGE_EDIT, TOOLTIP_EDIT, false);
-		enableEdit(tableViewer, buttonTableEdit, editable, IApplicationImage.IMAGE_EDIT_ENTRY, false);
+		enableEdit(tableViewer, buttonTableEdit, IApplicationImage.IMAGE_EDIT_ENTRY, false);
 	}
 
 	private void createToolbarMain(Composite parent) {
@@ -117,7 +117,7 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO);
 		buttonToolbarSearch = createButtonToggleToolbar(composite, toolbarSearch, IApplicationImage.IMAGE_SEARCH, TOOLTIP_SEARCH);
 		buttonToolbarEdit = createButtonToggleToolbar(composite, toolbarEdit, IApplicationImage.IMAGE_EDIT, TOOLTIP_EDIT);
-		buttonTableEdit = createButtonToggleEditTable(composite, tableViewer, editable, IApplicationImage.IMAGE_EDIT_ENTRY);
+		buttonTableEdit = createButtonToggleEditTable(composite, tableViewer, IApplicationImage.IMAGE_EDIT_ENTRY);
 		buttonDelete = createButtonDelete(composite);
 	}
 
@@ -181,6 +181,14 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 		tabFolder = new TabFolder(parent, SWT.BOTTOM);
 		tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				updateInput();
+			}
+		});
 		//
 		createHeaderDataTable(tabFolder);
 		textMiscellaneous = createTextMiscellaneous(tabFolder);
@@ -220,6 +228,16 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 		tabItem.setText("Miscellaneous");
 		//
 		Text text = new Text(tabFolder, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP);
+		text.addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+
+				if(measurementInfo != null) {
+					measurementInfo.setMiscInfo(text.getText().trim());
+				}
+			}
+		});
 		tabItem.setControl(text);
 		//
 		return text;
@@ -289,42 +307,33 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 	private void updateInput() {
 
 		updateEditStatus();
-		updateHeaderData();
+		updateData();
 	}
 
 	private void updateEditStatus() {
 
-		boolean edit = false;
+		boolean enabled = false;
 		if(measurementInfo instanceof IChromatogram) {
-			edit = true;
+			enabled = true;
 		} else if(measurementInfo instanceof IScanXIR) {
-			edit = true;
+			enabled = true;
 		} else if(measurementInfo instanceof IDataNMRSelection) {
-			edit = true;
+			enabled = true;
 		} else if(measurementInfo instanceof IPlate) {
-			edit = true;
+			enabled = true;
 		}
 		//
-		this.editable.set(edit);
 		toolbarEdit.get().setInput(measurementInfo);
-		boolean enabled = buttonTableEdit.getEnabled();
-		enableEdit(tableViewer, buttonTableEdit, editable, IApplicationImage.IMAGE_EDIT_ENTRY, enabled);
-	}
-
-	private void updateHeaderData() {
-
-		updateWidgets();
-		updateData();
-		//
-		tableViewer.get().sortTable();
-		Table table = tableViewer.get().getTable();
-		if(table.getItemCount() > 0) {
-			table.setSelection(0);
+		buttonTableEdit.setEnabled(enabled);
+		if(!enabled) {
+			enableEdit(tableViewer, buttonTableEdit, IApplicationImage.IMAGE_EDIT_ENTRY, false);
 		}
 	}
 
 	private void updateData() {
 
+		enableButtonDelete();
+		//
 		if(measurementInfo != null) {
 			toolbarInfo.get().setText("Number of Entries: " + measurementInfo.getHeaderDataMap().size());
 			tableViewer.get().setInput(measurementInfo);
@@ -334,13 +343,12 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 			tableViewer.get().setInput(null);
 			textMiscellaneous.setText("");
 		}
-	}
-
-	private void updateWidgets() {
-
-		boolean enabled = editable.get();
-		buttonTableEdit.setEnabled(enabled);
-		enableButtonDelete();
+		//
+		tableViewer.get().sortTable();
+		Table table = tableViewer.get().getTable();
+		if(table.getItemCount() > 0) {
+			table.setSelection(0);
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
