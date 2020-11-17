@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -44,6 +45,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -51,7 +53,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -68,6 +69,9 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 	private static final String TOOLTIP_INFO = "additional information.";
 	private static final String TOOLTIP_EDIT = "the edit toolbar.";
 	//
+	private static final int BORDER = 3;
+	private static final int MARGIN = BORDER * 2;
+	//
 	private Button buttonToolbarInfo;
 	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
 	private Button buttonToolbarEdit;
@@ -76,7 +80,7 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 	private ComboViewer comboViewerServices;
 	private Text textInput;
 	private ComboViewer comboViewerInput;
-	private Label labelMolecule;
+	private CLabel labelMolecule;
 	private Text textMolecule;
 	//
 	private ILibraryInformation libraryInformation = LIBRARY_INFORMATION_THIAMIN;
@@ -256,7 +260,7 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 		textMolecule = createMoleculeContent(tabFolder);
 	}
 
-	private Label createMoleculeImage(TabFolder tabFolder) {
+	private CLabel createMoleculeImage(TabFolder tabFolder) {
 
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText("Molecule");
@@ -269,9 +273,9 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 		return createLabelMolecule(composite);
 	}
 
-	private Label createLabelMolecule(Composite parent) {
+	private CLabel createLabelMolecule(Composite parent) {
 
-		Label label = new Label(parent, SWT.CENTER);
+		CLabel label = new CLabel(parent, SWT.CENTER);
 		label.setLayoutData(new GridData(GridData.FILL_BOTH));
 		label.setBackground(Colors.WHITE);
 		label.addControlListener(new ControlAdapter() {
@@ -279,7 +283,9 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 			@Override
 			public void controlResized(ControlEvent e) {
 
-				label.setBounds(5, 5, parent.getSize().x, parent.getSize().y);
+				Point size = parent.getSize();
+				label.setBounds(BORDER, BORDER, size.x - MARGIN, size.y - MARGIN);
+				createMoleculeImage(e.display);
 			}
 		});
 		//
@@ -450,8 +456,12 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 		//
 		IMoleculeImageService moleculeImageService = getMoleculeImageService();
 		if(moleculeImageService != null) {
-			int width = getSize().x;
-			int height = getSize().y;
+			/*
+			 * Subtract the margin.
+			 */
+			Point size = labelMolecule.getSize();
+			int width = size.x - MARGIN;
+			int height = size.y - MARGIN;
 			/*
 			 * If the library information is null, take the text.
 			 */
