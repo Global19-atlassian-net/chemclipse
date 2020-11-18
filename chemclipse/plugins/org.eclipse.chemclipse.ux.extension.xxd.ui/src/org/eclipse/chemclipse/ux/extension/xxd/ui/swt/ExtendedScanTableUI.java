@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.chemclipse.converter.exceptions.NoConverterAvailableException;
 import org.eclipse.chemclipse.csd.model.core.IScanCSD;
@@ -35,6 +37,7 @@ import org.eclipse.chemclipse.support.ui.menu.ITableMenuEntry;
 import org.eclipse.chemclipse.support.ui.swt.ExtendedTableViewer;
 import org.eclipse.chemclipse.support.ui.swt.ITableSettings;
 import org.eclipse.chemclipse.swt.ui.components.ISearchListener;
+import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.swt.ui.components.SearchSupportUI;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
@@ -80,15 +83,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
-public class ExtendedScanTableUI extends Composite {
+public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 
 	private static final Logger logger = Logger.getLogger(ScanTablePart.class);
 	//
 	private Composite toolbarMain;
-	private Composite toolbarInfoTop;
-	private Label labelInfoTop;
-	private Composite toolbarInfoBottom;
-	private Label labelInfoBottom;
+	private Button buttonToolbarInfo;
+	private AtomicReference<InformationUI> toolbarInfoTop = new AtomicReference<>();
+	private AtomicReference<InformationUI> toolbarInfoBottom = new AtomicReference<>();
 	private Composite toolbarEdit;
 	private Composite toolbarSearch;
 	private Button buttonCopyTraces;
@@ -280,9 +282,9 @@ public class ExtendedScanTableUI extends Composite {
 		//
 		if(forceEnableEditModus || isLibraryMassSpectrum) {
 			String editInformation = scanTableUI.isEditEnabled() ? "Edit is enabled." : "Edit is disabled.";
-			labelInfoTop.setText(scanDataSupport.getScanLabel(scan) + " - " + editInformation);
+			toolbarInfoTop.get().setText(scanDataSupport.getScanLabel(scan) + " - " + editInformation);
 		} else {
-			labelInfoTop.setText(scanDataSupport.getScanLabel(scan));
+			toolbarInfoTop.get().setText(scanDataSupport.getScanLabel(scan));
 		}
 	}
 
@@ -302,7 +304,7 @@ public class ExtendedScanTableUI extends Composite {
 		} else {
 			signals = "--";
 		}
-		labelInfoBottom.setText("Signals: " + signals);
+		toolbarInfoBottom.get().setText("Signals: " + signals);
 	}
 
 	private boolean isSaveEnabled() {
@@ -325,16 +327,21 @@ public class ExtendedScanTableUI extends Composite {
 		deleteKeyEventProcessor = new DeleteKeyEventProcessor();
 		//
 		toolbarMain = createToolbarMain(composite);
-		toolbarInfoTop = createToolbarInfoTop(composite);
+		createToolbarInfoTop(composite);
 		toolbarEdit = createToolbarEdit(composite);
 		toolbarSearch = createToolbarSearch(composite);
 		createTable(composite);
-		toolbarInfoBottom = createToolbarInfoBottom(composite);
+		createToolbarInfoBottom(composite);
 		//
-		PartSupport.setCompositeVisibility(toolbarInfoTop, true);
+		initialize();
+	}
+
+	private void initialize() {
+
+		enableToolbar(toolbarInfoTop, buttonToolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO, true);
 		PartSupport.setCompositeVisibility(toolbarEdit, false);
 		PartSupport.setCompositeVisibility(toolbarSearch, false);
-		PartSupport.setCompositeVisibility(toolbarInfoBottom, true);
+		enableToolbar(toolbarInfoBottom, buttonToolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO, true);
 		//
 		enableEditModus(false); // Disable the edit modus by default.
 	}
@@ -346,7 +353,7 @@ public class ExtendedScanTableUI extends Composite {
 		composite.setLayout(new GridLayout(9, false));
 		//
 		labelOptimized = createInfoLabelOptimized(composite);
-		createButtonToggleToolbarInfo(composite);
+		buttonToolbarInfo = createButtonToggleToolbar(composite, Arrays.asList(toolbarInfoTop, toolbarInfoBottom), IMAGE_INFO, TOOLTIP_INFO);
 		buttonToggleToolbarEdit = createButtonToggleToolbarEdit(composite);
 		createButtonToggleToolbarSearch(composite);
 		buttonCopyTraces = createButtonCopyTracesClipboard(composite);
@@ -448,31 +455,6 @@ public class ExtendedScanTableUI extends Composite {
 			}
 		}
 		return null;
-	}
-
-	private Button createButtonToggleToolbarInfo(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle info toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarInfoTop);
-				PartSupport.toggleCompositeVisibility(toolbarInfoBottom);
-				//
-				if(visible) {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
-		return button;
 	}
 
 	private Button createButtonToggleToolbarEdit(Composite parent) {
@@ -649,32 +631,22 @@ public class ExtendedScanTableUI extends Composite {
 		});
 	}
 
-	private Composite createToolbarInfoTop(Composite parent) {
+	private void createToolbarInfoTop(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayoutData(gridData);
-		composite.setLayout(new GridLayout(1, false));
-		//
-		labelInfoTop = new Label(composite, SWT.NONE);
-		labelInfoTop.setText("");
-		labelInfoTop.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		//
-		return composite;
+		toolbarInfoTop.set(createToolbarInfo(parent));
 	}
 
-	private Composite createToolbarInfoBottom(Composite parent) {
+	private void createToolbarInfoBottom(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayoutData(gridData);
-		composite.setLayout(new GridLayout(1, false));
+		toolbarInfoBottom.set(createToolbarInfo(parent));
+	}
+
+	private InformationUI createToolbarInfo(Composite parent) {
+
+		InformationUI informationUI = new InformationUI(parent, SWT.NONE);
+		informationUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		//
-		labelInfoBottom = new Label(composite, SWT.NONE);
-		labelInfoBottom.setText("");
-		labelInfoBottom.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		//
-		return composite;
+		return informationUI;
 	}
 
 	private Composite createToolbarEdit(Composite parent) {

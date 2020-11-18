@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
@@ -27,10 +29,18 @@ public interface IExtendedPartUI {
 
 	String PREFIX_SHOW = "Show";
 	String PREFIX_HIDE = "Hide";
-	//
 	String PREFIX_ENABLE = "Enable";
 	String PREFIX_DISABLE = "Disable";
+	//
 	String TOOLTIP_TABLE = "the table content edit modus.";
+	String TOOLTIP_INFO = "additional information.";
+	String TOOLTIP_EDIT = "the edit toolbar.";
+	String TOOLTIP_SEARCH = "the search toolbar.";
+	//
+	String IMAGE_INFO = IApplicationImage.IMAGE_INFO;
+	String IMAGE_EDIT = IApplicationImage.IMAGE_EDIT;
+	String IMAGE_SEARCH = IApplicationImage.IMAGE_SEARCH;
+	String IMAGE_EDIT_ENTRY = IApplicationImage.IMAGE_EDIT_ENTRY;
 
 	default Button createButton(Composite parent, String text, String tooltip, String image) {
 
@@ -44,6 +54,11 @@ public interface IExtendedPartUI {
 
 	default Button createButtonToggleToolbar(Composite parent, AtomicReference<? extends Composite> toolbar, String image, String tooltip) {
 
+		return createButtonToggleToolbar(parent, Arrays.asList(toolbar), image, tooltip);
+	}
+
+	default Button createButtonToggleToolbar(Composite parent, List<AtomicReference<? extends Composite>> toolbars, String image, String tooltip) {
+
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("");
 		button.addSelectionListener(new SelectionAdapter() {
@@ -51,10 +66,12 @@ public interface IExtendedPartUI {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				Composite composite = toolbar.get();
-				if(composite != null) {
-					boolean active = PartSupport.toggleCompositeVisibility(composite);
-					setButtonImage(button, image, PREFIX_SHOW, PREFIX_HIDE, tooltip, active);
+				for(AtomicReference<? extends Composite> toolbar : toolbars) {
+					Composite composite = toolbar.get();
+					if(composite != null) {
+						boolean active = PartSupport.toggleCompositeVisibility(composite);
+						setButtonImage(button, image, PREFIX_SHOW, PREFIX_HIDE, tooltip, active);
+					}
 				}
 			}
 		});

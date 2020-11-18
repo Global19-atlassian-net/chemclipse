@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
-import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.chemclipse.chromatogram.msd.filter.supplier.subtract.calculator.SubtractCalculator;
 import org.eclipse.chemclipse.chromatogram.msd.filter.supplier.subtract.settings.MassSpectrumFilterSettings;
@@ -32,11 +32,11 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.ui.workbench.DisplayUtils;
+import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.calibration.IUpdateListener;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.internal.support.ChartConfigSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.internal.support.SignalType;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.DataUpdateSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.parts.ScanChartPart;
@@ -44,7 +44,6 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstant
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageScans;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageSubtract;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.support.charts.ScanDataSupport;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.AxisConfig.ChartAxis;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.wizards.SubtractScanWizard;
 import org.eclipse.chemclipse.wsd.model.core.IScanWSD;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -73,7 +72,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public class ExtendedScanChartUI extends Composite implements ConfigurableUI<ScanChartUIConfig> {
+public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 
 	private static final Logger logger = Logger.getLogger(ScanChartPart.class);
 	/*
@@ -82,8 +81,8 @@ public class ExtendedScanChartUI extends Composite implements ConfigurableUI<Sca
 	 */
 	private IEventBroker eventBroker;
 	//
-	private Composite toolbarMain;
-	private Composite toolbarInfo;
+	private Button buttonToolbarInfo;
+	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
 	private Composite toolbarEdit;
 	private Composite toolbarTypes;
 	//
@@ -124,57 +123,6 @@ public class ExtendedScanChartUI extends Composite implements ConfigurableUI<Sca
 	public void setEventBroker(IEventBroker eventBroker) {
 
 		this.eventBroker = eventBroker;
-	}
-
-	@Override
-	public ScanChartUIConfig getConfig() {
-
-		return new ScanChartUIConfig() {
-
-			ChartConfigSupport axisSupport = new ChartConfigSupport(scanChartUI, EnumSet.of(ChartAxis.PRIMARY_X, ChartAxis.PRIMARY_Y, ChartAxis.SECONDARY_Y));
-
-			@Override
-			public void setToolbarVisible(boolean visible) {
-
-				PartSupport.setCompositeVisibility(toolbarMain, visible);
-			}
-
-			@Override
-			public boolean isToolbarVisible() {
-
-				return toolbarMain.isVisible();
-			}
-
-			@Override
-			public boolean hasToolbarInfo() {
-
-				return true;
-			}
-
-			@Override
-			public void setToolbarInfoVisible(boolean visible) {
-
-				PartSupport.setCompositeVisibility(toolbarInfo, visible);
-			}
-
-			@Override
-			public void setAxisLabelVisible(ChartAxis axis, boolean visible) {
-
-				axisSupport.setAxisLabelVisible(axis, visible);
-			}
-
-			@Override
-			public void setAxisVisible(ChartAxis axis, boolean visible) {
-
-				axisSupport.setAxisVisible(axis, visible);
-			}
-
-			@Override
-			public boolean hasAxis(ChartAxis axis) {
-
-				return axisSupport.hasAxis(axis);
-			};
-		};
 	}
 
 	public void update(IScan scan) {
@@ -259,13 +207,18 @@ public class ExtendedScanChartUI extends Composite implements ConfigurableUI<Sca
 		composite.setLayout(layout);
 		backgroundDefault = composite.getBackground();
 		//
-		toolbarMain = createToolbarMain(composite);
-		toolbarInfo = createToolbarInfo(composite);
+		createToolbarMain(composite);
+		createToolbarInfo(composite);
 		toolbarTypes = createToolbarTypes(composite);
 		toolbarEdit = createToolbarEdit(composite);
 		scanChartUI = createScanChart(composite);
 		//
-		PartSupport.setCompositeVisibility(toolbarInfo, true);
+		initialize();
+	}
+
+	private void initialize() {
+
+		enableToolbar(toolbarInfo, buttonToolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO, true);
 		PartSupport.setCompositeVisibility(toolbarTypes, false);
 		PartSupport.setCompositeVisibility(toolbarEdit, false);
 		//
@@ -281,7 +234,7 @@ public class ExtendedScanChartUI extends Composite implements ConfigurableUI<Sca
 		labelEdit = createInfoLabelEdit(composite);
 		labelSubtract = createInfoLabelSubtract(composite);
 		labelOptimized = createInfoLabelOptimized(composite);
-		createButtonToggleToolbarInfo(composite);
+		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
 		createButtonToggleToolbarTypes(composite);
 		buttonEdit = createButtonToggleToolbarEdit(composite);
 		buttonIdentify = createButtonIdentify(composite);
@@ -516,29 +469,6 @@ public class ExtendedScanChartUI extends Composite implements ConfigurableUI<Sca
 			}
 		});
 		return combo;
-	}
-
-	private Button createButtonToggleToolbarInfo(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle info toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarInfo);
-				if(visible) {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
-		return button;
 	}
 
 	private Button createButtonToggleToolbarTypes(Composite parent) {
@@ -811,18 +741,12 @@ public class ExtendedScanChartUI extends Composite implements ConfigurableUI<Sca
 		}
 	}
 
-	private Composite createToolbarInfo(Composite parent) {
+	private void createToolbarInfo(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayoutData(gridData);
-		composite.setLayout(new GridLayout(1, false));
+		InformationUI informationUI = new InformationUI(parent, SWT.NONE);
+		informationUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		//
-		labelScan = new Label(composite, SWT.NONE);
-		labelScan.setText("");
-		labelScan.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		//
-		return composite;
+		toolbarInfo.set(informationUI);
 	}
 
 	private ScanChartUI createScanChart(Composite parent) {

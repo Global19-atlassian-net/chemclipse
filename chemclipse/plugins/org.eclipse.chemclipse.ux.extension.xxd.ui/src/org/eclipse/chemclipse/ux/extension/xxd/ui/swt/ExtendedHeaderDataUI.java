@@ -17,11 +17,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IMeasurementInfo;
 import org.eclipse.chemclipse.model.exceptions.InvalidHeaderModificationException;
-import org.eclipse.chemclipse.nmr.model.selection.IDataNMRSelection;
-import org.eclipse.chemclipse.pcr.model.core.IPlate;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.ui.menu.ITableMenuEntry;
 import org.eclipse.chemclipse.support.ui.swt.ExtendedTableViewer;
@@ -32,7 +29,6 @@ import org.eclipse.chemclipse.swt.ui.components.IHeaderListener;
 import org.eclipse.chemclipse.swt.ui.components.ISearchListener;
 import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.swt.ui.components.SearchSupportUI;
-import org.eclipse.chemclipse.xir.model.core.IScanXIR;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -53,10 +49,6 @@ import org.eclipse.swt.widgets.Text;
 public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 
 	private static final String MENU_CATEGORY_HEADER_ENTRIES = "Header Entries";
-	//
-	private static final String TOOLTIP_INFO = "additional information.";
-	private static final String TOOLTIP_SEARCH = "the search toolbar.";
-	private static final String TOOLTIP_EDIT = "the edit toolbar.";
 	//
 	private Button buttonToolbarInfo;
 	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
@@ -100,10 +92,10 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 
 	private void initialize() {
 
-		enableToolbar(toolbarInfo, buttonToolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO, true);
-		enableToolbar(toolbarSearch, buttonToolbarSearch, IApplicationImage.IMAGE_SEARCH, TOOLTIP_EDIT, false);
-		enableToolbar(toolbarEdit, buttonToolbarEdit, IApplicationImage.IMAGE_EDIT, TOOLTIP_EDIT, false);
-		enableEdit(tableViewer, buttonTableEdit, IApplicationImage.IMAGE_EDIT_ENTRY, false);
+		enableToolbar(toolbarInfo, buttonToolbarInfo, IMAGE_INFO, TOOLTIP_INFO, true);
+		enableToolbar(toolbarSearch, buttonToolbarSearch, IMAGE_SEARCH, TOOLTIP_EDIT, false);
+		enableToolbar(toolbarEdit, buttonToolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT, false);
+		enableEdit(tableViewer, buttonTableEdit, IMAGE_EDIT_ENTRY, false);
 	}
 
 	private void createToolbarMain(Composite parent) {
@@ -114,10 +106,10 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 		composite.setLayoutData(gridData);
 		composite.setLayout(new GridLayout(5, false));
 		//
-		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO);
-		buttonToolbarSearch = createButtonToggleToolbar(composite, toolbarSearch, IApplicationImage.IMAGE_SEARCH, TOOLTIP_SEARCH);
-		buttonToolbarEdit = createButtonToggleToolbar(composite, toolbarEdit, IApplicationImage.IMAGE_EDIT, TOOLTIP_EDIT);
-		buttonTableEdit = createButtonToggleEditTable(composite, tableViewer, IApplicationImage.IMAGE_EDIT_ENTRY);
+		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
+		buttonToolbarSearch = createButtonToggleToolbar(composite, toolbarSearch, IMAGE_SEARCH, TOOLTIP_SEARCH);
+		buttonToolbarEdit = createButtonToggleToolbar(composite, toolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT);
+		buttonTableEdit = createButtonToggleEditTable(composite, tableViewer, IMAGE_EDIT_ENTRY);
 		buttonDelete = createButtonDelete(composite);
 	}
 
@@ -306,28 +298,8 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 
 	private void updateInput() {
 
-		updateEditStatus();
-		updateData();
-	}
-
-	private void updateEditStatus() {
-
-		boolean enabled = false;
-		if(measurementInfo instanceof IChromatogram) {
-			enabled = true;
-		} else if(measurementInfo instanceof IScanXIR) {
-			enabled = true;
-		} else if(measurementInfo instanceof IDataNMRSelection) {
-			enabled = true;
-		} else if(measurementInfo instanceof IPlate) {
-			enabled = true;
-		}
-		//
 		toolbarEdit.get().setInput(measurementInfo);
-		buttonTableEdit.setEnabled(enabled);
-		if(!enabled) {
-			enableEdit(tableViewer, buttonTableEdit, IApplicationImage.IMAGE_EDIT_ENTRY, false);
-		}
+		updateData();
 	}
 
 	private void updateData() {

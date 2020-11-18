@@ -15,8 +15,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.eclipse.chemclipse.model.selection.IChromatogramSelection;
+import org.eclipse.chemclipse.model.core.IMeasurementInfo;
 import org.eclipse.chemclipse.support.events.IChemClipseEvents;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IOverviewListener;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.OverviewSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ExtendedHeaderDataUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -24,11 +26,22 @@ import org.eclipse.swt.widgets.Composite;
 public class HeaderDataPart extends AbstractPart<ExtendedHeaderDataUI> {
 
 	private static final String TOPIC = IChemClipseEvents.TOPIC_CHROMATOGRAM_XXD_UPDATE_SELECTION;
+	private final OverviewSupport overviewSupport = new OverviewSupport();
 
 	@Inject
 	public HeaderDataPart(Composite parent) {
 
 		super(parent, TOPIC);
+		overviewSupport.setOverviewListener(new IOverviewListener() {
+
+			@Override
+			public void update(Object object) {
+
+				if(object instanceof IMeasurementInfo) {
+					getControl().setInput((IMeasurementInfo)object);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -40,21 +53,12 @@ public class HeaderDataPart extends AbstractPart<ExtendedHeaderDataUI> {
 	@Override
 	protected boolean updateData(List<Object> objects, String topic) {
 
-		if(objects.size() == 1) {
-			Object object = objects.get(0);
-			if(object instanceof IChromatogramSelection) {
-				IChromatogramSelection<?, ?> chromatogramSelection = (IChromatogramSelection<?, ?>)object;
-				getControl().setInput(chromatogramSelection.getChromatogram());
-				return true;
-			}
-		}
-		//
-		return false;
+		return overviewSupport.process(objects, topic);
 	}
 
 	@Override
 	protected boolean isUpdateTopic(String topic) {
 
-		return topic.equals(TOPIC);
+		return overviewSupport.isUpdateTopic(topic);
 	}
 }
