@@ -66,9 +66,6 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 	private static final String THIAMINE_CAS = "70-16-6";
 	private static final String THIAMINE_SMILES = "OCCc1c(C)[n+](=cs1)Cc2cnc(C)nc(N)2";
 	//
-	private static final String TOOLTIP_INFO = "additional information.";
-	private static final String TOOLTIP_EDIT = "the edit toolbar.";
-	//
 	private static final int BORDER = 3;
 	private static final int MARGIN = BORDER * 2;
 	//
@@ -114,8 +111,8 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 
 	private void initialize() {
 
-		enableToolbar(toolbarInfo, buttonToolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO, true);
-		enableToolbar(toolbarEdit, buttonToolbarEdit, IApplicationImage.IMAGE_EDIT, TOOLTIP_EDIT, false);
+		enableToolbar(toolbarInfo, buttonToolbarInfo, IMAGE_INFO, TOOLTIP_INFO, true);
+		enableToolbar(toolbarEdit, buttonToolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT, false);
 		/*
 		 * Services
 		 */
@@ -143,8 +140,8 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 		composite.setLayoutData(gridData);
 		composite.setLayout(new GridLayout(6, false));
 		//
-		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO);
-		buttonToolbarEdit = createButtonToggleToolbar(composite, toolbarEdit, IApplicationImage.IMAGE_EDIT, TOOLTIP_EDIT);
+		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
+		buttonToolbarEdit = createButtonToggleToolbar(composite, toolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT);
 		comboViewerServices = createComboViewerServices(composite);
 		createButtonReset(composite);
 		createButtonExport(composite);
@@ -264,13 +261,19 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText("Molecule");
-		//
+		/*
+		 * Probably replace CLabel by Canvas to draw a scaled image.
+		 * gc.drawImage(...)
+		 */
 		Composite composite = new Composite(tabFolder, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(1, true));
+		//
+		CLabel cLabel = createLabelMolecule(composite);
+		//
 		tabItem.setControl(composite);
 		//
-		return createLabelMolecule(composite);
+		return cLabel;
 	}
 
 	private CLabel createLabelMolecule(Composite parent) {
@@ -458,6 +461,7 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 		if(moleculeImageService != null) {
 			/*
 			 * Subtract the margin.
+			 * Probably use Canvas and a scale factor.
 			 */
 			Point size = labelMolecule.getSize();
 			int width = size.x - MARGIN;
@@ -480,10 +484,10 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 			}
 			//
 			moleculeInfo = getMoleculeInformation(libraryInformation);
-			if(libraryInformation.getName().isEmpty() || libraryInformation.getCasNumber().isEmpty()) {
-				logger.info("The library information doesn't contain data to create a molecule image.");
-			} else {
+			if(isSourceDataAvailable(libraryInformation)) {
 				imageMolecule = moleculeImageService.create(display, libraryInformation, width, height);
+			} else {
+				logger.info("The library information doesn't contain data to create a molecule image.");
 			}
 		}
 		//
@@ -495,6 +499,21 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 			labelMolecule.setText("The molecule image couldn't be created.");
 			labelMolecule.setImage(null);
 		}
+	}
+
+	private boolean isSourceDataAvailable(ILibraryInformation libraryInformation) {
+
+		if(!libraryInformation.getName().isEmpty()) {
+			return true;
+		} else if(!libraryInformation.getCasNumber().isEmpty()) {
+			return true;
+		} else if(!libraryInformation.getSmiles().isEmpty()) {
+			return true;
+		} else if(!libraryInformation.getInChI().isEmpty()) {
+			return true;
+		}
+		//
+		return false;
 	}
 
 	private String getMoleculeInformation(ILibraryInformation libraryInformation) {
@@ -577,10 +596,16 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 			ImageServiceInput imageInput = getImageInput();
 			switch(imageInput) {
 				case SMILES:
-					textInput.setText(libraryInformation.getSmiles());
+					String smiles = libraryInformation.getSmiles();
+					if(!smiles.isEmpty()) {
+						textInput.setText(smiles);
+					}
 					break;
 				default:
-					textInput.setText(libraryInformation.getName());
+					String name = libraryInformation.getName();
+					if(!name.isEmpty()) {
+						textInput.setText(name);
+					}
 					break;
 			}
 		} else {
