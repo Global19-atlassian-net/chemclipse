@@ -35,20 +35,28 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseWheelListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -61,13 +69,14 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 
 	private static final Logger logger = Logger.getLogger(ExtendedMoleculeUI.class);
 	//
+	private static final String ERROR_MESSAGE = "The molecule image couldn't be created.";
 	private static final ILibraryInformation LIBRARY_INFORMATION_THIAMIN = createLibraryInformationDefault();
 	private static final String THIAMINE_NAME = "Thiamine";
 	private static final String THIAMINE_CAS = "70-16-6";
 	private static final String THIAMINE_SMILES = "OCCc1c(C)[n+](=cs1)Cc2cnc(C)nc(N)2";
 	//
-	private static final int BORDER = 3;
-	private static final int MARGIN = BORDER * 2;
+	private static final double SCALE_DEFAULT = 1.0d;
+	private static final double SCALE_DELTA = 0.1d;
 	//
 	private Button buttonToolbarInfo;
 	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
@@ -77,10 +86,12 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 	private ComboViewer comboViewerServices;
 	private Text textInput;
 	private ComboViewer comboViewerInput;
-	private CLabel labelMolecule;
+	private Canvas canvasMolecule;
 	private Text textMolecule;
 	//
 	private ILibraryInformation libraryInformation = LIBRARY_INFORMATION_THIAMIN;
+	//
+	private double scale = SCALE_DEFAULT;
 	private Image imageMolecule = null;
 	//
 	private IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
@@ -95,6 +106,15 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 
 		this.libraryInformation = libraryInformation;
 		updateContent(getDisplay());
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+
+		if(imageMolecule != null) {
+			imageMolecule.dispose();
+		}
+		super.finalize();
 	}
 
 	private void createControl() {
@@ -253,46 +273,97 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 		tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		//
-		labelMolecule = createMoleculeImage(tabFolder);
+		canvasMolecule = createMoleculeImage(tabFolder);
 		textMolecule = createMoleculeContent(tabFolder);
 	}
 
-	private CLabel createMoleculeImage(TabFolder tabFolder) {
+	private Canvas createMoleculeImage(TabFolder tabFolder) {
 
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText("Molecule");
-		/*
-		 * Probably replace CLabel by Canvas to draw a scaled image.
-		 * gc.drawImage(...)
-		 */
-		Composite composite = new Composite(tabFolder, SWT.NONE);
+		//
+		Composite composite = new Composite(tabFolder, SWT.BORDER);
+		composite.setLayout(new FillLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout(1, true));
-		//
-		CLabel cLabel = createLabelMolecule(composite);
-		//
+		Canvas canvas = createCanvasMolecule(composite);
 		tabItem.setControl(composite);
 		//
-		return cLabel;
+		return canvas;
 	}
 
-	private CLabel createLabelMolecule(Composite parent) {
+	private Canvas createCanvasMolecule(Composite parent) {
 
-		CLabel label = new CLabel(parent, SWT.CENTER);
-		label.setLayoutData(new GridData(GridData.FILL_BOTH));
-		label.setBackground(Colors.WHITE);
-		label.addControlListener(new ControlAdapter() {
+		Canvas canvas = new Canvas(parent, SWT.FILL);
+		canvas.setBackground(Colors.WHITE);
+		//
+		canvas.addControlListener(new ControlAdapter() {
 
 			@Override
 			public void controlResized(ControlEvent e) {
 
-				Point size = parent.getSize();
-				label.setBounds(BORDER, BORDER, size.x - MARGIN, size.y - MARGIN);
-				createMoleculeImage(e.display);
+				canvas.redraw();
 			}
 		});
 		//
-		return label;
+		canvas.addMouseWheelListener(new MouseWheelListener() {
+
+			@Override
+			public void mouseScrolled(MouseEvent event) {
+
+				scale += (event.count > 0) ? SCALE_DELTA : -SCALE_DELTA;
+				canvas.redraw();
+			}
+		});
+		//
+		canvas.addPaintListener(new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent event) {
+
+				createMoleculeImage(event.display);
+				if(imageMolecule != null) {
+					/*
+					 * Image
+					 */
+					Rectangle bounds = imageMolecule.getBounds();
+					int srcX = 0;
+					int srcY = 0;
+					int srcWidth = bounds.width;
+					int srcHeight = bounds.height;
+					int destX = 0;
+					int destY = 0;
+					int destWidth = bounds.width;
+					int destHeight = bounds.height;
+					//
+					if(scale != 0.0d && scale != 1.0d) {
+						destWidth = (int)(bounds.width * scale);
+						destHeight = (int)(bounds.height * scale);
+						Point size = canvasMolecule.getSize();
+						int corrwidth = (int)(size.x * scale);
+						int corrheight = (int)(size.y * scale);
+						destX = (int)(srcWidth / 2.0d - destWidth / 2.0d - corrwidth / 2.0d);
+						destY = (int)(srcHeight / 2.0d - destHeight / 2.0d - corrheight / 2.0d);
+					}
+					//
+					event.gc.drawImage(imageMolecule, srcX, srcY, srcWidth, srcHeight, destX, destY, destWidth, destHeight);
+				} else {
+					/*
+					 * Text
+					 */
+					Font font = getFont();
+					FontData[] fontData = font.getFontData();
+					int width = event.gc.stringExtent(ERROR_MESSAGE).x;
+					int height = fontData[0].getHeight();
+					//
+					Point size = canvas.getSize();
+					int x = (int)(size.x / 2.0d - width / 2.0d);
+					int y = (int)(size.y / 2.0d - height / 2.0d);
+					event.gc.drawText(ERROR_MESSAGE, x, y, true);
+				}
+			}
+		});
+		//
+		return canvas;
 	}
 
 	private Text createMoleculeContent(TabFolder tabFolder) {
@@ -365,6 +436,7 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
+				scale = SCALE_DEFAULT;
 				libraryInformation = LIBRARY_INFORMATION_THIAMIN;
 				updateContent(e.display);
 			}
@@ -460,12 +532,15 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 		IMoleculeImageService moleculeImageService = getMoleculeImageService();
 		if(moleculeImageService != null) {
 			/*
-			 * Subtract the margin.
-			 * Probably use Canvas and a scale factor.
+			 * Canvas and a scale factor are used.
 			 */
-			Point size = labelMolecule.getSize();
-			int width = size.x - MARGIN;
-			int height = size.y - MARGIN;
+			Point size = canvasMolecule.getSize();
+			int width = size.x;
+			int height = size.y;
+			if(scale != 0.0d && scale != 1.0d) {
+				width += (int)(size.x * scale);
+				height += (int)(size.y * scale);
+			}
 			/*
 			 * If the library information is null, take the text.
 			 */
@@ -487,18 +562,11 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 			if(isSourceDataAvailable(libraryInformation)) {
 				imageMolecule = moleculeImageService.create(display, libraryInformation, width, height);
 			} else {
-				logger.info("The library information doesn't contain data to create a molecule image.");
+				logger.info(ERROR_MESSAGE);
 			}
 		}
 		//
 		toolbarInfo.get().setText(moleculeInfo);
-		if(imageMolecule != null) {
-			labelMolecule.setText("");
-			labelMolecule.setImage(imageMolecule);
-		} else {
-			labelMolecule.setText("The molecule image couldn't be created.");
-			labelMolecule.setImage(null);
-		}
 	}
 
 	private boolean isSourceDataAvailable(ILibraryInformation libraryInformation) {
@@ -572,7 +640,7 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 	private void updateContent(Display display) {
 
 		updateWidgets();
-		createMoleculeImage(display);
+		canvasMolecule.redraw();
 	}
 
 	private void updateWidgets() {
