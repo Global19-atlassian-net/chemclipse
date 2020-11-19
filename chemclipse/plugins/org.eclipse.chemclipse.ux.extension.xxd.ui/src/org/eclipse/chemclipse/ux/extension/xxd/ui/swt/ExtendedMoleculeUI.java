@@ -91,7 +91,7 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 	//
 	private ILibraryInformation libraryInformation = LIBRARY_INFORMATION_THIAMIN;
 	//
-	private double scale = SCALE_DEFAULT;
+	private double scaleFactor = SCALE_DEFAULT;
 	private Image imageMolecule = null;
 	//
 	private IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
@@ -310,7 +310,7 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 			@Override
 			public void mouseScrolled(MouseEvent event) {
 
-				scale += (event.count > 0) ? SCALE_DELTA : -SCALE_DELTA;
+				scaleFactor += (event.count > 0) ? SCALE_DELTA : -SCALE_DELTA;
 				canvas.redraw();
 			}
 		});
@@ -320,46 +320,7 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 			@Override
 			public void paintControl(PaintEvent event) {
 
-				createMoleculeImage(event.display);
-				if(imageMolecule != null) {
-					/*
-					 * Image
-					 */
-					Rectangle bounds = imageMolecule.getBounds();
-					int srcX = 0;
-					int srcY = 0;
-					int srcWidth = bounds.width;
-					int srcHeight = bounds.height;
-					int destX = 0;
-					int destY = 0;
-					int destWidth = bounds.width;
-					int destHeight = bounds.height;
-					//
-					if(scale != 0.0d && scale != 1.0d) {
-						destWidth = (int)(bounds.width * scale);
-						destHeight = (int)(bounds.height * scale);
-						Point size = canvasMolecule.getSize();
-						int corrwidth = (int)(size.x * scale);
-						int corrheight = (int)(size.y * scale);
-						destX = (int)(srcWidth / 2.0d - destWidth / 2.0d - corrwidth / 2.0d);
-						destY = (int)(srcHeight / 2.0d - destHeight / 2.0d - corrheight / 2.0d);
-					}
-					//
-					event.gc.drawImage(imageMolecule, srcX, srcY, srcWidth, srcHeight, destX, destY, destWidth, destHeight);
-				} else {
-					/*
-					 * Text
-					 */
-					Font font = getFont();
-					FontData[] fontData = font.getFontData();
-					int width = event.gc.stringExtent(ERROR_MESSAGE).x;
-					int height = fontData[0].getHeight();
-					//
-					Point size = canvas.getSize();
-					int x = (int)(size.x / 2.0d - width / 2.0d);
-					int y = (int)(size.y / 2.0d - height / 2.0d);
-					event.gc.drawText(ERROR_MESSAGE, x, y, true);
-				}
+				drawImage(canvas, event);
 			}
 		});
 		//
@@ -436,7 +397,7 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				scale = SCALE_DEFAULT;
+				scaleFactor = SCALE_DEFAULT;
 				libraryInformation = LIBRARY_INFORMATION_THIAMIN;
 				updateContent(e.display);
 			}
@@ -534,13 +495,9 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 			/*
 			 * Canvas and a scale factor are used.
 			 */
-			Point size = canvasMolecule.getSize();
+			Point size = calculateImageSize();
 			int width = size.x;
 			int height = size.y;
-			if(scale != 0.0d && scale != 1.0d) {
-				width += (int)(size.x * scale);
-				height += (int)(size.y * scale);
-			}
 			/*
 			 * If the library information is null, take the text.
 			 */
@@ -567,6 +524,78 @@ public class ExtendedMoleculeUI extends Composite implements IExtendedPartUI {
 		}
 		//
 		toolbarInfo.get().setText(moleculeInfo);
+	}
+
+	private Point calculateImageSize() {
+
+		Point size = canvasMolecule.getSize();
+		/*
+		 * Default 1
+		 */
+		int width = size.x;
+		int height = size.y;
+		//
+		if(scaleFactor != 1.0d) {
+			width += (int)(size.x * scaleFactor);
+			height += (int)(size.y * scaleFactor);
+		}
+		//
+		return adjustSize(width, height);
+	}
+
+	private Point adjustSize(int width, int height) {
+
+		width = (width <= 0) ? 1 : width;
+		height = (height <= 0) ? 1 : height;
+		//
+		return new Point(width, height);
+	}
+
+	private void drawImage(Canvas canvas, PaintEvent event) {
+
+		createMoleculeImage(event.display);
+		if(imageMolecule != null) {
+			/*
+			 * Image
+			 */
+			Rectangle bounds = imageMolecule.getBounds();
+			int srcX = 0;
+			int srcY = 0;
+			int srcWidth = bounds.width;
+			int srcHeight = bounds.height;
+			int destX = 0;
+			int destY = 0;
+			int destWidth = bounds.width;
+			int destHeight = bounds.height;
+			//
+			if(scaleFactor != 1.0d) {
+				destWidth = (int)(bounds.width * scaleFactor);
+				destHeight = (int)(bounds.height * scaleFactor);
+				Point size = canvasMolecule.getSize();
+				int corrwidth = (int)(size.x * scaleFactor);
+				int corrheight = (int)(size.y * scaleFactor);
+				destX = (int)(srcWidth / 2.0d - destWidth / 2.0d - corrwidth / 2.0d);
+				destY = (int)(srcHeight / 2.0d - destHeight / 2.0d - corrheight / 2.0d);
+			}
+			/*
+			 * Correction
+			 */
+			Point destSize = adjustSize(destWidth, destHeight);
+			event.gc.drawImage(imageMolecule, srcX, srcY, srcWidth, srcHeight, destX, destY, destSize.x, destSize.y);
+		} else {
+			/*
+			 * Text
+			 */
+			Font font = getFont();
+			FontData[] fontData = font.getFontData();
+			int width = event.gc.stringExtent(ERROR_MESSAGE).x;
+			int height = fontData[0].getHeight();
+			//
+			Point size = canvas.getSize();
+			int x = (int)(size.x / 2.0d - width / 2.0d);
+			int y = (int)(size.y / 2.0d - height / 2.0d);
+			event.gc.drawText(ERROR_MESSAGE, x, y, true);
+		}
 	}
 
 	private boolean isSourceDataAvailable(ILibraryInformation libraryInformation) {
