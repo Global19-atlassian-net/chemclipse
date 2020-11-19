@@ -22,6 +22,7 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IDataUpdateSuppor
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ExtendedPeakChartUI;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 public class PeakChartPart extends AbstractDataUpdateSupport implements IDataUpdateSupport {
@@ -32,7 +33,7 @@ public class PeakChartPart extends AbstractDataUpdateSupport implements IDataUpd
 	public PeakChartPart(Composite parent, MPart part) {
 
 		super(part);
-		extendedPeakChartUI = new ExtendedPeakChartUI(parent);
+		extendedPeakChartUI = new ExtendedPeakChartUI(parent, SWT.NONE);
 	}
 
 	@Focus

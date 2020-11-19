@@ -52,6 +52,7 @@ public class ScanChartPart extends AbstractPart<ExtendedScanChartUI> {
 				scan = peak.getPeakModel().getPeakMaximum();
 			}
 			getControl().update(scan);
+			return true;
 		}
 		//
 		return false;

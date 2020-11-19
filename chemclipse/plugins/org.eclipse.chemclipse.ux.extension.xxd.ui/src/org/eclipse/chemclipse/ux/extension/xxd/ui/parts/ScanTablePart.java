@@ -42,9 +42,11 @@ public class ScanTablePart extends AbstractPart<ExtendedScanTableUI> {
 		if(objects.size() == 1) {
 			if(isLoadEvent(topic)) {
 				getControl().setInput(objects.get(0));
+				return true;
 			} else {
 				if(isUnloadEvent(topic)) {
 					getControl().setInput(null);
+					return true;
 				}
 			}
 		}

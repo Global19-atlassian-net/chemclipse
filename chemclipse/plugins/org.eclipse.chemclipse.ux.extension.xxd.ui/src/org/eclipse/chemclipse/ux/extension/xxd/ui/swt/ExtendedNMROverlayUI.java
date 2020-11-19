@@ -31,6 +31,7 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
 import org.eclipse.chemclipse.swt.ui.support.IColorScheme;
 import org.eclipse.chemclipse.ux.extension.ui.editors.IScanEditorNMR;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.charts.ChartNMR;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageOverlay;
@@ -60,7 +61,7 @@ import org.eclipse.swtchart.extensions.linecharts.ILineSeriesSettings;
 import org.eclipse.swtchart.extensions.linecharts.LineChart;
 import org.eclipse.swtchart.extensions.linecharts.LineSeriesData;
 
-public class ExtendedNMROverlayUI implements Observer {
+public class ExtendedNMROverlayUI extends Composite implements Observer {
 
 	private enum Mode {
 		OVERLAY, STACKED
@@ -76,15 +77,19 @@ public class ExtendedNMROverlayUI implements Observer {
 	private IPreferenceStore preferenceStore;
 	private Mode mode = Mode.OVERLAY;
 
-	public ExtendedNMROverlayUI(Composite parent, EPartService partservice, IPreferenceStore preferenceStore) {
-		this.partservice = partservice;
-		this.preferenceStore = preferenceStore;
+	public ExtendedNMROverlayUI(Composite parent, int style) {
+
+		super(parent, style);
+		this.partservice = Activator.getDefault().getPartService();
+		this.preferenceStore = Activator.getDefault().getPreferenceStore();
+		//
 		if(preferenceStore != null) {
 			colorSchemeNormal = Colors.getColorScheme(preferenceStore.getString(PreferenceConstants.P_COLOR_SCHEME_DISPLAY_OVERLAY));
 		} else {
 			colorSchemeNormal = Colors.getColorScheme(Colors.COLOR_SCHEME_RED);
 		}
-		initialize(parent);
+		//
+		createControl();
 	}
 
 	public void update() {
@@ -115,12 +120,12 @@ public class ExtendedNMROverlayUI implements Observer {
 		return Collections.unmodifiableCollection(dataNMREditors.get().values());
 	}
 
-	private void initialize(Composite parent) {
+	private void createControl() {
 
-		parent.setLayout(new GridLayout(1, true));
+		setLayout(new GridLayout(1, true));
 		//
-		createToolbarMain(parent);
-		createOverlayChart(parent);
+		createToolbarMain(this);
+		createOverlayChart(this);
 	}
 
 	private void createToolbarMain(Composite parent) {
@@ -324,6 +329,7 @@ public class ExtendedNMROverlayUI implements Observer {
 		private Color color;
 
 		public OverlayDataNMRSelection(IScanEditorNMR editor) {
+
 			this.editor = editor;
 			IComplexSignalMeasurement<?>[] measurements = getMeasurements();
 			if(measurements.length > 0) {

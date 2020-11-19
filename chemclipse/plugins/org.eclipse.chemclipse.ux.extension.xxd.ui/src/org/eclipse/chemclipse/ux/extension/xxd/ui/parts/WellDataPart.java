@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Lablicate GmbH.
+ * Copyright (c) 2018, 2020 Lablicate GmbH.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -23,6 +23,7 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ExtendedWellDataUI;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 public class WellDataPart extends AbstractDataUpdateSupport implements IDataUpdateSupport {
@@ -31,8 +32,9 @@ public class WellDataPart extends AbstractDataUpdateSupport implements IDataUpda
 
 	@Inject
 	public WellDataPart(Composite parent, MPart part) {
+
 		super(part);
-		extendedWellDataUI = new ExtendedWellDataUI(parent);
+		extendedWellDataUI = new ExtendedWellDataUI(parent, SWT.NONE);
 	}
 
 	@Focus

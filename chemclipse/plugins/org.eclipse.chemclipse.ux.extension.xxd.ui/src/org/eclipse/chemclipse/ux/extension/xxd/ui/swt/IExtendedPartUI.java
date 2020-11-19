@@ -19,11 +19,18 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.ui.swt.ExtendedTableViewer;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceNode;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swtchart.extensions.core.ScrollableChart;
 
 public interface IExtendedPartUI {
 
@@ -32,16 +39,20 @@ public interface IExtendedPartUI {
 	String PREFIX_ENABLE = "Enable";
 	String PREFIX_DISABLE = "Disable";
 	//
+	String TITLE_SETTINGS = "Settings";
+	//
 	String TOOLTIP_TABLE = "the table content edit modus.";
 	String TOOLTIP_INFO = "additional information.";
 	String TOOLTIP_EDIT = "the edit toolbar.";
 	String TOOLTIP_SEARCH = "the search toolbar.";
 	String TOOLTIP_TYPES = "the types toolbar.";
+	String TOOLTIP_LEGEND = "the chart legend.";
 	//
 	String IMAGE_INFO = IApplicationImage.IMAGE_INFO;
 	String IMAGE_EDIT = IApplicationImage.IMAGE_EDIT;
 	String IMAGE_SEARCH = IApplicationImage.IMAGE_SEARCH;
 	String IMAGE_TYPES = IApplicationImage.IMAGE_TYPES;
+	String IMAGE_LEGEND = IApplicationImage.IMAGE_TAG;
 	String IMAGE_EDIT_ENTRY = IApplicationImage.IMAGE_EDIT_ENTRY;
 
 	default Button createButton(Composite parent, String text, String tooltip, String image) {
@@ -95,6 +106,71 @@ public interface IExtendedPartUI {
 					boolean edit = !tableViewer.isEditEnabled();
 					tableViewer.setEditEnabled(edit);
 					setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_TABLE, edit);
+				}
+			}
+		});
+		//
+		return button;
+	}
+
+	default Button createButtonToggleChartLegend(Composite parent, AtomicReference<? extends ScrollableChart> scrollableChart, String image) {
+
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText("");
+		setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_LEGEND, false);
+		button.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				ScrollableChart chart = scrollableChart.get();
+				if(chart != null) {
+					boolean enabled = chart.toggleSeriesLegendVisibility();
+					setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_LEGEND, enabled);
+				}
+			}
+		});
+		//
+		return button;
+	}
+
+	default Button createSettingsButton(Composite parent, List<IPreferencePage> preferencePages, ISettingsHandler settingsHandler) {
+
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText("");
+		button.setToolTipText("Open the Settings");
+		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_CONFIGURE, IApplicationImage.SIZE_16x16));
+		//
+		button.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				PreferenceManager preferenceManager = new PreferenceManager();
+				if(preferencePages.size() > 0) {
+					/*
+					 * Add the pages
+					 */
+					for(int i = 0; i < preferencePages.size(); i++) {
+						IPreferencePage preferencePage = preferencePages.get(i);
+						preferenceManager.addToRoot(new PreferenceNode(Integer.toString(i + 1), preferencePage));
+					}
+					//
+					PreferenceDialog preferenceDialog = new PreferenceDialog(e.display.getActiveShell(), preferenceManager);
+					preferenceDialog.create();
+					preferenceDialog.setMessage(TITLE_SETTINGS);
+					if(preferenceDialog.open() == Window.OK) {
+						try {
+							if(settingsHandler != null) {
+								settingsHandler.apply(e.display);
+							}
+						} catch(Exception e1) {
+							System.out.println(e1);
+							MessageDialog.openError(e.display.getActiveShell(), "Settings", "Something has gone wrong to apply the settings.");
+						}
+					}
+				} else {
+					MessageDialog.openInformation(e.display.getActiveShell(), TITLE_SETTINGS, "No setting page(s) have been defined.");
 				}
 			}
 		});

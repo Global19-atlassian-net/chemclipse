@@ -13,6 +13,7 @@
 package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,14 +51,7 @@ import org.eclipse.chemclipse.wsd.model.core.IChromatogramPeakWSD;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
 import org.eclipse.chemclipse.wsd.model.core.selection.IChromatogramSelectionWSD;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.di.Focus;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -68,6 +62,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swtchart.IAxis;
@@ -86,7 +81,7 @@ import org.eclipse.swtchart.extensions.linecharts.ILineSeriesSettings;
 import org.eclipse.swtchart.extensions.linecharts.LineChart;
 
 @SuppressWarnings("rawtypes")
-public class ExtendedPeakDetectorUI {
+public class ExtendedPeakDetectorUI extends Composite implements IExtendedPartUI {
 
 	private static final Logger logger = Logger.getLogger(ExtendedPeakDetectorUI.class);
 	//
@@ -295,8 +290,9 @@ public class ExtendedPeakDetectorUI {
 	}
 
 	@Inject
-	public ExtendedPeakDetectorUI(Composite parent) {
+	public ExtendedPeakDetectorUI(Composite parent, int style) {
 
+		super(parent, SWT.NONE);
 		detectionTypeDescriptions = new HashMap<String, String>();
 		detectionTypeDescriptions.put(DETECTION_TYPE_BASELINE, "Modus (Baseline) [Key:" + KEY_BASELINE + "]");
 		detectionTypeDescriptions.put(DETECTION_TYPE_BOX_BB, "Modus (BB) [Key:" + KEY_BB + "]");
@@ -304,13 +300,14 @@ public class ExtendedPeakDetectorUI {
 		detectionTypeDescriptions.put(DETECTION_TYPE_BOX_BV, "Modus (BV) [Key:" + KEY_BV + "]");
 		detectionTypeDescriptions.put(DETECTION_TYPE_BOX_VB, "Modus (VB) [Key:" + KEY_VB + "]");
 		detectionTypeDescriptions.put(DETECTION_TYPE_NONE, "");
-		initialize(parent);
+		//
+		createControl();
 	}
 
-	@Focus
-	public void setFocus() {
+	public boolean setFocus() {
 
 		updateChromatogramAndPeak();
+		return true;
 	}
 
 	public void update(IChromatogramSelection chromatogramSelection) {
@@ -374,13 +371,13 @@ public class ExtendedPeakDetectorUI {
 		}
 	}
 
-	private void initialize(Composite parent) {
+	private void createControl() {
 
-		parent.setLayout(new GridLayout(1, true));
+		setLayout(new GridLayout(1, true));
 		//
-		createToolbarMain(parent);
-		toolbarInfo = createToolbarInfo(parent);
-		createChromatogramChart(parent);
+		createToolbarMain(this);
+		toolbarInfo = createToolbarInfo(this);
+		createChromatogramChart(this);
 		//
 		PartSupport.setCompositeVisibility(toolbarInfo, true);
 	}
@@ -538,30 +535,12 @@ public class ExtendedPeakDetectorUI {
 
 	private void createSettingsButton(Composite parent) {
 
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Open the Settings");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_CONFIGURE, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
+		createSettingsButton(parent, Arrays.asList(new PreferencePagePeaks()), new ISettingsHandler() {
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void apply(Display display) {
 
-				IPreferencePage preferencePage = new PreferencePagePeaks();
-				preferencePage.setTitle("Peak Settings");
-				PreferenceManager preferenceManager = new PreferenceManager();
-				preferenceManager.addToRoot(new PreferenceNode("1", preferencePage));
-				//
-				PreferenceDialog preferenceDialog = new PreferenceDialog(e.display.getActiveShell(), preferenceManager);
-				preferenceDialog.create();
-				preferenceDialog.setMessage("Settings");
-				if(preferenceDialog.open() == Window.OK) {
-					try {
-						applySettings();
-					} catch(Exception e1) {
-						MessageDialog.openError(e.display.getActiveShell(), "Settings", "Something has gone wrong to apply the chart settings.");
-					}
-				}
+				applySettings();
 			}
 		});
 	}
@@ -854,7 +833,7 @@ public class ExtendedPeakDetectorUI {
 		updateChromatogramAndPeak();
 	}
 
-	private void redraw() {
+	public void redraw() {
 
 		chromatogramChart.getBaseChart().redraw();
 	}

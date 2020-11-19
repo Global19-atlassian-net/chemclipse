@@ -39,11 +39,6 @@ public abstract class AbstractPart<T extends Composite> {
 		}
 	};
 
-	// TODO Remove
-	public AbstractPart() {
-
-	}
-
 	/**
 	 * Create the part with the given main topic.
 	 * 

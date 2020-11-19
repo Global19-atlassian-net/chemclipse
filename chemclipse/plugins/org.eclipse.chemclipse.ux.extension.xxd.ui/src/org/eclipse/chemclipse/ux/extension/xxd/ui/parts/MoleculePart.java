@@ -54,6 +54,7 @@ public class MoleculePart extends AbstractPart<ExtendedMoleculeUI> {
 					libraryInformation = libraryMassSpectrum.getLibraryInformation();
 				}
 				getControl().setInput(libraryInformation);
+				return true;
 			} else if(isIdentificationTargetTopic(topic)) {
 				/*
 				 * Identification Target
@@ -65,6 +66,7 @@ public class MoleculePart extends AbstractPart<ExtendedMoleculeUI> {
 					libraryInformation = identificationTarget.getLibraryInformation();
 				}
 				getControl().setInput(libraryInformation);
+				return true;
 			}
 		}
 		//

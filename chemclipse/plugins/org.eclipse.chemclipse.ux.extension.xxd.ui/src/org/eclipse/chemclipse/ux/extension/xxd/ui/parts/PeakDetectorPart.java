@@ -22,6 +22,7 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IDataUpdateSuppor
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ExtendedPeakDetectorUI;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 public class PeakDetectorPart extends AbstractDataUpdateSupport implements IDataUpdateSupport {
@@ -32,7 +33,7 @@ public class PeakDetectorPart extends AbstractDataUpdateSupport implements IData
 	public PeakDetectorPart(Composite parent, MPart part) {
 
 		super(part);
-		extendedPeakDetectorUI = new ExtendedPeakDetectorUI(parent);
+		extendedPeakDetectorUI = new ExtendedPeakDetectorUI(parent, SWT.NONE);
 	}
 
 	@Focus

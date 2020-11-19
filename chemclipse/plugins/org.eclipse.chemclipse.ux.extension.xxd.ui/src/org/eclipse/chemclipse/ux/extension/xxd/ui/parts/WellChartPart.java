@@ -23,6 +23,7 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ExtendedWellChartUI;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 public class WellChartPart extends AbstractDataUpdateSupport implements IDataUpdateSupport {
@@ -33,7 +34,7 @@ public class WellChartPart extends AbstractDataUpdateSupport implements IDataUpd
 	public WellChartPart(Composite parent, MPart part) {
 
 		super(part);
-		extendedWellChartUI = new ExtendedWellChartUI(parent);
+		extendedWellChartUI = new ExtendedWellChartUI(parent, SWT.NONE);
 	}
 
 	@Focus

@@ -22,7 +22,7 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IDataUpdateSuppor
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ExtendedBaselineUI;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 public class ChromatogramBaselinePart extends AbstractDataUpdateSupport implements IDataUpdateSupport {
@@ -33,8 +33,7 @@ public class ChromatogramBaselinePart extends AbstractDataUpdateSupport implemen
 	public ChromatogramBaselinePart(Composite parent, MPart part) {
 
 		super(part);
-		parent.setLayout(new FillLayout());
-		extendedBaselineUI = new ExtendedBaselineUI(parent);
+		extendedBaselineUI = new ExtendedBaselineUI(parent, SWT.NONE);
 	}
 
 	@Focus

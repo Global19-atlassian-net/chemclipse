@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Lablicate GmbH.
+ * Copyright (c) 2018, 2020 Lablicate GmbH.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -22,6 +22,7 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IDataUpdateSuppor
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ExtendedPeakQuantReferencesUI;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 public class PeakQuantReferencesPart extends AbstractDataUpdateSupport implements IDataUpdateSupport {
@@ -30,8 +31,9 @@ public class PeakQuantReferencesPart extends AbstractDataUpdateSupport implement
 
 	@Inject
 	public PeakQuantReferencesPart(Composite parent, MPart part) {
+
 		super(part);
-		extendedPeakQuantReferencesUI = new ExtendedPeakQuantReferencesUI(parent);
+		extendedPeakQuantReferencesUI = new ExtendedPeakQuantReferencesUI(parent, SWT.NONE);
 	}
 
 	@Focus

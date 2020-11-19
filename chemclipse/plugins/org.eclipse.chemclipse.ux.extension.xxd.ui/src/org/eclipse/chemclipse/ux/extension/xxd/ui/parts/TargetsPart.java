@@ -43,6 +43,7 @@ public class TargetsPart extends AbstractPart<ExtendedTargetsUI> {
 		if(objects.size() == 1) {
 			if(isChromatogramUnloadEvent(topic) || isOtherUnloadEvent(topic)) {
 				getControl().update(null);
+				return true;
 			} else {
 				Object object = objects.get(0);
 				if(isChromatogramTopic(topic)) {
@@ -50,9 +51,11 @@ public class TargetsPart extends AbstractPart<ExtendedTargetsUI> {
 						IChromatogramSelection<?, ?> chromatogramSelection = (IChromatogramSelection<?, ?>)object;
 						object = chromatogramSelection.getChromatogram();
 						getControl().update(object);
+						return true;
 					}
 				} else if(isScanOrPeakTopic(topic) || isIdentificationTopic(topic)) {
 					getControl().update(object);
+					return true;
 				}
 			}
 		}

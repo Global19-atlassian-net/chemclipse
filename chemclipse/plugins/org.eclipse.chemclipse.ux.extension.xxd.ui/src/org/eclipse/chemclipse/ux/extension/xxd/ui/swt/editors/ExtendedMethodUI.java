@@ -54,6 +54,7 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.methods.MethodSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.methods.ProcessingWizard;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.methods.SettingsWizard;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ConfigurableUI;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.IExtendedPartUI;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.MethodUIConfig;
 import org.eclipse.chemclipse.xxd.process.ui.preferences.PreferencePageReportExport;
 import org.eclipse.core.runtime.Adapters;
@@ -98,7 +99,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-public class ExtendedMethodUI extends Composite implements ConfigurableUI<MethodUIConfig> {
+public class ExtendedMethodUI extends Composite implements ConfigurableUI<MethodUIConfig>, IExtendedPartUI {
 
 	private Composite toolbarHeader;
 	private Label labelDataInfo;
