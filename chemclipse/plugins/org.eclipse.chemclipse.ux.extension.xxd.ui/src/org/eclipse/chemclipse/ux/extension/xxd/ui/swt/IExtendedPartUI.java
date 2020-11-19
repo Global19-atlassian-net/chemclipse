@@ -36,10 +36,12 @@ public interface IExtendedPartUI {
 	String TOOLTIP_INFO = "additional information.";
 	String TOOLTIP_EDIT = "the edit toolbar.";
 	String TOOLTIP_SEARCH = "the search toolbar.";
+	String TOOLTIP_TYPES = "the types toolbar.";
 	//
 	String IMAGE_INFO = IApplicationImage.IMAGE_INFO;
 	String IMAGE_EDIT = IApplicationImage.IMAGE_EDIT;
 	String IMAGE_SEARCH = IApplicationImage.IMAGE_SEARCH;
+	String IMAGE_TYPES = IApplicationImage.IMAGE_TYPES;
 	String IMAGE_EDIT_ENTRY = IApplicationImage.IMAGE_EDIT_ENTRY;
 
 	default Button createButton(Composite parent, String text, String tooltip, String image) {

@@ -42,7 +42,6 @@ import org.eclipse.chemclipse.swt.ui.components.ISearchListener;
 import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.swt.ui.components.SearchSupportUI;
 import org.eclipse.chemclipse.swt.ui.preferences.PreferencePageSystem;
-import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.ListSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
@@ -87,10 +86,12 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 	//
 	private Button buttonToolbarInfo;
 	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
+	private Button buttonToolbarSearch;
+	private AtomicReference<Composite> toolbarSearch = new AtomicReference<>();
+	private Button buttonToolbarEdit;
+	private AtomicReference<Composite> toolbarEdit = new AtomicReference<>();
 	//
 	private ComboViewer comboViewerTargetOption;
-	private Composite toolbarSearch;
-	private Composite toolbarModify;
 	private ComboTarget comboTarget;
 	private Button buttonAddTarget;
 	private Button buttonDeleteTarget;
@@ -177,8 +178,8 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 		//
 		createToolbarMain(this);
 		createToolbarInfo(this);
-		toolbarSearch = createToolbarSearch(this);
-		toolbarModify = createToolbarModify(this);
+		createToolbarSearch(this);
+		createToolbarEdit(this);
 		targetListUI = createTargetTable(this);
 		//
 		initialize();
@@ -187,8 +188,8 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 	private void initialize() {
 
 		enableToolbar(toolbarInfo, buttonToolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO, true);
-		PartSupport.setCompositeVisibility(toolbarSearch, false);
-		PartSupport.setCompositeVisibility(toolbarModify, false);
+		enableToolbar(toolbarSearch, buttonToolbarSearch, IMAGE_SEARCH, TOOLTIP_SEARCH, false);
+		enableToolbar(toolbarEdit, buttonToolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT, false);
 		//
 		targetListUI.setEditEnabled(false);
 		comboViewerTargetOption.setInput(new String[]{TARGET_OPTION_AUTO, TARGET_OPTION_CHROMATOGRAM});
@@ -206,8 +207,8 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 		//
 		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
 		comboViewerTargetOption = createComboViewerTargetOption(composite);
-		createButtonToggleToolbarSearch(composite);
-		createButtonToggleToolbarModify(composite);
+		buttonToolbarSearch = createButtonToggleToolbar(composite, toolbarSearch, IMAGE_SEARCH, TOOLTIP_SEARCH);
+		buttonToolbarEdit = createButtonToggleToolbar(composite, toolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT);
 		buttonDeleteTargets = createButtonDeleteAll(composite);
 		createButtonSettings(composite);
 	}
@@ -252,53 +253,6 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 		});
 		//
 		return comboViewer;
-	}
-
-	private Button createButtonToggleToolbarSearch(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle search toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SEARCH, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarSearch);
-				if(visible) {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SEARCH, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SEARCH, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
-		return button;
-	}
-
-	private Button createButtonToggleToolbarModify(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle modify toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_EDIT_DEFAULT, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarModify);
-				if(visible) {
-					comboTarget.updateContentProposals();
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_EDIT_ACTIVE, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_EDIT_DEFAULT, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
-		return button;
 	}
 
 	private Button createButtonToggleEditModus(Composite parent) {
@@ -381,7 +335,7 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 		toolbarInfo.set(informationUI);
 	}
 
-	private Composite createToolbarSearch(Composite parent) {
+	private void createToolbarSearch(Composite parent) {
 
 		SearchSupportUI searchSupportUI = new SearchSupportUI(parent, SWT.NONE);
 		searchSupportUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -394,10 +348,10 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 			}
 		});
 		//
-		return searchSupportUI;
+		toolbarSearch.set(searchSupportUI);
 	}
 
-	private Composite createToolbarModify(Composite parent) {
+	private void createToolbarEdit(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -408,7 +362,7 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 		buttonDeleteTarget = createButtonDelete(composite);
 		createButtonToggleEditModus(composite);
 		//
-		return composite;
+		toolbarEdit.set(composite);
 	}
 
 	private ComboTarget createComboTarget(Composite parent) {
@@ -721,7 +675,7 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 			targetListUI.setInput(targetSupplier.getTargets());
 		} else {
 			targetListUI.setInput(null);
-			PartSupport.setCompositeVisibility(toolbarModify, false);
+			enableToolbar(toolbarEdit, buttonToolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT, false);
 		}
 		//
 		updateLabelInfo();

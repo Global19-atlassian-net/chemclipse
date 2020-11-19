@@ -40,7 +40,6 @@ import org.eclipse.chemclipse.swt.ui.components.ISearchListener;
 import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.swt.ui.components.SearchSupportUI;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
-import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.parts.ScanTablePart;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
@@ -87,15 +86,16 @@ public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 
 	private static final Logger logger = Logger.getLogger(ScanTablePart.class);
 	//
-	private Composite toolbarMain;
+	private AtomicReference<Composite> toolbarMain = new AtomicReference<>();
 	private Button buttonToolbarInfo;
 	private AtomicReference<InformationUI> toolbarInfoTop = new AtomicReference<>();
 	private AtomicReference<InformationUI> toolbarInfoBottom = new AtomicReference<>();
-	private Composite toolbarEdit;
-	private Composite toolbarSearch;
+	private Button buttonToolbarSearch;
+	private AtomicReference<Composite> toolbarSearch = new AtomicReference<>();
+	private Button buttonToolbarEdit;
+	private AtomicReference<Composite> toolbarEdit = new AtomicReference<>();
 	private Button buttonCopyTraces;
 	private Button buttonSaveScan;
-	private Button buttonToggleToolbarEdit;
 	//
 	private CLabel labelOptimized;
 	private Button buttonDeleteOptimized;
@@ -207,15 +207,8 @@ public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 	 */
 	private void enableEditModus(boolean enabled) {
 
-		buttonToggleToolbarEdit.setEnabled(enabled);
-		PartSupport.setControlVisibility(buttonToggleToolbarEdit, enabled);
-		/*
-		 * Don't necessarily show the edit toolbar.
-		 * But hide it, if appropriate.
-		 */
-		if(enabled == false) {
-			PartSupport.setCompositeVisibility(toolbarEdit, false);
-		}
+		enableToolbar(toolbarEdit, buttonToolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT, enabled);
+		buttonToolbarEdit.setEnabled(enabled);
 		//
 		scanTableUI.setEditEnabled(enabled);
 		ITableSettings tableSettings = scanTableUI.getTableSettings();
@@ -228,8 +221,9 @@ public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 		}
 		//
 		scanTableUI.applySettings(tableSettings);
-		toolbarMain.layout(true);
-		toolbarMain.redraw();
+		Composite main = toolbarMain.get();
+		main.layout(true);
+		main.redraw();
 	}
 
 	private void updateObject() {
@@ -256,7 +250,7 @@ public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 			labelY.setText(titleY + ":");
 			textY.setToolTipText(titleY);
 			//
-			toolbarEdit.layout(true);
+			toolbarEdit.get().layout(true);
 		}
 	}
 
@@ -326,10 +320,10 @@ public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 		deleteMenuEntry = new DeleteMenuEntry();
 		deleteKeyEventProcessor = new DeleteKeyEventProcessor();
 		//
-		toolbarMain = createToolbarMain(composite);
+		createToolbarMain(composite);
 		createToolbarInfoTop(composite);
-		toolbarEdit = createToolbarEdit(composite);
-		toolbarSearch = createToolbarSearch(composite);
+		createToolbarEdit(composite);
+		createToolbarSearch(composite);
 		createTable(composite);
 		createToolbarInfoBottom(composite);
 		//
@@ -339,14 +333,14 @@ public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 	private void initialize() {
 
 		enableToolbar(toolbarInfoTop, buttonToolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO, true);
-		PartSupport.setCompositeVisibility(toolbarEdit, false);
-		PartSupport.setCompositeVisibility(toolbarSearch, false);
+		enableToolbar(toolbarSearch, buttonToolbarSearch, IMAGE_SEARCH, TOOLTIP_SEARCH, false);
+		enableToolbar(toolbarEdit, buttonToolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT, false);
 		enableToolbar(toolbarInfoBottom, buttonToolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO, true);
 		//
 		enableEditModus(false); // Disable the edit modus by default.
 	}
 
-	private Composite createToolbarMain(Composite parent) {
+	private void createToolbarMain(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -354,15 +348,15 @@ public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 		//
 		labelOptimized = createInfoLabelOptimized(composite);
 		buttonToolbarInfo = createButtonToggleToolbar(composite, Arrays.asList(toolbarInfoTop, toolbarInfoBottom), IMAGE_INFO, TOOLTIP_INFO);
-		buttonToggleToolbarEdit = createButtonToggleToolbarEdit(composite);
-		createButtonToggleToolbarSearch(composite);
+		buttonToolbarSearch = createButtonToggleToolbar(composite, toolbarSearch, IMAGE_SEARCH, TOOLTIP_SEARCH);
+		buttonToolbarEdit = createButtonToggleToolbar(composite, toolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT);
 		buttonCopyTraces = createButtonCopyTracesClipboard(composite);
 		createResetButton(composite);
 		buttonSaveScan = createSaveButton(composite);
 		buttonDeleteOptimized = createDeleteOptimizedButton(composite);
 		createSettingsButton(composite);
 		//
-		return composite;
+		toolbarMain.set(composite);
 	}
 
 	private CLabel createInfoLabelOptimized(Composite parent) {
@@ -455,53 +449,6 @@ public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 			}
 		}
 		return null;
-	}
-
-	private Button createButtonToggleToolbarEdit(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle edit toolbar.");
-		button.setText("");
-		button.setLayoutData(new GridData()); // GridData is needed to show/hide the control, see: enableEditModus(boolean enabled)
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_EDIT_DEFAULT, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarEdit);
-				if(visible) {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_EDIT_ACTIVE, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_EDIT_DEFAULT, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
-		return button;
-	}
-
-	private Button createButtonToggleToolbarSearch(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle search toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SEARCH, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarSearch);
-				if(visible) {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SEARCH, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SEARCH, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
-		return button;
 	}
 
 	private Button createButtonCopyTracesClipboard(Composite parent) {
@@ -649,7 +596,7 @@ public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 		return informationUI;
 	}
 
-	private Composite createToolbarEdit(Composite parent) {
+	private void createToolbarEdit(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -663,10 +610,10 @@ public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 		createButtonAdd(composite);
 		createButtonDelete(composite);
 		//
-		return composite;
+		toolbarEdit.set(composite);
 	}
 
-	private Composite createToolbarSearch(Composite parent) {
+	private void createToolbarSearch(Composite parent) {
 
 		SearchSupportUI searchSupportUI = new SearchSupportUI(parent, SWT.NONE);
 		searchSupportUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -679,7 +626,7 @@ public class ExtendedScanTableUI extends Composite implements IExtendedPartUI {
 			}
 		});
 		//
-		return searchSupportUI;
+		toolbarSearch.set(searchSupportUI);
 	}
 
 	private Label createLabelX(Composite parent) {

@@ -34,7 +34,6 @@ import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.ui.workbench.DisplayUtils;
 import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
-import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.calibration.IUpdateListener;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.internal.support.SignalType;
@@ -70,7 +69,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 
 public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 
@@ -83,15 +81,15 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 	//
 	private Button buttonToolbarInfo;
 	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
-	private Composite toolbarEdit;
-	private Composite toolbarTypes;
+	private Button buttonToolbarEdit;
+	private AtomicReference<Composite> toolbarEdit = new AtomicReference<>();
+	private Button buttonToolbarTypes;
+	private AtomicReference<Composite> toolbarTypes = new AtomicReference<>();
 	//
 	private CLabel labelEdit;
 	private CLabel labelSubtract;
 	private CLabel labelOptimized;
 	//
-	private Label labelScan;
-	private Button buttonEdit;
 	private Button buttonIdentify;
 	private Button buttonCopyTraces;
 	private Button buttonSave;
@@ -180,7 +178,7 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 		this.scan = scan;
 		scanFilterUI.setInput(scan);
 		scanIdentifierUI.setInput(scan);
-		labelScan.setText(scanDataSupport.getScanLabel(scan));
+		toolbarInfo.get().setText(scanDataSupport.getScanLabel(scan));
 		setDetectorSignalType(scan);
 		updateScanChart(scan);
 		updateInfoLabels();
@@ -209,8 +207,8 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 		//
 		createToolbarMain(composite);
 		createToolbarInfo(composite);
-		toolbarTypes = createToolbarTypes(composite);
-		toolbarEdit = createToolbarEdit(composite);
+		createToolbarTypes(composite);
+		createToolbarEdit(composite);
 		scanChartUI = createScanChart(composite);
 		//
 		initialize();
@@ -219,8 +217,8 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 	private void initialize() {
 
 		enableToolbar(toolbarInfo, buttonToolbarInfo, IApplicationImage.IMAGE_INFO, TOOLTIP_INFO, true);
-		PartSupport.setCompositeVisibility(toolbarTypes, false);
-		PartSupport.setCompositeVisibility(toolbarEdit, false);
+		enableToolbar(toolbarTypes, buttonToolbarTypes, IMAGE_TYPES, TOOLTIP_TYPES, false);
+		enableToolbar(toolbarEdit, buttonToolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT, false);
 		//
 		updateButtons();
 	}
@@ -235,14 +233,27 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 		labelSubtract = createInfoLabelSubtract(composite);
 		labelOptimized = createInfoLabelOptimized(composite);
 		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
-		createButtonToggleToolbarTypes(composite);
-		buttonEdit = createButtonToggleToolbarEdit(composite);
+		buttonToolbarTypes = createButtonToggleToolbar(composite, toolbarTypes, IMAGE_TYPES, TOOLTIP_TYPES);
+		buttonToolbarEdit = createButtonToggleToolbar(composite, toolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT);
 		buttonIdentify = createButtonIdentify(composite);
 		buttonCopyTraces = createButtonCopyTracesClipboard(composite);
 		createResetButton(composite);
 		buttonSave = createSaveButton(composite);
 		buttonDeleteOptimized = createDeleteOptimizedButton(composite);
 		createSettingsButton(composite);
+		/*
+		 * TODO Move
+		 */
+		buttonToolbarEdit.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				boolean visible = toolbarEdit.get().isVisible();
+				setEditToolbarStatus(visible);
+				updateInfoLabels();
+			}
+		});
 		//
 		return composite;
 	}
@@ -305,7 +316,7 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 		return label;
 	}
 
-	private Composite createToolbarTypes(Composite parent) {
+	private void createToolbarTypes(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -316,10 +327,10 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 		comboSignalType = createSignalType(composite);
 		comboSignalType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		//
-		return composite;
+		toolbarTypes.set(composite);
 	}
 
-	private Composite createToolbarEdit(Composite parent) {
+	private void createToolbarEdit(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -329,7 +340,7 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 		scanFilterUI = createScanFilterUI(composite);
 		scanIdentifierUI = createScanIdentifierUI(composite);
 		//
-		return composite;
+		toolbarEdit.set(composite);
 	}
 
 	private Button createButtonSubtractOption(Composite parent) {
@@ -471,63 +482,18 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 		return combo;
 	}
 
-	private Button createButtonToggleToolbarTypes(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle type toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_TYPES, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarTypes);
-				if(visible) {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_TYPES, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_TYPES, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
-		return button;
-	}
-
-	private Button createButtonToggleToolbarEdit(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle the edit toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_EDIT_DEFAULT, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarEdit);
-				setEditToolbarStatus(visible);
-				updateInfoLabels();
-			}
-		});
-		//
-		return button;
-	}
-
 	private void setEditToolbarStatus(boolean visible) {
 
 		if(!visible) {
-			boolean toolbarIsVisible = toolbarEdit.isVisible();
+			boolean toolbarIsVisible = toolbarEdit.get().isVisible();
 			if(toolbarIsVisible) {
-				PartSupport.toggleCompositeVisibility(toolbarEdit);
+				enableToolbar(toolbarEdit, buttonToolbarEdit, IMAGE_EDIT, TOOLTIP_EDIT, false);
 			}
 		}
 		/*
 		 * Set the edit modus and button icon.
 		 */
 		editModus = visible;
-		String fileName = visible ? IApplicationImage.IMAGE_EDIT_ACTIVE : IApplicationImage.IMAGE_EDIT_DEFAULT;
-		buttonEdit.setImage(ApplicationImageFactory.getInstance().getImage(fileName, IApplicationImage.SIZE_16x16));
 	}
 
 	private void updateInfoLabels() {
