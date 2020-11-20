@@ -27,7 +27,6 @@ import org.eclipse.chemclipse.converter.model.reports.ISequence;
 import org.eclipse.chemclipse.converter.model.reports.ISequenceRecord;
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
-import org.eclipse.chemclipse.processing.ui.E4ProcessSupplierContext;
 import org.eclipse.chemclipse.support.events.IPerspectiveAndViewIds;
 import org.eclipse.chemclipse.support.ui.workbench.DisplayUtils;
 import org.eclipse.chemclipse.support.ui.workbench.EditorSupport;
@@ -43,6 +42,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
@@ -62,8 +62,6 @@ public class SequenceEditor extends AbstractDataUpdateSupport implements IDataUp
 	//
 	private File sequenceFile;
 	private ExtendedSequenceListUI extendedSequenceListUI;
-	@Inject
-	private E4ProcessSupplierContext processContext;
 
 	@Inject
 	public SequenceEditor(Composite parent, MPart part, MDirtyable dirtyable, EModelService modelService, MApplication application, Shell shell) {
@@ -197,6 +195,6 @@ public class SequenceEditor extends AbstractDataUpdateSupport implements IDataUp
 
 	private void createPage(Composite parent) {
 
-		extendedSequenceListUI = new ExtendedSequenceListUI(parent, processContext);
+		extendedSequenceListUI = new ExtendedSequenceListUI(parent, SWT.NONE);
 	}
 }

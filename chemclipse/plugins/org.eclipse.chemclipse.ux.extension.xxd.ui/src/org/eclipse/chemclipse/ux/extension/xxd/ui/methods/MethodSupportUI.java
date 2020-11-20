@@ -39,6 +39,7 @@ import org.eclipse.chemclipse.support.ui.provider.AbstractLabelProvider;
 import org.eclipse.chemclipse.support.ui.provider.ListContentProvider;
 import org.eclipse.chemclipse.swt.ui.components.IMethodListener;
 import org.eclipse.chemclipse.ux.extension.ui.provider.ISupplierEditorSupport;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.editors.EditorSupportFactory;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.PreferencesConfig;
 import org.eclipse.chemclipse.xxd.process.ui.preferences.PreferencePageChromatogramExport;
@@ -66,7 +67,7 @@ import org.eclipse.swt.widgets.Shell;
 public class MethodSupportUI extends Composite implements PreferencesConfig {
 
 	private static final Logger logger = Logger.getLogger(MethodSupportUI.class);
-	private final ISupplierEditorSupport supplierEditorSupport = new EditorSupportFactory(DataType.MTH).getInstanceEditorSupport();
+	private final ISupplierEditorSupport supplierEditorSupport = new EditorSupportFactory(DataType.MTH, () -> Activator.getDefault().getEclipseContext()).getInstanceEditorSupport();
 	//
 	private ComboViewer comboViewerMethods;
 	private Button buttonAddMethod;

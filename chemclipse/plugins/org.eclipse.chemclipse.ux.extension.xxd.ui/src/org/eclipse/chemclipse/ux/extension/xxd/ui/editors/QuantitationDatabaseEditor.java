@@ -41,6 +41,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
@@ -160,7 +161,7 @@ public class QuantitationDatabaseEditor extends AbstractDataUpdateSupport implem
 
 	private void createPage(Composite parent) {
 
-		extendedQuantCompoundListUI = new ExtendedQuantCompoundListUI(parent);
+		extendedQuantCompoundListUI = new ExtendedQuantCompoundListUI(parent, SWT.NONE);
 		extendedQuantCompoundListUI.setModificationHandler(new IModificationHandler() {
 
 			@Override

@@ -13,6 +13,7 @@
 package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -37,14 +38,8 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstant
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageOverlay;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -61,7 +56,7 @@ import org.eclipse.swtchart.extensions.linecharts.ILineSeriesSettings;
 import org.eclipse.swtchart.extensions.linecharts.LineChart;
 import org.eclipse.swtchart.extensions.linecharts.LineSeriesData;
 
-public class ExtendedNMROverlayUI extends Composite implements Observer {
+public class ExtendedNMROverlayUI extends Composite implements Observer, IExtendedPartUI {
 
 	private enum Mode {
 		OVERLAY, STACKED
@@ -72,17 +67,14 @@ public class ExtendedNMROverlayUI extends Composite implements Observer {
 	 * A mapping between (active) {@link IScanEditorNMR} and selected {@link SpectrumMeasurement}s
 	 */
 	private AtomicReference<Map<IScanEditorNMR, OverlayDataNMRSelection>> dataNMREditors = new AtomicReference<Map<IScanEditorNMR, OverlayDataNMRSelection>>(Collections.emptyMap());
-	private EPartService partservice;
+	private EPartService partservice = Activator.getDefault().getPartService();
+	private IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 	private IColorScheme colorSchemeNormal;
-	private IPreferenceStore preferenceStore;
 	private Mode mode = Mode.OVERLAY;
 
 	public ExtendedNMROverlayUI(Composite parent, int style) {
 
 		super(parent, style);
-		this.partservice = Activator.getDefault().getPartService();
-		this.preferenceStore = Activator.getDefault().getPreferenceStore();
-		//
 		if(preferenceStore != null) {
 			colorSchemeNormal = Colors.getColorScheme(preferenceStore.getString(PreferenceConstants.P_COLOR_SCHEME_DISPLAY_OVERLAY));
 		} else {
@@ -204,43 +196,19 @@ public class ExtendedNMROverlayUI extends Composite implements Observer {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				applyOverlaySettings();
+				applySettings();
 			}
 		});
 	}
 
 	private void createSettingsButton(Composite parent) {
 
-		if(preferenceStore == null) {
-			return;
-		}
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Open the Settings");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_CONFIGURE, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
+		createSettingsButton(parent, Arrays.asList(new PreferencePageOverlay()), new ISettingsHandler() {
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void apply(Display display) {
 
-				IPreferencePage preferencePageOverlay = new PreferencePageOverlay();
-				preferencePageOverlay.setTitle("Overlay Settings");
-				//
-				PreferenceManager preferenceManager = new PreferenceManager();
-				preferenceManager.addToRoot(new PreferenceNode("1", preferencePageOverlay));
-				//
-				PreferenceDialog preferenceDialog = new PreferenceDialog(e.display.getActiveShell(), preferenceManager);
-				preferenceDialog.setPreferenceStore(preferenceStore);
-				preferenceDialog.create();
-				preferenceDialog.setMessage("Settings");
-				if(preferenceDialog.open() == Window.OK) {
-					try {
-						applyOverlaySettings();
-					} catch(Exception e1) {
-						System.out.println(e1);
-						MessageDialog.openError(e.display.getActiveShell(), "Settings", "Something has gone wrong to apply the chart settings.");
-					}
-				}
+				applySettings();
 			}
 		});
 	}
@@ -256,7 +224,7 @@ public class ExtendedNMROverlayUI extends Composite implements Observer {
 		chartNMR.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
-	private void applyOverlaySettings() {
+	private void applySettings() {
 
 	}
 
