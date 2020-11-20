@@ -55,7 +55,7 @@ public class ExtendedPlateChartsUI extends Composite implements IExtendedPartUI 
 	private Button buttonToolbarInfo;
 	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
 	private Combo comboChannels;
-	private ChartPCR chartPCR;
+	private AtomicReference<ChartPCR> chartControl = new AtomicReference<>();
 	private IPlate plate = null;
 	//
 	private IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
@@ -111,7 +111,7 @@ public class ExtendedPlateChartsUI extends Composite implements IExtendedPartUI 
 		if(plate != null) {
 			updateChart();
 		} else {
-			chartPCR.deleteSeries();
+			chartControl.get().deleteSeries();
 		}
 	}
 
@@ -135,7 +135,7 @@ public class ExtendedPlateChartsUI extends Composite implements IExtendedPartUI 
 		createToolbarMain(this);
 		createToolbarInfo(this);
 		comboChannels = createComboChannels(this);
-		chartPCR = createChart(this);
+		createChart(this);
 		//
 		initialize();
 	}
@@ -154,24 +154,9 @@ public class ExtendedPlateChartsUI extends Composite implements IExtendedPartUI 
 		composite.setLayout(new GridLayout(4, false));
 		//
 		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
-		createToggleChartLegendButton(composite);
+		createButtonToggleChartLegend(composite, chartControl, IMAGE_LEGEND);
 		createResetButton(composite);
 		createSettingsButton(composite);
-	}
-
-	private void createToggleChartLegendButton(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle the chart legend");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_TAG, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				chartPCR.toggleSeriesLegendVisibility();
-			}
-		});
 	}
 
 	private void createResetButton(Composite parent) {
@@ -226,13 +211,14 @@ public class ExtendedPlateChartsUI extends Composite implements IExtendedPartUI 
 		return combo;
 	}
 
-	private ChartPCR createChart(Composite parent) {
+	private void createChart(Composite parent) {
 
 		ChartPCR chart = new ChartPCR(parent, SWT.NONE);
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.horizontalSpan = 3;
 		chart.setLayoutData(gridData);
-		return chart;
+		//
+		chartControl.set(chart);
 	}
 
 	private void updateChart() {
@@ -240,7 +226,7 @@ public class ExtendedPlateChartsUI extends Composite implements IExtendedPartUI 
 		/*
 		 * Clear the chart and reset.
 		 */
-		chartPCR.deleteSeries();
+		chartControl.get().deleteSeries();
 		if(plate != null) {
 			ColorCodes colorCodes = new ColorCodes();
 			colorCodes.load(preferenceStore.getString(PreferenceConstants.P_PCR_COLOR_CODES));
@@ -260,7 +246,7 @@ public class ExtendedPlateChartsUI extends Composite implements IExtendedPartUI 
 				}
 			}
 			//
-			chartPCR.addSeriesData(lineSeriesDataList);
+			chartControl.get().addSeriesData(lineSeriesDataList);
 		}
 	}
 

@@ -55,7 +55,7 @@ public class ExtendedWellChartUI extends Composite implements IExtendedPartUI {
 	private Button buttonToolbarInfo;
 	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
 	private Combo comboChannels;
-	private ChartPCR chartPCR;
+	private AtomicReference<ChartPCR> chartControl = new AtomicReference<>();
 	//
 	private IWell well = null;
 	private IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
@@ -122,7 +122,7 @@ public class ExtendedWellChartUI extends Composite implements IExtendedPartUI {
 		createToolbarMain(this);
 		createToolbarInfo(this);
 		comboChannels = createComboChannels(this);
-		chartPCR = createChart(this);
+		createChart(this);
 		//
 		initialize();
 	}
@@ -141,24 +141,9 @@ public class ExtendedWellChartUI extends Composite implements IExtendedPartUI {
 		composite.setLayout(new GridLayout(4, false));
 		//
 		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
-		createToggleChartLegendButton(composite);
+		createButtonToggleChartLegend(composite, chartControl, IMAGE_LEGEND);
 		createResetButton(composite);
 		createSettingsButton(composite);
-	}
-
-	private void createToggleChartLegendButton(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle the chart legend");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_TAG, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				chartPCR.toggleSeriesLegendVisibility();
-			}
-		});
 	}
 
 	private void createResetButton(Composite parent) {
@@ -213,11 +198,12 @@ public class ExtendedWellChartUI extends Composite implements IExtendedPartUI {
 		return combo;
 	}
 
-	private ChartPCR createChart(Composite parent) {
+	private void createChart(Composite parent) {
 
 		ChartPCR chart = new ChartPCR(parent, SWT.NONE);
 		chart.setLayoutData(new GridData(GridData.FILL_BOTH));
-		return chart;
+		//
+		chartControl.set(chart);
 	}
 
 	private void updateChart() {
@@ -225,7 +211,7 @@ public class ExtendedWellChartUI extends Composite implements IExtendedPartUI {
 		/*
 		 * Clear the chart and reset.
 		 */
-		chartPCR.deleteSeries();
+		chartControl.get().deleteSeries();
 		if(well != null && !well.isEmptyMeasurement()) {
 			/*
 			 * Extract the channels.
@@ -249,7 +235,9 @@ public class ExtendedWellChartUI extends Composite implements IExtendedPartUI {
 				}
 			}
 			//
-			chartPCR.addSeriesData(lineSeriesDataList);
+			chartControl.get().addSeriesData(lineSeriesDataList);
+		} else {
+			chartControl.get().adjustRange(true);
 		}
 	}
 

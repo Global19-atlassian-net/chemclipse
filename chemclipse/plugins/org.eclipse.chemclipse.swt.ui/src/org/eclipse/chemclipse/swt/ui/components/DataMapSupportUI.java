@@ -77,6 +77,8 @@ public class DataMapSupportUI extends Composite {
 		textKey = createTextKey(composite);
 		textValue = createTextValue(composite);
 		buttonAdd = createButtonAdd(composite);
+		//
+		updateWidget();
 	}
 
 	private Text createTextKey(Composite parent) {
@@ -159,6 +161,9 @@ public class DataMapSupportUI extends Composite {
 
 	private void updateWidget() {
 
+		textKey.setEnabled(dataMap != null);
+		textValue.setEnabled(dataMap != null);
+		//
 		boolean enabled = false;
 		if(dataMap != null) {
 			String key = textKey.getText().trim();

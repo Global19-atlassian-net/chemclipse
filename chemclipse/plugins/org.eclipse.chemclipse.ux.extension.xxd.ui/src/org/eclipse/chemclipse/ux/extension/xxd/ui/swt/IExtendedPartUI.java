@@ -74,6 +74,7 @@ public interface IExtendedPartUI {
 
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("");
+		setButtonImage(button, image, PREFIX_SHOW, PREFIX_HIDE, tooltip, false);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -96,6 +97,7 @@ public interface IExtendedPartUI {
 
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("");
+		setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_TABLE, false);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override

@@ -56,7 +56,7 @@ public class ExtendedWellDataUI extends Composite implements IExtendedPartUI {
 	private Button buttonToolbarSearch;
 	private AtomicReference<Composite> toolbarSearch = new AtomicReference<>();
 	private Button buttonToolbarEdit;
-	private AtomicReference<Composite> toolbarEdit = new AtomicReference<>();
+	private AtomicReference<DataMapSupportUI> toolbarEdit = new AtomicReference<>();
 	private Button buttonTableEdit;
 	private Button buttonDelete;
 	//
@@ -292,16 +292,23 @@ public class ExtendedWellDataUI extends Composite implements IExtendedPartUI {
 
 	private void updateInput() {
 
-		tableViewer.get().setInput(well.getData());
+		if(well == null) {
+			toolbarEdit.get().setInput(null);
+			tableViewer.get().setInput(null);
+		} else {
+			toolbarEdit.get().setInput(well.getData());
+			tableViewer.get().setInput(well.getData());
+			//
+			WellDataListUI wellDataListUI = tableViewer.get();
+			wellDataListUI.sortTable();
+			Table table = wellDataListUI.getTable();
+			if(table.getItemCount() > 0) {
+				table.setSelection(0);
+			}
+		}
+		//
 		updateWidgets();
 		updateLabel();
-		//
-		WellDataListUI wellDataListUI = tableViewer.get();
-		wellDataListUI.sortTable();
-		Table table = wellDataListUI.getTable();
-		if(table.getItemCount() > 0) {
-			table.setSelection(0);
-		}
 	}
 
 	private void updateLabel() {
