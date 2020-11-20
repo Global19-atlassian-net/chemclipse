@@ -50,7 +50,7 @@ public class ChromtogramScanInfoPart extends AbstractPart<ExtendedScanInfoUI> {
 				}
 			} else {
 				getControl().setInput(null);
-				return true;
+				return false;
 			}
 		}
 		//

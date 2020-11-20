@@ -17,56 +17,51 @@ import javax.inject.Inject;
 
 import org.eclipse.chemclipse.pcr.model.core.IPlate;
 import org.eclipse.chemclipse.support.events.IChemClipseEvents;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.AbstractDataUpdateSupport;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.part.support.IDataUpdateSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ExtendedPlateDataUI;
-import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.di.Focus;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class PlateDataPart extends AbstractDataUpdateSupport implements IDataUpdateSupport {
+public class PlateDataPart extends AbstractPart<ExtendedPlateDataUI> {
 
-	private ExtendedPlateDataUI extendedPlateDataUI;
+	private static final String TOPIC = IChemClipseEvents.TOPIC_PLATE_PCR_UPDATE_SELECTION;
 
 	@Inject
-	public PlateDataPart(Composite parent, MPart part) {
+	public PlateDataPart(Composite parent) {
 
-		super(part);
-		extendedPlateDataUI = new ExtendedPlateDataUI(parent, SWT.NONE);
-	}
-
-	@Focus
-	public void setFocus() {
-
-		updateObjects(getObjects(), getTopic());
+		super(parent, TOPIC);
 	}
 
 	@Override
-	public void registerEvents() {
+	protected ExtendedPlateDataUI createControl(Composite parent) {
 
-		registerEvent(IChemClipseEvents.TOPIC_PLATE_PCR_UPDATE_SELECTION, IEventBroker.DATA);
-		registerEvent(IChemClipseEvents.TOPIC_PLATE_PCR_UNLOAD_SELECTION, IEventBroker.DATA);
+		return new ExtendedPlateDataUI(parent, SWT.NONE);
 	}
 
 	@Override
-	public void updateObjects(List<Object> objects, String topic) {
+	protected boolean updateData(List<Object> objects, String topic) {
 
-		/*
-		 * 0 => because only one property was used to register the event.
-		 */
 		if(objects.size() == 1) {
 			if(topic.equals(IChemClipseEvents.TOPIC_PLATE_PCR_UNLOAD_SELECTION)) {
-				extendedPlateDataUI.update(null);
+				getControl().update(null);
+				return false;
 			} else {
 				Object object = objects.get(0);
 				if(object instanceof IPlate) {
-					extendedPlateDataUI.update((IPlate)object);
+					getControl().update((IPlate)object);
+					return true;
 				} else {
-					extendedPlateDataUI.update(null);
+					getControl().update(null);
+					return true;
 				}
 			}
 		}
+		//
+		return false;
+	}
+
+	@Override
+	protected boolean isUpdateTopic(String topic) {
+
+		return TOPIC.equals(topic) || TOPIC.equals(IChemClipseEvents.TOPIC_PLATE_PCR_UNLOAD_SELECTION);
 	}
 }

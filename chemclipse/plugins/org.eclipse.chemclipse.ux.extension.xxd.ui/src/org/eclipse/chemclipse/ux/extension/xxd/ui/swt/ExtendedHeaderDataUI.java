@@ -24,7 +24,7 @@ import org.eclipse.chemclipse.support.ui.menu.ITableMenuEntry;
 import org.eclipse.chemclipse.support.ui.swt.ExtendedTableViewer;
 import org.eclipse.chemclipse.support.ui.swt.ITableSettings;
 import org.eclipse.chemclipse.support.ui.workbench.DisplayUtils;
-import org.eclipse.chemclipse.swt.ui.components.HeaderSupportUI;
+import org.eclipse.chemclipse.swt.ui.components.DataMapSupportUI;
 import org.eclipse.chemclipse.swt.ui.components.IHeaderListener;
 import org.eclipse.chemclipse.swt.ui.components.ISearchListener;
 import org.eclipse.chemclipse.swt.ui.components.InformationUI;
@@ -55,7 +55,7 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 	private Button buttonToolbarSearch;
 	private AtomicReference<Composite> toolbarSearch = new AtomicReference<>();
 	private Button buttonToolbarEdit;
-	private AtomicReference<HeaderSupportUI> toolbarEdit = new AtomicReference<>();
+	private AtomicReference<DataMapSupportUI> toolbarEdit = new AtomicReference<>();
 	private Button buttonTableEdit;
 	private Button buttonDelete;
 	//
@@ -139,9 +139,9 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 
 	private void createToolbarEdit(Composite parent) {
 
-		HeaderSupportUI headerSupportUI = new HeaderSupportUI(parent, SWT.NONE);
-		headerSupportUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		headerSupportUI.setHeaderListener(new IHeaderListener() {
+		DataMapSupportUI headerMapSupportUI = new DataMapSupportUI(parent, SWT.NONE);
+		headerMapSupportUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		headerMapSupportUI.setHeaderListener(new IHeaderListener() {
 
 			@Override
 			public void update() {
@@ -150,7 +150,7 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 			}
 		});
 		//
-		toolbarEdit.set(headerSupportUI);
+		toolbarEdit.set(headerMapSupportUI);
 	}
 
 	private Button createButtonDelete(Composite parent) {
@@ -288,7 +288,7 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 				 * Show a message if certain keys couldn't be removed.
 				 */
 				if(keysNotRemoved.size() > 0) {
-					MessageDialog.openWarning(DisplayUtils.getShell(), HeaderSupportUI.HEADER_ENTRY, "The following keys can't be removed: " + keysNotRemoved);
+					MessageDialog.openWarning(DisplayUtils.getShell(), DataMapSupportUI.HEADER_ENTRY, "The following keys can't be removed: " + keysNotRemoved);
 				}
 				//
 				updateInput();
@@ -298,7 +298,7 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 
 	private void updateInput() {
 
-		toolbarEdit.get().setInput(measurementInfo);
+		toolbarEdit.get().setInput(measurementInfo.getHeaderDataMap());
 		updateData();
 	}
 

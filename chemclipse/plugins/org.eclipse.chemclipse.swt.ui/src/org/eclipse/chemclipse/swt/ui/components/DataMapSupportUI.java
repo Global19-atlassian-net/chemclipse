@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.swt.ui.components;
 
-import org.eclipse.chemclipse.model.core.IMeasurementInfo;
+import java.util.Map;
+
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -28,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class HeaderSupportUI extends Composite {
+public class DataMapSupportUI extends Composite {
 
 	public static final String HEADER_ENTRY = "Header Entry";
 	//
@@ -37,9 +38,9 @@ public class HeaderSupportUI extends Composite {
 	private Button buttonAdd;
 	//
 	private IHeaderListener headerListener;
-	private IMeasurementInfo measurementInfo;
+	private Map<String, String> dataMap;
 
-	public HeaderSupportUI(Composite parent, int style) {
+	public DataMapSupportUI(Composite parent, int style) {
 
 		super(parent, style);
 		createControl();
@@ -57,9 +58,9 @@ public class HeaderSupportUI extends Composite {
 		this.headerListener = headerListener;
 	}
 
-	public void setInput(IMeasurementInfo measurementInfo) {
+	public void setInput(Map<String, String> dataMap) {
 
-		this.measurementInfo = measurementInfo;
+		this.dataMap = dataMap;
 		updateWidget();
 	}
 
@@ -135,7 +136,7 @@ public class HeaderSupportUI extends Composite {
 
 	private void addEntry(Shell shell) {
 
-		if(measurementInfo != null) {
+		if(dataMap != null) {
 			/*
 			 * Get the values.
 			 */
@@ -144,12 +145,12 @@ public class HeaderSupportUI extends Composite {
 			//
 			if("".equals(key)) {
 				MessageDialog.openError(shell, HEADER_ENTRY, "The header key must be not empty.");
-			} else if(measurementInfo.headerDataContainsKey(key)) {
+			} else if(dataMap.containsKey(key)) {
 				MessageDialog.openError(shell, HEADER_ENTRY, "The header key already exists.");
 			} else if("".equals(value)) {
 				MessageDialog.openError(shell, HEADER_ENTRY, "The header value must be not empty.");
 			} else {
-				measurementInfo.putHeaderData(key, value);
+				dataMap.put(key, value);
 				reset();
 				fireUpdate();
 			}
@@ -159,7 +160,7 @@ public class HeaderSupportUI extends Composite {
 	private void updateWidget() {
 
 		boolean enabled = false;
-		if(measurementInfo != null) {
+		if(dataMap != null) {
 			String key = textKey.getText().trim();
 			if(!key.isEmpty()) {
 				String value = textValue.getText().trim();
@@ -174,7 +175,7 @@ public class HeaderSupportUI extends Composite {
 
 	private void fireUpdate() {
 
-		if(measurementInfo != null) {
+		if(dataMap != null) {
 			if(headerListener != null) {
 				headerListener.update();
 			}

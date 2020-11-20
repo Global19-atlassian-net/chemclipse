@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.chemclipse.pcr.model.comparators.DetectionFormatComparator;
 import org.eclipse.chemclipse.pcr.model.core.IChannelSpecification;
@@ -24,7 +25,7 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.ui.provider.AbstractLabelProvider;
 import org.eclipse.chemclipse.support.ui.provider.ListContentProvider;
-import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
+import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePagePCR;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.SWT;
@@ -36,12 +37,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 
 public class ExtendedPlateDataUI extends Composite implements IExtendedPartUI {
 
-	private Label labelInfo;
-	private Composite toolbarInfo;
+	private Button buttonToolbarInfo;
+	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
 	private ComboViewer comboDetectionFormats;
 	private ComboViewer comboChannelSpecifications;
 	private ChannelSpecificationListUI channelSpecificationListUI;
@@ -67,12 +67,17 @@ public class ExtendedPlateDataUI extends Composite implements IExtendedPartUI {
 		setLayout(new GridLayout(1, true));
 		//
 		createToolbarMain(this);
-		toolbarInfo = createToolbarInfo(this);
+		createToolbarInfo(this);
 		comboDetectionFormats = createComboDetectionFormats(this);
 		comboChannelSpecifications = createComboChannelSpecifications(this);
 		channelSpecificationListUI = createChannelSpecificationTable(this);
 		//
-		PartSupport.setCompositeVisibility(toolbarInfo, true);
+		initialize();
+	}
+
+	private void initialize() {
+
+		enableToolbar(toolbarInfo, buttonToolbarInfo, IMAGE_INFO, TOOLTIP_INFO, true);
 	}
 
 	private void createToolbarMain(Composite parent) {
@@ -83,32 +88,9 @@ public class ExtendedPlateDataUI extends Composite implements IExtendedPartUI {
 		composite.setLayoutData(gridData);
 		composite.setLayout(new GridLayout(3, false));
 		//
-		createButtonToggleToolbarInfo(composite);
+		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
 		createResetButton(composite);
 		createSettingsButton(composite);
-	}
-
-	private Button createButtonToggleToolbarInfo(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle info toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarInfo);
-				if(visible) {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
-		return button;
 	}
 
 	private void createResetButton(Composite parent) {
@@ -146,18 +128,12 @@ public class ExtendedPlateDataUI extends Composite implements IExtendedPartUI {
 
 	}
 
-	private Composite createToolbarInfo(Composite parent) {
+	private void createToolbarInfo(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayoutData(gridData);
-		composite.setLayout(new GridLayout(1, false));
+		InformationUI informationUI = new InformationUI(parent, SWT.NONE);
+		informationUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		//
-		labelInfo = new Label(composite, SWT.NONE);
-		labelInfo.setText("");
-		labelInfo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		//
-		return composite;
+		toolbarInfo.set(informationUI);
 	}
 
 	private ComboViewer createComboDetectionFormats(Composite parent) {
@@ -248,11 +224,7 @@ public class ExtendedPlateDataUI extends Composite implements IExtendedPartUI {
 
 	private void updateLabel() {
 
-		if(plate != null) {
-			labelInfo.setText("Plate: " + plate.getName());
-		} else {
-			labelInfo.setText("No plate data available.");
-		}
+		toolbarInfo.get().setText(plate != null ? plate.getName() : "--");
 	}
 
 	private void updateDetectionFormats() {

@@ -46,7 +46,7 @@ public class ScanTablePart extends AbstractPart<ExtendedScanTableUI> {
 			} else {
 				if(isUnloadEvent(topic)) {
 					getControl().setInput(null);
-					return true;
+					return false;
 				}
 			}
 		}
