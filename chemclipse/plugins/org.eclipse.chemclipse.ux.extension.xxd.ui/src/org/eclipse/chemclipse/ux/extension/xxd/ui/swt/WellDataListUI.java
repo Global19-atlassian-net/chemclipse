@@ -33,6 +33,7 @@ public class WellDataListUI extends ExtendedTableViewer {
 	private WellDataTableComparator tableComparator = new WellDataTableComparator();
 	private WellDataListFilter listFilter = new WellDataListFilter();
 	private WellDataLabelProvider labelProvider = new WellDataLabelProvider();
+	//
 	private IWell well = null;
 
 	public WellDataListUI(Composite parent, int style) {

@@ -49,7 +49,7 @@ public class InformationUI extends Composite {
 	private Label createLabel(Composite parent) {
 
 		Label label = new Label(parent, SWT.NONE);
-		label.setText("");
+		label.setText("--");
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		//
 		return label;

@@ -36,6 +36,12 @@ public abstract class AbstractDataModel implements IDataModel {
 	}
 
 	@Override
+	public void putData(String key, String value) {
+
+		data.put(key, value);
+	}
+
+	@Override
 	public String getData(String key, String defaultValue) {
 
 		return data.getOrDefault(key, defaultValue);

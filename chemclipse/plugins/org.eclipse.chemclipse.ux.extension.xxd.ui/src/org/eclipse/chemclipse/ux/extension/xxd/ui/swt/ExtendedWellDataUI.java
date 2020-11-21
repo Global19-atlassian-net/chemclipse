@@ -297,7 +297,7 @@ public class ExtendedWellDataUI extends Composite implements IExtendedPartUI {
 			tableViewer.get().setInput(null);
 		} else {
 			toolbarEdit.get().setInput(well.getData());
-			tableViewer.get().setInput(well.getData());
+			tableViewer.get().setInput(well);
 			//
 			WellDataListUI wellDataListUI = tableViewer.get();
 			wellDataListUI.sortTable();

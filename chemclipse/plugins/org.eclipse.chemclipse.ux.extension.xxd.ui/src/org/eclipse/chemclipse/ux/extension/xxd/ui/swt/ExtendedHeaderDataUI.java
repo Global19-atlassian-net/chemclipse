@@ -298,7 +298,10 @@ public class ExtendedHeaderDataUI extends Composite implements IExtendedPartUI {
 
 	private void updateInput() {
 
-		toolbarEdit.get().setInput(measurementInfo.getHeaderDataMap());
+		DataMapSupportUI dataMapSupportUI = toolbarEdit.get();
+		if(dataMapSupportUI != null) {
+			dataMapSupportUI.setInput(measurementInfo != null ? measurementInfo.getHeaderDataMap() : null);
+		}
 		updateData();
 	}
 
