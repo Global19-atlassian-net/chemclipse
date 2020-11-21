@@ -335,7 +335,7 @@ public class ExtendedRetentionIndexListUI extends Composite implements IExtended
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePageSystem(), new PreferencePage()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePageSystem.class, PreferencePage.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

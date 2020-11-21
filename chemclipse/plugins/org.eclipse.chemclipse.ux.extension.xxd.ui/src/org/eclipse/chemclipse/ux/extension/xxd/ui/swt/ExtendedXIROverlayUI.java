@@ -108,7 +108,7 @@ public class ExtendedXIROverlayUI extends Composite implements IExtendedPartUI {
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePageOverlay()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePageOverlay.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

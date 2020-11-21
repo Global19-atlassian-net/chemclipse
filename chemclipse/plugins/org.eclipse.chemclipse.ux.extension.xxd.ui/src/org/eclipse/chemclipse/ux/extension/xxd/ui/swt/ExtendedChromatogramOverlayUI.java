@@ -358,7 +358,7 @@ public class ExtendedChromatogramOverlayUI extends Composite implements IExtende
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePageOverlay(), new PreferencePageNamedTraces()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePageOverlay.class, PreferencePageNamedTraces.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

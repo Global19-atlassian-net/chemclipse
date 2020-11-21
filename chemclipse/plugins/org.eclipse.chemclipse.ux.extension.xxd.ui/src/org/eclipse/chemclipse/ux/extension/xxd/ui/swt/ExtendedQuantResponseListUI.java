@@ -156,7 +156,7 @@ public class ExtendedQuantResponseListUI extends Composite implements IExtendedP
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePagePeaksAxes()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePagePeaksAxes.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

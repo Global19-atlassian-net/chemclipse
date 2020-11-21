@@ -295,7 +295,7 @@ public class ExtendedSubtractScanUI extends Composite implements IExtendedPartUI
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePageScans(), new PreferencePageSubtract()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePageScans.class, PreferencePageSubtract.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

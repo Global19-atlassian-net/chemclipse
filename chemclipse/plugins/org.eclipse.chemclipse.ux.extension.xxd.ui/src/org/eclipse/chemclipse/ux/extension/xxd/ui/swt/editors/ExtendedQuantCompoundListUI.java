@@ -524,7 +524,7 @@ public class ExtendedQuantCompoundListUI extends Composite implements IExtendedP
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePageQuantitation(), new PreferencePageQuantitationAxes()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePageQuantitation.class, PreferencePageQuantitationAxes.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

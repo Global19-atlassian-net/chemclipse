@@ -632,7 +632,7 @@ public class ExtendedComparisonScanUI extends Composite implements IExtendedPart
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePageScans()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePageScans.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

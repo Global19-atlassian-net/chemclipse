@@ -141,7 +141,7 @@ public class ExtendedSequenceExplorerUI extends Composite implements IExtendedPa
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePageSequences()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePageSequences.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

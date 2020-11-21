@@ -295,7 +295,7 @@ public class ExtendedPeakTracesUI extends Composite implements IExtendedPartUI {
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePagePeakTraces(), new PreferencePageScans()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePagePeakTraces.class, PreferencePageScans.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

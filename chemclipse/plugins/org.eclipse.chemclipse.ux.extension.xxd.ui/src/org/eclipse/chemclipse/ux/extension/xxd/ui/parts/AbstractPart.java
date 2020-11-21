@@ -50,6 +50,7 @@ public abstract class AbstractPart<T extends Composite> {
 		this.topic = topic;
 		control = createControl(parent);
 		dataUpdateSupport.add(updateListener);
+		subscribeAdditionalTopics();
 	}
 
 	@Focus
@@ -80,6 +81,23 @@ public abstract class AbstractPart<T extends Composite> {
 	protected T getControl() {
 
 		return control;
+	}
+
+	/**
+	 * Overwrite, if additional topics shall be added.
+	 */
+	protected void subscribeAdditionalTopics() {
+
+	}
+
+	protected void subscribeAdditionalTopic(String topic, String property) {
+
+		dataUpdateSupport.subscribe(topic, property);
+	}
+
+	protected void subscribeAdditionalTopic(String topic, String[] properties) {
+
+		dataUpdateSupport.subscribe(topic, properties);
 	}
 
 	/**

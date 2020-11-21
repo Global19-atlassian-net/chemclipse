@@ -795,7 +795,7 @@ public class ExtendedPeakScanListUI extends Composite implements IExtendedPartUI
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePageSystem(), new PreferencePageLists()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePageSystem.class, PreferencePageLists.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

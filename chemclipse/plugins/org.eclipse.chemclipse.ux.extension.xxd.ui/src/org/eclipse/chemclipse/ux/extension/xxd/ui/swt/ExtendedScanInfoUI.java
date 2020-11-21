@@ -124,7 +124,7 @@ public class ExtendedScanInfoUI extends Composite implements IExtendedPartUI {
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePageChromatogram()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePageChromatogram.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

@@ -428,7 +428,7 @@ public class ExtendedPeakChartUI extends Composite implements IExtendedPartUI {
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePagePeaks(), new PreferencePageScans()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePagePeaks.class, PreferencePageScans.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

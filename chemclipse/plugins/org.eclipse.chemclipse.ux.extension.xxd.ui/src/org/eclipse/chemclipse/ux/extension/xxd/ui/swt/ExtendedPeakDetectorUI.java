@@ -535,7 +535,7 @@ public class ExtendedPeakDetectorUI extends Composite implements IExtendedPartUI
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePagePeaks()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePagePeaks.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

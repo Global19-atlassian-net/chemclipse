@@ -268,7 +268,7 @@ public class ExtendedXIRScanUI extends Composite implements IExtendedPartUI {
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePageChromatogram(), new PreferencePageSystem()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePageChromatogram.class, PreferencePageSystem.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {

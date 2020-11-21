@@ -11,10 +11,12 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.ui.swt.ExtendedTableViewer;
@@ -34,6 +36,8 @@ import org.eclipse.swtchart.extensions.core.ScrollableChart;
 
 public interface IExtendedPartUI {
 
+	Logger logger = Logger.getLogger(IExtendedPartUI.class);
+	//
 	String PREFIX_SHOW = "Show";
 	String PREFIX_HIDE = "Hide";
 	String PREFIX_ENABLE = "Enable";
@@ -136,7 +140,7 @@ public interface IExtendedPartUI {
 		return button;
 	}
 
-	default Button createSettingsButton(Composite parent, List<IPreferencePage> preferencePages, ISettingsHandler settingsHandler) {
+	default Button createSettingsButton(Composite parent, List<Class<? extends IPreferencePage>> preferencePages, ISettingsHandler settingsHandler) {
 
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("");
@@ -148,19 +152,29 @@ public interface IExtendedPartUI {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				PreferenceManager preferenceManager = new PreferenceManager();
 				if(preferencePages.size() > 0) {
 					/*
 					 * Add the pages
 					 */
+					PreferenceManager preferenceManager = new PreferenceManager();
 					for(int i = 0; i < preferencePages.size(); i++) {
-						IPreferencePage preferencePage = preferencePages.get(i);
-						preferenceManager.addToRoot(new PreferenceNode(Integer.toString(i + 1), preferencePage));
+						try {
+							Class<? extends IPreferencePage> page = preferencePages.get(i);
+							IPreferencePage preferencePage = page.getConstructor().newInstance();
+							preferenceManager.addToRoot(new PreferenceNode(Integer.toString(i + 1), preferencePage));
+						} catch(InstantiationException | IllegalAccessException
+								| IllegalArgumentException
+								| InvocationTargetException
+								| NoSuchMethodException
+								| SecurityException e1) {
+							logger.warn(e1);
+						}
 					}
 					//
 					PreferenceDialog preferenceDialog = new PreferenceDialog(e.display.getActiveShell(), preferenceManager);
 					preferenceDialog.create();
 					preferenceDialog.setMessage(TITLE_SETTINGS);
+					//
 					if(preferenceDialog.open() == Window.OK) {
 						try {
 							if(settingsHandler != null) {

@@ -416,7 +416,7 @@ public class ExtendedSequenceListUI extends Composite implements IExtendedPartUI
 
 	private void createSettingsButton(Composite parent) {
 
-		createSettingsButton(parent, Arrays.asList(new PreferencePageSequences(), new PreferencePageChromatogram()), new ISettingsHandler() {
+		createSettingsButton(parent, Arrays.asList(PreferencePageSequences.class, PreferencePageChromatogram.class), new ISettingsHandler() {
 
 			@Override
 			public void apply(Display display) {
