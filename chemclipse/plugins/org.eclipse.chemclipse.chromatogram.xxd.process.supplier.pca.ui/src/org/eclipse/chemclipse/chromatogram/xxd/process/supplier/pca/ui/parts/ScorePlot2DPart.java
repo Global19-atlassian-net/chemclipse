@@ -18,11 +18,10 @@ import javax.inject.Inject;
 import org.eclipse.chemclipse.chromatogram.xxd.process.supplier.pca.model.EvaluationPCA;
 import org.eclipse.chemclipse.chromatogram.xxd.process.supplier.pca.ui.Activator;
 import org.eclipse.chemclipse.chromatogram.xxd.process.supplier.pca.ui.swt.ExtendedScorePlot2D;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.parts.AbstractPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class ScorePlot2DPart extends AbstractPart<ExtendedScorePlot2D> {
+public class ScorePlot2DPart extends AbstractPartPCA<ExtendedScorePlot2D> {
 
 	private static final String TOPIC = Activator.TOPIC_PCA_EVALUATION_LOAD;
 
@@ -30,15 +29,6 @@ public class ScorePlot2DPart extends AbstractPart<ExtendedScorePlot2D> {
 	public ScorePlot2DPart(Composite parent) {
 
 		super(parent, TOPIC);
-	}
-
-	/**
-	 * Overwrite, if additional topics shall be added.
-	 */
-	protected void subscribeAdditionalTopics() {
-
-		subscribeAdditionalTopic(Activator.TOPIC_PCA_EVALUATION_LOAD, Activator.PROPERTY_PCA_EVALUATION);
-		subscribeAdditionalTopic(Activator.TOPIC_PCA_EVALUATION_CLEAR, Activator.PROPERTY_PCA_EVALUATION);
 	}
 
 	@Override

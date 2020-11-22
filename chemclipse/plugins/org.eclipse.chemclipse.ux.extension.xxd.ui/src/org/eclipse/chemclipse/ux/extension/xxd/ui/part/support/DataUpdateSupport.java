@@ -12,11 +12,13 @@
 package org.eclipse.chemclipse.ux.extension.xxd.ui.part.support;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -25,6 +27,8 @@ import org.osgi.service.event.EventHandler;
 
 public class DataUpdateSupport {
 
+	private static final Logger logger = Logger.getLogger(DataUpdateSupport.class);
+	//
 	private IEventBroker eventBroker;
 	//
 	private Map<String, EventHandler> handlerMap = new HashMap<>();
@@ -91,6 +95,7 @@ public class DataUpdateSupport {
 		EventHandler eventHandler = handlerMap.get(topic);
 		if(eventHandler != null) {
 			eventBroker.unsubscribe(eventHandler);
+			logger.info("Subscription removed on topic '" + topic + "'.");
 		}
 	}
 
@@ -115,26 +120,26 @@ public class DataUpdateSupport {
 
 	private void registerEventHandler(String topic, String[] properties) {
 
-		EventHandler eventHandler = new EventHandler() {
-
-			@Override
-			public void handleEvent(Event event) {
-
-				update(event, properties);
-			}
-		};
 		/*
-		 * Remove an existing handler with
-		 * the same topic.
+		 * Register a new handler on the given topic.
 		 */
-		if(handlerMap.containsKey(topic)) {
-			unsubscribe(topic);
+		if(!handlerMap.containsKey(topic)) {
+			EventHandler eventHandler = new EventHandler() {
+
+				@Override
+				public void handleEvent(Event event) {
+
+					update(event, properties);
+				}
+			};
+			/*
+			 * Subscribe the new handler.
+			 */
+			eventBroker.subscribe(topic, eventHandler);
+			handlerMap.put(topic, eventHandler);
+			//
+			logger.info("Subscription added on topic '" + topic + "' and properties '" + Arrays.asList(properties) + "'.");
 		}
-		/*
-		 * Subscribe the new handler.
-		 */
-		eventBroker.subscribe(topic, eventHandler);
-		handlerMap.put(topic, eventHandler);
 	}
 
 	private void update(Event event, String[] properties) {
