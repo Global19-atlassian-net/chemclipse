@@ -51,12 +51,14 @@ public interface IExtendedPartUI {
 	String TOOLTIP_SEARCH = "the search toolbar.";
 	String TOOLTIP_TYPES = "the types toolbar.";
 	String TOOLTIP_LEGEND = "the chart legend.";
+	String TOOLTIP_LEGEND_MARKER = "the chart legend marker.";
 	//
 	String IMAGE_INFO = IApplicationImage.IMAGE_INFO;
 	String IMAGE_EDIT = IApplicationImage.IMAGE_EDIT;
 	String IMAGE_SEARCH = IApplicationImage.IMAGE_SEARCH;
 	String IMAGE_TYPES = IApplicationImage.IMAGE_TYPES;
 	String IMAGE_LEGEND = IApplicationImage.IMAGE_TAG;
+	String IMAGE_LEGEND_MARKER = IApplicationImage.IMAGE_CHART_LEGEND_MARKER;
 	String IMAGE_EDIT_ENTRY = IApplicationImage.IMAGE_EDIT_ENTRY;
 
 	default Button createButton(Composite parent, String text, String tooltip, String image) {
@@ -133,6 +135,28 @@ public interface IExtendedPartUI {
 				if(chart != null) {
 					boolean enabled = chart.toggleSeriesLegendVisibility();
 					setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_LEGEND, enabled);
+				}
+			}
+		});
+		//
+		return button;
+	}
+
+	default Button createButtonToggleLegendMarker(Composite parent, AtomicReference<? extends ScrollableChart> scrollableChart, String image) {
+
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText("");
+		setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_LEGEND_MARKER, false);
+		button.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				ScrollableChart chart = scrollableChart.get();
+				if(chart != null) {
+					boolean enabled = chart.togglePositionLegendVisibility();
+					setButtonImage(button, image, PREFIX_ENABLE, PREFIX_DISABLE, TOOLTIP_LEGEND_MARKER, enabled);
+					chart.redraw();
 				}
 			}
 		});

@@ -15,6 +15,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.chemclipse.model.core.IPeak;
 import org.eclipse.chemclipse.model.quantitation.IQuantitationCompound;
@@ -49,7 +50,7 @@ public class QuantPeaksChartUI extends Composite implements IExtendedPartUI {
 	private PeakChartSupport peakChartSupport = new PeakChartSupport();
 	private DecimalFormat decimalFormat = ValueFormat.getDecimalFormatEnglish("0.000");
 	//
-	private PeaksChart peaksChart;
+	private AtomicReference<PeaksChart> chartControl = new AtomicReference<>();
 	private IQuantitationCompound quantitationCompound;
 
 	public QuantPeaksChartUI(Composite parent, int style) {
@@ -73,6 +74,12 @@ public class QuantPeaksChartUI extends Composite implements IExtendedPartUI {
 		//
 		createToolbarMain(composite);
 		createPeaksChart(composite);
+		//
+		initialize();
+	}
+
+	private void initialize() {
+
 	}
 
 	private void createToolbarMain(Composite parent) {
@@ -83,24 +90,9 @@ public class QuantPeaksChartUI extends Composite implements IExtendedPartUI {
 		composite.setLayoutData(gridData);
 		composite.setLayout(new GridLayout(3, false));
 		//
-		createToggleChartSeriesLegendButton(composite);
+		createButtonToggleChartLegend(composite, chartControl, IMAGE_LEGEND);
 		createResetButton(composite);
 		createSettingsButton(composite);
-	}
-
-	private void createToggleChartSeriesLegendButton(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle the chart series legend.");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_TAG, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				peaksChart.toggleSeriesLegendVisibility();
-			}
-		});
 	}
 
 	private void createResetButton(Composite parent) {
@@ -133,13 +125,15 @@ public class QuantPeaksChartUI extends Composite implements IExtendedPartUI {
 
 	private void createPeaksChart(Composite parent) {
 
-		peaksChart = new PeaksChart(parent, SWT.NONE);
+		PeaksChart peaksChart = new PeaksChart(parent, SWT.NONE);
 		peaksChart.setLayoutData(new GridData(GridData.FILL_BOTH));
+		//
+		chartControl.set(peaksChart);
 	}
 
 	private void applySettings() {
 
-		peaksChart.modifyAxes(true);
+		chartControl.get().modifyAxes(true);
 		setQuantitationCompound();
 	}
 
@@ -150,6 +144,7 @@ public class QuantPeaksChartUI extends Composite implements IExtendedPartUI {
 
 	private void setQuantitationCompound() {
 
+		PeaksChart peaksChart = chartControl.get();
 		peaksChart.deleteSeries();
 		if(quantitationCompound != null) {
 			List<ILineSeriesData> lineSeriesDataList = new ArrayList<ILineSeriesData>();

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.chemclipse.model.quantitation.CalibrationMethod;
 import org.eclipse.chemclipse.model.quantitation.IQuantitationCompound;
@@ -24,9 +25,9 @@ import org.eclipse.chemclipse.numeric.core.Point;
 import org.eclipse.chemclipse.numeric.equations.IEquation;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
+import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
 import org.eclipse.chemclipse.swt.ui.support.IColorScheme;
-import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.charts.CalibrationChart;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
@@ -43,7 +44,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swtchart.extensions.linecharts.ILineSeriesData;
 import org.eclipse.swtchart.extensions.linecharts.LineChart;
 
@@ -52,9 +52,9 @@ public class QuantResponseChartUI extends Composite implements IExtendedPartUI {
 	private CalibrationChartSupport calibrationChartSupport = new CalibrationChartSupport();
 	private IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 	//
-	private Composite toolbarInfo;
-	private Label labelInfo;
-	private CalibrationChart calibrationChart;
+	private Button buttonToolbarInfo;
+	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
+	private AtomicReference<CalibrationChart> chartControl = new AtomicReference<>();
 	private IQuantitationCompound quantitationCompound;
 
 	public QuantResponseChartUI(Composite parent, int style) {
@@ -77,10 +77,15 @@ public class QuantResponseChartUI extends Composite implements IExtendedPartUI {
 		composite.setLayout(new GridLayout(1, true));
 		//
 		createToolbarMain(composite);
-		toolbarInfo = createToolbarInfo(composite);
+		createToolbarInfo(composite);
 		createCalibrationChart(composite);
 		//
-		PartSupport.setCompositeVisibility(toolbarInfo, true);
+		initialize();
+	}
+
+	private void initialize() {
+
+		enableToolbar(toolbarInfo, buttonToolbarInfo, IMAGE_INFO, TOOLTIP_INFO, true);
 	}
 
 	private void createToolbarMain(Composite parent) {
@@ -91,79 +96,19 @@ public class QuantResponseChartUI extends Composite implements IExtendedPartUI {
 		composite.setLayoutData(gridData);
 		composite.setLayout(new GridLayout(5, false));
 		//
-		createButtonToggleToolbarInfo(composite);
-		createToggleChartSeriesLegendButton(composite);
-		createToggleLegendMarkerButton(composite);
+		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
+		createButtonToggleChartLegend(composite, chartControl, IMAGE_LEGEND);
+		createButtonToggleLegendMarker(composite, chartControl, IMAGE_LEGEND_MARKER);
 		createResetButton(composite);
 		createSettingsButton(composite);
 	}
 
-	private Composite createToolbarInfo(Composite parent) {
+	private void createToolbarInfo(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayoutData(gridData);
-		composite.setLayout(new GridLayout(1, false));
+		InformationUI informationUI = new InformationUI(parent, SWT.NONE);
+		informationUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		//
-		labelInfo = new Label(composite, SWT.NONE);
-		labelInfo.setText("");
-		labelInfo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		//
-		return composite;
-	}
-
-	private Button createButtonToggleToolbarInfo(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle info toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarInfo);
-				if(visible) {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
-		return button;
-	}
-
-	private void createToggleChartSeriesLegendButton(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle the chart series legend.");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_TAG, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				calibrationChart.toggleSeriesLegendVisibility();
-			}
-		});
-	}
-
-	private void createToggleLegendMarkerButton(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle the chart legend marker.");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_CHART_LEGEND_MARKER, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				calibrationChart.togglePositionLegendVisibility();
-				calibrationChart.redraw();
-			}
-		});
+		toolbarInfo.set(informationUI);
 	}
 
 	private void createResetButton(Composite parent) {
@@ -196,13 +141,15 @@ public class QuantResponseChartUI extends Composite implements IExtendedPartUI {
 
 	private void createCalibrationChart(Composite parent) {
 
-		calibrationChart = new CalibrationChart(parent, SWT.NONE);
+		CalibrationChart calibrationChart = new CalibrationChart(parent, SWT.NONE);
 		calibrationChart.setLayoutData(new GridData(GridData.FILL_BOTH));
+		//
+		chartControl.set(calibrationChart);
 	}
 
 	private void applySettings() {
 
-		calibrationChart.modifyAxes(true);
+		chartControl.get().modifyAxes(true);
 		setQuantitationCompound();
 	}
 
@@ -213,12 +160,12 @@ public class QuantResponseChartUI extends Composite implements IExtendedPartUI {
 
 	private void setQuantitationCompound() {
 
-		labelInfo.setText("");
+		CalibrationChart calibrationChart = chartControl.get();
 		calibrationChart.deleteSeries();
 		//
 		if(quantitationCompound != null) {
 			//
-			labelInfo.setText("Quantitation Compound: " + quantitationCompound.getName());
+			toolbarInfo.get().setText("Quantitation Compound: " + quantitationCompound.getName());
 			//
 			List<ILineSeriesData> lineSeriesDataList = new ArrayList<ILineSeriesData>();
 			ILineSeriesData lineSeriesDataPoints;
@@ -262,6 +209,8 @@ public class QuantResponseChartUI extends Composite implements IExtendedPartUI {
 			}
 			//
 			calibrationChart.addSeriesData(lineSeriesDataList, LineChart.NO_COMPRESSION);
+		} else {
+			toolbarInfo.get().setText("");
 		}
 	}
 }

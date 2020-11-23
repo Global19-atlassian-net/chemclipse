@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 
@@ -29,7 +30,7 @@ import org.eclipse.chemclipse.msd.model.core.IScanMSD;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.ui.provider.AbstractLabelProvider;
-import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
+import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePagePeakTraces;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageScans;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.support.charts.PeakDataSupport;
@@ -50,7 +51,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swtchart.ISeries;
 import org.eclipse.swtchart.ISeriesSet;
@@ -68,11 +68,11 @@ public class ExtendedPeakTracesUI extends Composite implements IExtendedPartUI {
 	private static final String TRACE_LABEL_PREFIX = "Trace";
 	private static final String CATEGORY = "Peak Trace(s)";
 	//
-	private Composite toolbarInfo;
-	private Label labelPeak;
+	private Button buttonToolbarInfo;
+	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
 	private ComboViewer comboViewerTraces;
 	private Button buttonDeleteTrace;
-	private PeakTracesUI peakTracesUI;
+	private AtomicReference<PeakTracesUI> chartControl = new AtomicReference<>();
 	//
 	private IPeak peak = null;
 	private final PeakDataSupport peakDataSupport = new PeakDataSupport();
@@ -104,10 +104,15 @@ public class ExtendedPeakTracesUI extends Composite implements IExtendedPartUI {
 		setLayout(gridLayout);
 		//
 		createToolbarMain(this);
-		toolbarInfo = createToolbarInfo(this);
+		createToolbarInfo(this);
 		createPeakChart(this);
 		//
-		PartSupport.setCompositeVisibility(toolbarInfo, true);
+		initialize();
+	}
+
+	private void initialize() {
+
+		enableToolbar(toolbarInfo, buttonToolbarInfo, IMAGE_INFO, TOOLTIP_INFO, true);
 	}
 
 	private void createToolbarMain(Composite parent) {
@@ -116,50 +121,21 @@ public class ExtendedPeakTracesUI extends Composite implements IExtendedPartUI {
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		composite.setLayout(new GridLayout(7, false));
 		//
-		createButtonToggleToolbarInfo(composite);
+		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
 		comboViewerTraces = createComboViewerTraces(composite);
 		buttonDeleteTrace = createButtonDeleteTrace(composite);
 		createButtonCopyTracesClipboard(composite);
-		createToggleChartSeriesLegendButton(composite);
+		createButtonToggleChartLegend(composite, chartControl, IMAGE_LEGEND);
 		createResetButton(composite);
 		createSettingsButton(composite);
 	}
 
-	private Composite createToolbarInfo(Composite parent) {
+	private void createToolbarInfo(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayoutData(gridData);
-		composite.setLayout(new GridLayout(1, false));
+		InformationUI informationUI = new InformationUI(parent, SWT.NONE);
+		informationUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		//
-		labelPeak = new Label(composite, SWT.NONE);
-		labelPeak.setText("");
-		labelPeak.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		//
-		return composite;
-	}
-
-	private Button createButtonToggleToolbarInfo(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle info toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarInfo);
-				if(visible) {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
-		return button;
+		toolbarInfo.set(informationUI);
 	}
 
 	private ComboViewer createComboViewerTraces(Composite parent) {
@@ -190,6 +166,7 @@ public class ExtendedPeakTracesUI extends Composite implements IExtendedPartUI {
 
 				Object object = comboViewer.getStructuredSelection().getFirstElement();
 				//
+				PeakTracesUI peakTracesUI = chartControl.get();
 				if(object instanceof String) {
 					peakTracesUI.deselectTrace();
 					updatePeak();
@@ -240,7 +217,7 @@ public class ExtendedPeakTracesUI extends Composite implements IExtendedPartUI {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				List<Integer> traces = peakTracesUI.getTraces();
+				List<Integer> traces = chartControl.get().getTraces();
 				Iterator<Integer> iterator = traces.iterator();
 				StringBuilder builder = new StringBuilder();
 				//
@@ -260,21 +237,6 @@ public class ExtendedPeakTracesUI extends Composite implements IExtendedPartUI {
 		});
 		//
 		return button;
-	}
-
-	private void createToggleChartSeriesLegendButton(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle the chart series legend.");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_TAG, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				peakTracesUI.toggleSeriesLegendVisibility();
-			}
-		});
 	}
 
 	private void createResetButton(Composite parent) {
@@ -307,7 +269,7 @@ public class ExtendedPeakTracesUI extends Composite implements IExtendedPartUI {
 
 	private void createPeakChart(Composite parent) {
 
-		peakTracesUI = new PeakTracesUI(parent, SWT.BORDER);
+		PeakTracesUI peakTracesUI = new PeakTracesUI(parent, SWT.BORDER);
 		peakTracesUI.setLayoutData(new GridData(GridData.FILL_BOTH));
 		//
 		BaseChart baseChart = peakTracesUI.getBaseChart();
@@ -355,6 +317,8 @@ public class ExtendedPeakTracesUI extends Composite implements IExtendedPartUI {
 		chartSettings.addMenuEntry(createMenuDeleteHiddenSeries());
 		chartSettings.addMenuEntry(createMenuDeleteSelectedSeries());
 		peakTracesUI.applySettings(chartSettings);
+		//
+		chartControl.set(peakTracesUI);
 	}
 
 	private IChartMenuEntry createMenuDeleteHiddenSeries() {
@@ -478,12 +442,12 @@ public class ExtendedPeakTracesUI extends Composite implements IExtendedPartUI {
 
 	private void updateLabel() {
 
-		labelPeak.setText(peakDataSupport.getPeakLabel(peak));
+		toolbarInfo.get().setText(peakDataSupport.getPeakLabel(peak));
 	}
 
 	private void updatePeak() {
 
-		peakTracesUI.setInput(peak);
+		chartControl.get().setInput(peak);
 		updateComboTraces();
 		enableDeleteButton(false);
 	}
@@ -492,7 +456,7 @@ public class ExtendedPeakTracesUI extends Composite implements IExtendedPartUI {
 
 		List<Object> input = new ArrayList<>();
 		input.add(TRACE_LABEL_NONE);
-		input.addAll(peakTracesUI.getTraces());
+		input.addAll(chartControl.get().getTraces());
 		comboViewerTraces.setInput(input);
 		comboViewerTraces.getCombo().select(0);
 	}
