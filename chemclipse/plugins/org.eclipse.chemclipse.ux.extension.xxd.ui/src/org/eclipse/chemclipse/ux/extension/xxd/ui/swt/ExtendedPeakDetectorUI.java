@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 
@@ -35,8 +36,8 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.ui.workbench.DisplayUtils;
+import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
-import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.charts.ChromatogramChart;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.internal.listener.BoxSelectionPaintListener;
@@ -120,8 +121,8 @@ public class ExtendedPeakDetectorUI extends Composite implements IExtendedPartUI
 	private static final int STATUS_DETECTION_HINT_ACTIVE = 1;
 	private static final String MESSAGE_DETECTION_MODUS = "CTRL";
 	//
-	private Composite toolbarInfo;
-	private Label labelChromatogram;
+	private Button buttonToolbarInfo;
+	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
 	private Label labelDetectionType;
 	private Label labelDetectionModus;
 	private Button buttonDetectionTypeBaseline;
@@ -319,7 +320,7 @@ public class ExtendedPeakDetectorUI extends Composite implements IExtendedPartUI
 		}
 		//
 		setDetectionType(DETECTION_TYPE_NONE);
-		labelChromatogram.setText(ChromatogramDataSupport.getChromatogramLabel(chromatogram));
+		toolbarInfo.get().setText(ChromatogramDataSupport.getChromatogramLabel(chromatogram));
 		this.peak = null;
 		//
 		updateChromatogramAndPeak();
@@ -376,10 +377,15 @@ public class ExtendedPeakDetectorUI extends Composite implements IExtendedPartUI
 		setLayout(new GridLayout(1, true));
 		//
 		createToolbarMain(this);
-		toolbarInfo = createToolbarInfo(this);
+		createToolbarInfo(this);
 		createChromatogramChart(this);
 		//
-		PartSupport.setCompositeVisibility(toolbarInfo, true);
+		initialize();
+	}
+
+	private void initialize() {
+
+		enableToolbar(toolbarInfo, buttonToolbarInfo, IMAGE_INFO, TOOLTIP_INFO, true);
 	}
 
 	private void createToolbarMain(Composite parent) {
@@ -391,7 +397,7 @@ public class ExtendedPeakDetectorUI extends Composite implements IExtendedPartUI
 		//
 		labelDetectionType = createDetectionTypeLabel(composite);
 		labelDetectionModus = createDetectionModusLabel(composite);
-		createButtonToggleToolbarInfo(composite);
+		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
 		buttonDetectionTypeBaseline = createDetectionTypeButton(composite, DETECTION_TYPE_BASELINE, IApplicationImage.IMAGE_DETECTION_TYPE_BASELINE);
 		buttonDetectionTypeBoxBB = createDetectionTypeButton(composite, DETECTION_TYPE_BOX_BB, IApplicationImage.IMAGE_DETECTION_TYPE_SCAN_BB);
 		buttonDetectionTypeBoxVV = createDetectionTypeButton(composite, DETECTION_TYPE_BOX_VV, IApplicationImage.IMAGE_DETECTION_TYPE_SCAN_VV);
@@ -423,18 +429,12 @@ public class ExtendedPeakDetectorUI extends Composite implements IExtendedPartUI
 		return label;
 	}
 
-	private Composite createToolbarInfo(Composite parent) {
+	private void createToolbarInfo(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayoutData(gridData);
-		composite.setLayout(new GridLayout(1, false));
+		InformationUI informationUI = new InformationUI(parent, SWT.NONE);
+		informationUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		//
-		labelChromatogram = new Label(composite, SWT.NONE);
-		labelChromatogram.setText("");
-		labelChromatogram.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		//
-		return composite;
+		toolbarInfo.set(informationUI);
 	}
 
 	private Button createDetectionTypeButton(Composite parent, String detectionType, String image) {
@@ -492,29 +492,6 @@ public class ExtendedPeakDetectorUI extends Composite implements IExtendedPartUI
 				}
 			}
 		});
-		return button;
-	}
-
-	private Button createButtonToggleToolbarInfo(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle info toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarInfo);
-				if(visible) {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
 		return button;
 	}
 
