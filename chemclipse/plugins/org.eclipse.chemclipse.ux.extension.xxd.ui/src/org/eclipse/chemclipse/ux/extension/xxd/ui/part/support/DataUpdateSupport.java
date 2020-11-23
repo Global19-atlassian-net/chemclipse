@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -32,6 +34,7 @@ public class DataUpdateSupport {
 	private IEventBroker eventBroker;
 	//
 	private Map<String, EventHandler> handlerMap = new HashMap<>();
+	private Map<String, Set<String>> propertiesMap = new HashMap<>();
 	private Map<String, List<Object>> objectMap = new HashMap<>();
 	//
 	private List<IDataUpdateListener> updateListeners = new ArrayList<>();
@@ -72,10 +75,9 @@ public class DataUpdateSupport {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Object> getUpdates(String topic) {
 
-		return objectMap.getOrDefault(topic, Collections.EMPTY_LIST);
+		return objectMap.getOrDefault(topic, Collections.emptyList());
 	}
 
 	public void subscribe(String topic, String property) {
@@ -95,6 +97,9 @@ public class DataUpdateSupport {
 		EventHandler eventHandler = handlerMap.get(topic);
 		if(eventHandler != null) {
 			eventBroker.unsubscribe(eventHandler);
+			handlerMap.remove(topic);
+			propertiesMap.remove(topic);
+			objectMap.remove(topic);
 			logger.info("Subscription removed on topic '" + topic + "'.");
 		}
 	}
@@ -115,7 +120,10 @@ public class DataUpdateSupport {
 		}
 		//
 		handlerMap.clear();
+		propertiesMap.clear();
 		objectMap.clear();
+		//
+		logger.info("Subscriptions have been completely removed.");
 	}
 
 	private void registerEventHandler(String topic, String[] properties) {
@@ -124,6 +132,23 @@ public class DataUpdateSupport {
 		 * Register a new handler on the given topic.
 		 */
 		if(!handlerMap.containsKey(topic)) {
+			/*
+			 * Probably check additionally, that topic and properties are matching?
+			 * Normally, a topic is not registered with different properties.
+			 */
+			Set<String> propertySet = propertiesMap.get(topic);
+			if(propertySet == null) {
+				propertySet = new HashSet<>();
+				propertySet.addAll(Arrays.asList(properties));
+				propertiesMap.put(topic, propertySet);
+			} else {
+				if(properties.length != propertySet.size()) {
+					logger.warn("Subscription properties '" + Arrays.asList(properties) + "' on topic '" + topic + "' differ from existing handler properties '" + propertySet.toArray() + "'.");
+				}
+			}
+			/*
+			 * Handler
+			 */
 			EventHandler eventHandler = new EventHandler() {
 
 				@Override
