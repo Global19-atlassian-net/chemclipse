@@ -38,19 +38,21 @@ public abstract class AbstractDataUpdateSupport extends AbstractUpdateSupport im
 	public AbstractDataUpdateSupport(MPart part) {
 
 		super(part);
+		/*
+		 * Additional events.
+		 */
+		registerEvents();
 	}
 
 	public void registerEvent(String topic, String property) {
 
-		System.out.println("TODO ENABLE OR UPGRADE TO AbstractPart");
-		// registerEvent(topic, new String[]{property});
+		registerEvent(topic, new String[]{property});
 	}
 
 	public void registerEvent(String topic, String[] properties) {
 
 		if(eventBroker != null) {
-			System.out.println("TODO ENABLE OR UPGRADE TO AbstractPart");
-			// registeredEventHandler.add(registerEventHandler(eventBroker, topic, properties));
+			registeredEventHandler.add(registerEventHandler(eventBroker, topic, properties));
 		}
 	}
 
