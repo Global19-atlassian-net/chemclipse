@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 Lablicate GmbH.
+ * Copyright (c) 2018, 2020 Lablicate GmbH.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -16,8 +16,6 @@ import static org.eclipse.chemclipse.support.ui.swt.ControlBuilder.createColumn;
 import static org.eclipse.chemclipse.support.ui.swt.ControlBuilder.createTreeTable;
 
 import java.util.Collection;
-
-import javax.inject.Inject;
 
 import org.eclipse.chemclipse.model.core.IMeasurementResult;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
@@ -49,7 +47,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TreeColumn;
 
-public class ExtendedMeasurementResultUI {
+public class ExtendedMeasurementResultUI extends Composite {
 
 	private Label labelChromatogramInfo;
 	private Label labelMeasurementResultInfo;
@@ -62,9 +60,10 @@ public class ExtendedMeasurementResultUI {
 	private ProxyStructuredContentProvider contentProvider;
 	private IMeasurementResult<?> lastResult;
 
-	@Inject
-	public ExtendedMeasurementResultUI(Composite parent) {
-		initialize(parent);
+	public ExtendedMeasurementResultUI(Composite parent, int style) {
+
+		super(parent, style);
+		createControl();
 	}
 
 	/**
@@ -97,14 +96,14 @@ public class ExtendedMeasurementResultUI {
 		}
 	}
 
-	private void initialize(Composite parent) {
+	private void createControl() {
 
-		parent.setLayout(new GridLayout(1, true));
+		setLayout(new GridLayout(1, true));
 		//
-		createToolbarMain(parent);
-		toolbarChromatogramInfo = createToolbarChromatogramInfo(parent);
-		toolbarMeasurementResultInfo = createToolbarMeasurementResultInfo(parent);
-		resultTable = createResultSection(parent);
+		createToolbarMain(this);
+		toolbarChromatogramInfo = createToolbarChromatogramInfo(this);
+		toolbarMeasurementResultInfo = createToolbarMeasurementResultInfo(this);
+		resultTable = createResultSection(this);
 		//
 		PartSupport.setCompositeVisibility(toolbarChromatogramInfo, true);
 		PartSupport.setCompositeVisibility(toolbarMeasurementResultInfo, false);

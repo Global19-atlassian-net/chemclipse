@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 Lablicate GmbH.
+ * Copyright (c) 2018, 2020 Lablicate GmbH.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
-import javax.inject.Inject;
-
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IPeak;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
@@ -20,7 +18,6 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.support.charts.ChromatogramDataSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.support.charts.PeakDataSupport;
-import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,8 +27,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-@SuppressWarnings("rawtypes")
-public class ExtendedIntegrationAreaUI {
+public class ExtendedIntegrationAreaUI extends Composite {
 
 	private Composite toolbarInfo;
 	private Label labelInfo;
@@ -40,17 +36,17 @@ public class ExtendedIntegrationAreaUI {
 	private Object object;
 	//
 	private PeakDataSupport peakDataSupport = new PeakDataSupport();
-	private ChromatogramDataSupport chromatogramDataSupport = new ChromatogramDataSupport();
 
-	@Inject
-	public ExtendedIntegrationAreaUI(Composite parent) {
-		initialize(parent);
+	public ExtendedIntegrationAreaUI(Composite parent, int style) {
+
+		super(parent, style);
+		createControl();
 	}
 
-	@Focus
-	public void setFocus() {
+	public boolean setFocus() {
 
 		updateObject();
+		return true;
 	}
 
 	public void update(Object object) {
@@ -60,10 +56,10 @@ public class ExtendedIntegrationAreaUI {
 			IPeak peak = (IPeak)object;
 			String description = peak.getIntegratorDescription();
 			labelInfo.setText(peakDataSupport.getPeakLabel(peak) + " | " + description);
-		} else if(object instanceof IChromatogram) {
-			IChromatogram chromatogram = (IChromatogram)object;
+		} else if(object instanceof IChromatogram<?>) {
+			IChromatogram<?> chromatogram = (IChromatogram<?>)object;
 			String description = chromatogram.getIntegratorDescription();
-			labelInfo.setText(chromatogramDataSupport.getChromatogramLabel(chromatogram) + " | " + description);
+			labelInfo.setText(ChromatogramDataSupport.getChromatogramLabel(chromatogram) + " | " + description);
 		} else {
 			labelInfo.setText("No data has been selected.");
 		}
@@ -79,13 +75,13 @@ public class ExtendedIntegrationAreaUI {
 		}
 	}
 
-	private void initialize(Composite parent) {
+	private void createControl() {
 
-		parent.setLayout(new GridLayout(1, true));
+		setLayout(new GridLayout(1, true));
 		//
-		createToolbarMain(parent);
-		toolbarInfo = createToolbarInfo(parent);
-		createQuantitationTable(parent);
+		createToolbarMain(this);
+		toolbarInfo = createToolbarInfo(this);
+		createQuantitationTable(this);
 		//
 		PartSupport.setCompositeVisibility(toolbarInfo, true);
 	}

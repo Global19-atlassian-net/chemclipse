@@ -124,7 +124,10 @@ public abstract class AbstractPart<T extends Composite> {
 	 * @param topic
 	 * @return boolean
 	 */
-	protected abstract boolean isUpdateTopic(String topic);
+	protected boolean isUpdateTopic(String topic) {
+
+		return this.topic.equals(topic);
+	}
 
 	private boolean updateSelection(List<Object> objects, String topic) {
 
