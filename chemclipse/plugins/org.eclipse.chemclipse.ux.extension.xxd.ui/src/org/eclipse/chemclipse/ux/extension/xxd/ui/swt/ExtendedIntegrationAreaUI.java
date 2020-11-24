@@ -11,26 +11,23 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IPeak;
-import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
-import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
-import org.eclipse.chemclipse.ux.extension.ui.support.PartSupport;
+import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.support.charts.ChromatogramDataSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.support.charts.PeakDataSupport;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 
-public class ExtendedIntegrationAreaUI extends Composite {
+public class ExtendedIntegrationAreaUI extends Composite implements IExtendedPartUI {
 
-	private Composite toolbarInfo;
-	private Label labelInfo;
+	private Button buttonToolbarInfo;
+	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
 	private IntegrationAreaUI integrationAreaUI;
 	//
 	private Object object;
@@ -55,13 +52,13 @@ public class ExtendedIntegrationAreaUI extends Composite {
 		if(object instanceof IPeak) {
 			IPeak peak = (IPeak)object;
 			String description = peak.getIntegratorDescription();
-			labelInfo.setText(peakDataSupport.getPeakLabel(peak) + " | " + description);
+			toolbarInfo.get().setText(peakDataSupport.getPeakLabel(peak) + " | " + description);
 		} else if(object instanceof IChromatogram<?>) {
 			IChromatogram<?> chromatogram = (IChromatogram<?>)object;
 			String description = chromatogram.getIntegratorDescription();
-			labelInfo.setText(ChromatogramDataSupport.getChromatogramLabel(chromatogram) + " | " + description);
+			toolbarInfo.get().setText(ChromatogramDataSupport.getChromatogramLabel(chromatogram) + " | " + description);
 		} else {
-			labelInfo.setText("No data has been selected.");
+			toolbarInfo.get().setText("No data has been selected.");
 		}
 		updateObject();
 	}
@@ -80,10 +77,15 @@ public class ExtendedIntegrationAreaUI extends Composite {
 		setLayout(new GridLayout(1, true));
 		//
 		createToolbarMain(this);
-		toolbarInfo = createToolbarInfo(this);
+		createToolbarInfo(this);
 		createQuantitationTable(this);
 		//
-		PartSupport.setCompositeVisibility(toolbarInfo, true);
+		initialize();
+	}
+
+	private void initialize() {
+
+		enableToolbar(toolbarInfo, buttonToolbarInfo, IMAGE_INFO, TOOLTIP_INFO, true);
 	}
 
 	private void createToolbarMain(Composite parent) {
@@ -94,49 +96,20 @@ public class ExtendedIntegrationAreaUI extends Composite {
 		composite.setLayoutData(gridData);
 		composite.setLayout(new GridLayout(1, false));
 		//
-		createButtonToggleToolbarInfo(composite);
+		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
 	}
 
-	private Composite createToolbarInfo(Composite parent) {
+	private void createToolbarInfo(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayoutData(gridData);
-		composite.setLayout(new GridLayout(1, false));
+		InformationUI informationUI = new InformationUI(parent, SWT.NONE);
+		informationUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		//
-		labelInfo = new Label(composite, SWT.NONE);
-		labelInfo.setText("");
-		labelInfo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		//
-		return composite;
+		toolbarInfo.set(informationUI);
 	}
 
 	private void createQuantitationTable(Composite parent) {
 
 		integrationAreaUI = new IntegrationAreaUI(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		integrationAreaUI.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-	}
-
-	private Button createButtonToggleToolbarInfo(Composite parent) {
-
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle info toolbar.");
-		button.setText("");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				boolean visible = PartSupport.toggleCompositeVisibility(toolbarInfo);
-				if(visible) {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				} else {
-					button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_INFO, IApplicationImage.SIZE_16x16));
-				}
-			}
-		});
-		//
-		return button;
 	}
 }

@@ -14,6 +14,7 @@ package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.chemclipse.model.baseline.IBaselineModel;
 import org.eclipse.chemclipse.model.core.IChromatogram;
@@ -22,6 +23,7 @@ import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.selection.IChromatogramSelection;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
+import org.eclipse.chemclipse.swt.ui.components.InformationUI;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
 import org.eclipse.chemclipse.swt.ui.support.IColorScheme;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
@@ -29,6 +31,7 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.charts.ChromatogramChart;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstants;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageBaseline;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.support.charts.ChromatogramChartSupport;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.support.charts.ChromatogramDataSupport;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -47,37 +50,49 @@ import org.eclipse.swtchart.extensions.linecharts.LineSeriesData;
 
 public class ExtendedBaselineUI extends Composite implements IExtendedPartUI {
 
-	private ChromatogramChart chromatogramChart;
+	private Button buttonToolbarInfo;
+	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
+	private AtomicReference<ChromatogramChart> chartControl = new AtomicReference<>();
+	private IChromatogram<?> chromatogram;
+	//
+	private ChromatogramChartSupport chromatogramChartSupport = new ChromatogramChartSupport();
 	private IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 	private IColorScheme colorScheme = Colors.getColorScheme(preferenceStore.getString(PreferenceConstants.P_COLOR_SCHEME_DISPLAY_BASELINE));
 	private String compressionType = preferenceStore.getString(PreferenceConstants.DEF_BASELINE_CHART_COMPRESSION_TYPE);
-	private ChromatogramChartSupport chromatogramChartSupport = new ChromatogramChartSupport();
-	@SuppressWarnings("rawtypes")
-	private IChromatogram chromatogram;
 
 	public ExtendedBaselineUI(Composite parent, int style) {
 
 		super(parent, style);
-		initialize(parent);
+		createControl();
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	public void update(IChromatogramSelection chromatogramSelection) {
+	public void update(IChromatogramSelection<?, ?> chromatogramSelection) {
 
+		toolbarInfo.get().setText(ChromatogramDataSupport.getChromatogramSelectionLabel(chromatogramSelection));
+		//
 		if(chromatogramSelection != null) {
 			chromatogram = chromatogramSelection.getChromatogram();
 		} else {
 			chromatogram = null;
 		}
+		//
 		refreshBaselineChart(chromatogram);
 	}
 
-	private void initialize(Composite parent) {
+	private void createControl() {
 
-		parent.setLayout(new GridLayout(1, true));
+		setLayout(new GridLayout(1, true));
 		//
-		createToolbarMain(parent);
-		createOverlayChart(parent);
+		createToolbarMain(this);
+		createToolbarInfo(this);
+		createOverlayChart(this);
+		//
+		initialize();
+	}
+
+	private void initialize() {
+
+		enableToolbar(toolbarInfo, buttonToolbarInfo, IMAGE_INFO, TOOLTIP_INFO, true);
 	}
 
 	private void createToolbarMain(Composite parent) {
@@ -86,26 +101,20 @@ public class ExtendedBaselineUI extends Composite implements IExtendedPartUI {
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalAlignment = SWT.END;
 		composite.setLayoutData(gridData);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(4, false));
 		//
-		createToggleChartLegendButton(composite);
+		buttonToolbarInfo = createButtonToggleToolbar(composite, toolbarInfo, IMAGE_INFO, TOOLTIP_INFO);
+		createButtonToggleChartLegend(composite, chartControl, IMAGE_LEGEND);
 		createResetButton(composite);
 		createSettingsButton(composite);
 	}
 
-	private void createToggleChartLegendButton(Composite parent) {
+	private void createToolbarInfo(Composite parent) {
 
-		Button button = new Button(parent, SWT.PUSH);
-		button.setToolTipText("Toggle the chart legend");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_TAG, IApplicationImage.SIZE_16x16));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				chromatogramChart.toggleSeriesLegendVisibility();
-			}
-		});
+		InformationUI informationUI = new InformationUI(parent, SWT.NONE);
+		informationUI.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		//
+		toolbarInfo.set(informationUI);
 	}
 
 	private void createResetButton(Composite parent) {
@@ -116,7 +125,6 @@ public class ExtendedBaselineUI extends Composite implements IExtendedPartUI {
 		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_RESET, IApplicationImage.SIZE_16x16));
 		button.addSelectionListener(new SelectionAdapter() {
 
-			@SuppressWarnings("unchecked")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
@@ -139,14 +147,15 @@ public class ExtendedBaselineUI extends Composite implements IExtendedPartUI {
 
 	private void createOverlayChart(Composite parent) {
 
-		chromatogramChart = new ChromatogramChart(parent, SWT.BORDER);
+		ChromatogramChart chromatogramChart = new ChromatogramChart(parent, SWT.BORDER);
 		chromatogramChart.setLayoutData(new GridData(GridData.FILL_BOTH));
 		IChartSettings chartSettings = chromatogramChart.getChartSettings();
 		chartSettings.setCreateMenu(true);
 		chromatogramChart.applySettings(chartSettings);
+		//
+		chartControl.set(chromatogramChart);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void applySettings() {
 
 		colorScheme = Colors.getColorScheme(preferenceStore.getString(PreferenceConstants.P_COLOR_SCHEME_DISPLAY_BASELINE));
@@ -156,6 +165,7 @@ public class ExtendedBaselineUI extends Composite implements IExtendedPartUI {
 
 	private void refreshBaselineChart(IChromatogram<? extends IPeak> chromatogram) {
 
+		ChromatogramChart chromatogramChart = chartControl.get();
 		chromatogramChart.deleteSeries();
 		if(chromatogram != null) {
 			List<ILineSeriesData> lineSeriesDataList = new ArrayList<ILineSeriesData>();
@@ -199,7 +209,7 @@ public class ExtendedBaselineUI extends Composite implements IExtendedPartUI {
 			for(IScan scan : chromatogram.getScans()) {
 				int retentionTime = scan.getRetentionTime();
 				xSeries[index] = retentionTime;
-				ySeries[index] = (baseline) ? baselineModel.getBackgroundAbundance(retentionTime) : scan.getTotalSignal();
+				ySeries[index] = (baseline) ? baselineModel.getBackground(retentionTime) : scan.getTotalSignal();
 				index++;
 			}
 		} else {

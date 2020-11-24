@@ -376,6 +376,7 @@ public interface IApplicationImage extends IApplicationImageProvider {
 	String IMAGE_START_PROCESSING = "org.eclipse.chemclipse.rcp.ui.icons/startProcessing.gif";
 	String IMAGE_END_PROCESSING = "org.eclipse.chemclipse.rcp.ui.icons/endProcessing.gif";
 	//
+	String IMAGE_RESULTS = "org.eclipse.chemclipse.rcp.ui.icons/measurementResults.gif";
 	String IMAGE_MEASUREMENT_RESULTS_DEFAULT = "org.eclipse.chemclipse.rcp.ui.icons/measurementResultsDefault.gif";
 	String IMAGE_MEASUREMENT_RESULTS_ACTIVE = "org.eclipse.chemclipse.rcp.ui.icons/measurementResultsActive.gif";
 	//

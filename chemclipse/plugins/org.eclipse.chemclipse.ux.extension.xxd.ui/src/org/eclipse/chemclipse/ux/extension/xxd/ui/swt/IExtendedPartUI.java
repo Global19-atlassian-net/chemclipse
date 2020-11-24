@@ -47,6 +47,7 @@ public interface IExtendedPartUI {
 	//
 	String TOOLTIP_TABLE = "the table content edit modus.";
 	String TOOLTIP_INFO = "additional information.";
+	String TOOLTIP_RESULTS = "results information.";
 	String TOOLTIP_EDIT = "the edit toolbar.";
 	String TOOLTIP_SEARCH = "the search toolbar.";
 	String TOOLTIP_TYPES = "the types toolbar.";
@@ -54,6 +55,7 @@ public interface IExtendedPartUI {
 	String TOOLTIP_LEGEND_MARKER = "the chart legend marker.";
 	//
 	String IMAGE_INFO = IApplicationImage.IMAGE_INFO;
+	String IMAGE_RESULTS = IApplicationImage.IMAGE_RESULTS;
 	String IMAGE_EDIT = IApplicationImage.IMAGE_EDIT;
 	String IMAGE_SEARCH = IApplicationImage.IMAGE_SEARCH;
 	String IMAGE_TYPES = IApplicationImage.IMAGE_TYPES;
