@@ -262,16 +262,6 @@ public class ExtendedChromatogramUI extends Composite implements ToolbarConfig {
 
 		IChromatogramSelection chromatogramSelection = getChromatogramSelection();
 		if(chromatogramSelection != null && eventBroker != null && display != null) {
-			/*
-			 * Will be removed as soon as the topics
-			 * IChemClipseEvents.TOPIC_CHROMATOGRAM_MSD_UPDATE_CHROMATOGRAM_SELECTION
-			 * ...
-			 * are removed.
-			 */
-			if(preferenceStore.getBoolean(PreferenceConstants.P_LEGACY_UPDATE_CHROMATOGRAM_MODUS)) {
-				fireUpdateChromatogramLegacy(display);
-			}
-			//
 			display.asyncExec(new Runnable() {
 
 				@Override
@@ -282,35 +272,6 @@ public class ExtendedChromatogramUI extends Composite implements ToolbarConfig {
 			});
 		}
 		return chromatogramSelection != null ? true : false;
-	}
-
-	private void fireUpdateChromatogramLegacy(Display display) {
-
-		Map<String, Object> map = new HashMap<>();
-		map.put(IChemClipseEvents.PROPERTY_CHROMATOGRAM_SELECTION, chromatogramSelection);
-		map.put(IChemClipseEvents.PROPERTY_FORCE_RELOAD, true);
-		String topic;
-		//
-		if(chromatogramSelection instanceof IChromatogramSelectionMSD) {
-			topic = IChemClipseEvents.TOPIC_CHROMATOGRAM_MSD_UPDATE_CHROMATOGRAM_SELECTION;
-		} else if(chromatogramSelection instanceof IChromatogramSelectionCSD) {
-			topic = IChemClipseEvents.TOPIC_CHROMATOGRAM_CSD_UPDATE_CHROMATOGRAM_SELECTION;
-		} else if(chromatogramSelection instanceof IChromatogramSelectionWSD) {
-			topic = IChemClipseEvents.TOPIC_CHROMATOGRAM_WSD_UPDATE_CHROMATOGRAM_SELECTION;
-		} else {
-			topic = null;
-		}
-		//
-		if(topic != null && eventBroker != null && display != null) {
-			display.asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-
-					eventBroker.post(topic, map);
-				}
-			});
-		}
 	}
 
 	public boolean fireUpdatePeak(Display display) {

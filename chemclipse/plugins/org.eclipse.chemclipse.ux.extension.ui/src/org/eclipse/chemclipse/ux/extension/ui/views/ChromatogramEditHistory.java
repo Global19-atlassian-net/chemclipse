@@ -34,6 +34,7 @@ public class ChromatogramEditHistory extends EditHistoryPart {
 
 	@Inject
 	public ChromatogramEditHistory(Composite parent, EPartService partService, MPart part, IEventBroker eventBroker, EventHandler eventHandler) {
+
 		super(parent, partService, part, eventBroker);
 		this.partService = partService;
 		this.part = part;
@@ -52,20 +53,19 @@ public class ChromatogramEditHistory extends EditHistoryPart {
 
 		if(eventBroker != null) {
 			/*
-			 * Receives and handles MSD/CSD/WSD chromatogram selection updates.
+			 * Chromatogram Selection
 			 */
 			eventHandler = new EventHandler() {
 
 				public void handleEvent(Event event) {
 
-					IChromatogramSelection<?, ?> chromatogramSelection = (IChromatogramSelection<?, ?>)event.getProperty(IChemClipseEvents.PROPERTY_CHROMATOGRAM_SELECTION);
+					IChromatogramSelection<?, ?> chromatogramSelection = (IChromatogramSelection<?, ?>)event.getProperty(IChemClipseEvents.PROPERTY_CHROMATOGRAM_SELECTION_XXD);
 					boolean forceReload = (Boolean)event.getProperty(IChemClipseEvents.PROPERTY_FORCE_RELOAD);
 					doUpdate(chromatogramSelection, forceReload);
 				}
 			};
-			eventBroker.subscribe(IChemClipseEvents.TOPIC_CHROMATOGRAM_MSD_UPDATE_CHROMATOGRAM_SELECTION, eventHandler);
-			eventBroker.subscribe(IChemClipseEvents.TOPIC_CHROMATOGRAM_CSD_UPDATE_CHROMATOGRAM_SELECTION, eventHandler);
-			eventBroker.subscribe(IChemClipseEvents.TOPIC_CHROMATOGRAM_WSD_UPDATE_CHROMATOGRAM_SELECTION, eventHandler);
+			//
+			eventBroker.subscribe(IChemClipseEvents.TOPIC_CHROMATOGRAM_XXD_UPDATE_SELECTION, eventHandler);
 		}
 	}
 

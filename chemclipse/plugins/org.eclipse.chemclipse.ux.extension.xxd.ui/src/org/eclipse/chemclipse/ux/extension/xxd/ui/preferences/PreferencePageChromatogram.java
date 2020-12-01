@@ -39,8 +39,7 @@ public class PreferencePageChromatogram extends FieldEditorPreferencePage implem
 	@Override
 	public void createFieldEditors() {
 
-		addField(new BooleanFieldEditor(PreferenceConstants.P_LEGACY_UPDATE_CHROMATOGRAM_MODUS, "Legacy Chromatogram Update Modus", getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.P_LEGACY_UPDATE_CHROMATOGRAM_MODUS, "Legacy Peak Update Modus", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.P_LEGACY_UPDATE_PEAK_MODUS, "Legacy Peak Update Modus", getFieldEditorParent()));
 		//
 		addField(new SpacerFieldEditor(getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.P_SHOW_RETENTION_INDEX_WITHOUT_DECIMALS, "Display RI without decimals", getFieldEditorParent()));
