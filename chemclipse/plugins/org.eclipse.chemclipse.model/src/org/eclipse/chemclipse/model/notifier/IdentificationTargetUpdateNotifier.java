@@ -12,25 +12,23 @@
 package org.eclipse.chemclipse.model.notifier;
 
 import org.eclipse.chemclipse.model.Activator;
-import org.eclipse.chemclipse.model.core.IPeak;
+import org.eclipse.chemclipse.model.identifier.IIdentificationTarget;
 import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
-public class PeakUpdateNotifier {
+public class IdentificationTargetUpdateNotifier {
 
 	/**
-	 * Sends an update event. The peak could be also null.
+	 * Sends an update event. The identification target selection must be not null.
 	 * 
-	 * @param peak
+	 * @param identificationTarget
 	 */
-	public static void update(IPeak peak) {
+	public static void update(IIdentificationTarget identificationTarget) {
 
 		IEventBroker eventBroker = Activator.getDefault().getEventBroker();
 		if(eventBroker != null) {
-			if(peak != null) {
-				eventBroker.send(IChemClipseEvents.TOPIC_PEAK_XXD_UPDATE_SELECTION, peak);
-			} else {
-				eventBroker.send(IChemClipseEvents.TOPIC_PEAK_XXD_UNLOAD_SELECTION, null);
+			if(identificationTarget != null) {
+				eventBroker.send(IChemClipseEvents.TOPIC_IDENTIFICATION_TARGET_UPDATE, identificationTarget);
 			}
 		}
 	}

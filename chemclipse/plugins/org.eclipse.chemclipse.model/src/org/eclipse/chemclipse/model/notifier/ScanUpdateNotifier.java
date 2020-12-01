@@ -21,7 +21,7 @@ public class ScanUpdateNotifier {
 	/**
 	 * Sends an update event. The scan selection could be also null.
 	 * 
-	 * @param chromatogramSelection
+	 * @param scan
 	 */
 	public static void update(IScan scan) {
 

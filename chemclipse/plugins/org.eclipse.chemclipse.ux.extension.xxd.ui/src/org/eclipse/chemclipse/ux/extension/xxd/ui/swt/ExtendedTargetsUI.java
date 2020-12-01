@@ -12,9 +12,7 @@
  *******************************************************************************/
 package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -24,13 +22,14 @@ import org.eclipse.chemclipse.model.core.IPeak;
 import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.core.ITargetSupplier;
 import org.eclipse.chemclipse.model.identifier.IIdentificationTarget;
+import org.eclipse.chemclipse.model.notifier.IdentificationTargetUpdateNotifier;
+import org.eclipse.chemclipse.model.notifier.ScanUpdateNotifier;
 import org.eclipse.chemclipse.model.targets.ITarget;
 import org.eclipse.chemclipse.model.updates.ITargetUpdateListener;
 import org.eclipse.chemclipse.msd.model.core.IPeakMSD;
 import org.eclipse.chemclipse.msd.model.core.IScanMSD;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
-import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.ui.events.IKeyEventProcessor;
 import org.eclipse.chemclipse.support.ui.menu.ITableMenuEntry;
 import org.eclipse.chemclipse.support.ui.provider.AbstractLabelProvider;
@@ -81,8 +80,6 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 	private static final String MENU_CATEGORY_TARGETS = "Targets";
 	private static final String TARGET_OPTION_AUTO = "Auto";
 	private static final String TARGET_OPTION_CHROMATOGRAM = "Chromatogram";
-	//
-	private final Map<String, Object> map = new HashMap<String, Object>();
 	//
 	private Button buttonToolbarInfo;
 	private AtomicReference<InformationUI> toolbarInfo = new AtomicReference<>();
@@ -425,6 +422,7 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 		listUI.setEditingSupport();
 		Table table = listUI.getTable();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		//
 		table.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -590,6 +588,9 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 
 	private void propagateTarget() {
 
+		IEventBroker eventBroker = Activator.getDefault().getEventBroker();
+		if(eventBroker != null) {
+		}
 		Table table = targetListUI.getTable();
 		int index = table.getSelectionIndex();
 		if(index >= 0) {
@@ -597,43 +598,17 @@ public class ExtendedTargetsUI extends Composite implements IExtendedPartUI {
 			Object object = tableItem.getData();
 			if(object instanceof IIdentificationTarget) {
 				/*
-				 * Fire updates
+				 * First update the mass spectrum.
 				 */
-				IEventBroker eventBroker = Activator.getDefault().getEventBroker();
-				if(eventBroker != null) {
-					IScanMSD massSpectrum = getMassSpectrum();
-					IIdentificationTarget target = (IIdentificationTarget)object;
-					//
-					DisplayUtils.getDisplay().asyncExec(new Runnable() {
-
-						@Override
-						public void run() {
-
-							/*
-							 * Molecule Part
-							 */
-							eventBroker.send(IChemClipseEvents.TOPIC_IDENTIFICATION_TARGET_UPDATE, target);
-						}
-					});
-					//
-					if(massSpectrum != null) {
-						DisplayUtils.getDisplay().asyncExec(new Runnable() {
-
-							@Override
-							public void run() {
-
-								/*
-								 * Send the identification target update to let e.g. the molecule renderer react on an update.
-								 */
-								map.clear();
-								IIdentificationTarget identificationTarget = (IIdentificationTarget)object;
-								map.put(IChemClipseEvents.PROPERTY_IDENTIFICATION_TARGET_MASS_SPECTRUM_UNKNOWN, massSpectrum);
-								map.put(IChemClipseEvents.PROPERTY_IDENTIFICATION_TARGET_ENTRY, identificationTarget);
-								eventBroker.send(IChemClipseEvents.TOPIC_IDENTIFICATION_TARGET_MASS_SPECTRUM_UNKNOWN_UPDATE, map);
-							}
-						});
-					}
+				IScanMSD massSpectrum = getMassSpectrum();
+				if(massSpectrum != null) {
+					ScanUpdateNotifier.update(massSpectrum);
 				}
+				/*
+				 * Then update the identification, see ComparisonScanChart.
+				 */
+				IIdentificationTarget identificationTarget = (IIdentificationTarget)object;
+				IdentificationTargetUpdateNotifier.update(identificationTarget);
 			}
 		}
 	}

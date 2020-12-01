@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<component name="org.eclipse.chemclipse.ux.extension.ui.definitions.ScanTypeMSD">
+<component name="org.eclipse.chemclipse.ux.extension.ui.definitions.ScanTypeXXD">
    <implementation class="org.eclipse.chemclipse.ux.extension.ui.definitions.ScanType" />
-   <property name="event.topics" value="scan/msd/update/selection" />
+   <property name="event.topics" value="scan/xxd/update/selection" />
    <service>
       <provide interface="org.osgi.service.event.EventHandler" />
    </service>

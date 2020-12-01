@@ -117,7 +117,6 @@ public class MassSpectrumEditor implements IChemClipseEditor {
 		 * Fire an update if a loaded mass spectrum has been selected.
 		 */
 		if(massSpectrum != null) {
-			eventBroker.post(IChemClipseEvents.TOPIC_SCAN_MSD_UPDATE_SELECTION, massSpectrum);
 			ScanUpdateNotifier.update(massSpectrum);
 		}
 	}
@@ -376,7 +375,7 @@ public class MassSpectrumEditor implements IChemClipseEditor {
 
 	public void registerEvents() {
 
-		registerEvent(IChemClipseEvents.TOPIC_SCAN_MSD_UPDATE_SELECTION, IChemClipseEvents.PROPERTY_SCAN_SELECTION);
+		registerEvent(IChemClipseEvents.TOPIC_SCAN_XXD_UPDATE_SELECTION, IChemClipseEvents.EVENT_BROKER_DATA);
 	}
 
 	public void updateObjects(List<Object> objects, String topic) {

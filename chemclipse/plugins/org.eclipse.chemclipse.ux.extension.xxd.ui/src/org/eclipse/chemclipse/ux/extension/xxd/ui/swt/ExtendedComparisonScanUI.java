@@ -109,6 +109,12 @@ public class ExtendedComparisonScanUI extends Composite implements IExtendedPart
 		return true;
 	}
 
+	public void clear() {
+
+		IScanMSD scanMSD = null;
+		update(scanMSD);
+	}
+
 	public void update(IScanMSD scanMSD) {
 
 		if(displayOption.equals(OPTION_UPDATE_SCAN_1)) {
@@ -142,47 +148,62 @@ public class ExtendedComparisonScanUI extends Composite implements IExtendedPart
 		}
 	}
 
+	public void update(IIdentificationTarget identificationTarget) {
+
+		if(displayOption.equals(OPTION_LIBRARY_SEARCH)) {
+			updateIdentificationTarget(identificationTarget);
+		}
+	}
+
 	public void update(IScanMSD unknownMassSpectrum, IIdentificationTarget identificationTarget) {
 
 		if(displayOption.equals(OPTION_LIBRARY_SEARCH)) {
 			scan1 = copyScan(unknownMassSpectrum);
-			scan1Optimized = null;
-			scan2Optimized = null;
-			LibraryServiceRunnable runnable = new LibraryServiceRunnable(identificationTarget, new Consumer<IScanMSD>() {
+			updateIdentificationTarget(identificationTarget);
+		}
+	}
 
-				@Override
-				public void accept(IScanMSD referenceMassSpectrum) {
+	private void updateIdentificationTarget(IIdentificationTarget identificationTarget) {
 
-					scan2 = copyScan(referenceMassSpectrum);
-					Display.getDefault().asyncExec(new Runnable() {
+		scan1Optimized = null;
+		scan2Optimized = null;
+		LibraryServiceRunnable runnable = new LibraryServiceRunnable(identificationTarget, new Consumer<IScanMSD>() {
 
-						@Override
-						public void run() {
+			@Override
+			public void accept(IScanMSD referenceMassSpectrum) {
 
-							buttonOptimizedScan.setEnabled(true);
-							updateChart();
-						}
-					});
-				}
-			});
-			try {
-				if(runnable.requireProgressMonitor()) {
-					DisplayUtils.executeInUserInterfaceThread(() -> {
-						ProgressMonitorDialog monitor = new ProgressMonitorDialog(scanChartUI.getShell());
-						monitor.run(true, true, runnable);
-						return null;
-					});
-				} else {
-					DisplayUtils.executeBusy(() -> {
-						runnable.run(new NullProgressMonitor());
-						return null;
-					});
-				}
-			} catch(InterruptedException e) {
-				Thread.currentThread().interrupt();
-			} catch(ExecutionException e) {
-				Activator.getDefault().getLog().log(new Status(IStatus.ERROR, getClass().getName(), "Update scan failed", e));
+				scan2 = copyScan(referenceMassSpectrum);
+				Display.getDefault().asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+
+						buttonOptimizedScan.setEnabled(true);
+						updateChart();
+					}
+				});
 			}
+		});
+		/*
+		 * 
+		 */
+		try {
+			if(runnable.requireProgressMonitor()) {
+				DisplayUtils.executeInUserInterfaceThread(() -> {
+					ProgressMonitorDialog monitor = new ProgressMonitorDialog(scanChartUI.getShell());
+					monitor.run(true, true, runnable);
+					return null;
+				});
+			} else {
+				DisplayUtils.executeBusy(() -> {
+					runnable.run(new NullProgressMonitor());
+					return null;
+				});
+			}
+		} catch(InterruptedException e) {
+			Thread.currentThread().interrupt();
+		} catch(ExecutionException e) {
+			Activator.getDefault().getLog().log(new Status(IStatus.ERROR, getClass().getName(), "Update scan failed.", e));
 		}
 	}
 

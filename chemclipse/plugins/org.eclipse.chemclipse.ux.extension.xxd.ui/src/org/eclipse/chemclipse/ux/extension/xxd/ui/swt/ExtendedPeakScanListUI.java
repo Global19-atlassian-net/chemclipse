@@ -14,10 +14,8 @@ package org.eclipse.chemclipse.ux.extension.xxd.ui.swt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.chemclipse.converter.exceptions.NoConverterAvailableException;
@@ -27,17 +25,19 @@ import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IPeak;
 import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.identifier.IIdentificationTarget;
+import org.eclipse.chemclipse.model.notifier.ChromatogramUpdateNotifier;
+import org.eclipse.chemclipse.model.notifier.IdentificationTargetUpdateNotifier;
+import org.eclipse.chemclipse.model.notifier.PeakUpdateNotifier;
+import org.eclipse.chemclipse.model.notifier.ScanUpdateNotifier;
 import org.eclipse.chemclipse.model.selection.IChromatogramSelection;
 import org.eclipse.chemclipse.model.support.RetentionTimeRange;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
-import org.eclipse.chemclipse.msd.model.core.IPeakMSD;
 import org.eclipse.chemclipse.msd.model.core.IScanMSD;
 import org.eclipse.chemclipse.msd.model.implementation.MassSpectra;
 import org.eclipse.chemclipse.msd.swt.ui.support.DatabaseFileSupport;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.comparator.SortOrder;
-import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.ui.events.IKeyEventProcessor;
 import org.eclipse.chemclipse.support.ui.menu.ITableMenuEntry;
 import org.eclipse.chemclipse.support.ui.swt.ExtendedTableViewer;
@@ -55,7 +55,6 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferenceConstant
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageLists;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.support.charts.ChromatogramDataSupport;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.PeakScanListUIConfig.InteractionMode;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -85,7 +84,6 @@ public class ExtendedPeakScanListUI extends Composite implements IExtendedPartUI
 	private final ListSupport listSupport = new ListSupport();
 	private final TargetExtendedComparator comparator = new TargetExtendedComparator(SortOrder.DESC);
 	private final IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
-	private final IEventBroker eventBroker = Activator.getDefault().getEventBroker();
 	//
 	private Composite toolbarInfoTop;
 	private Composite toolbarInfoBottom;
@@ -479,7 +477,7 @@ public class ExtendedPeakScanListUI extends Composite implements IExtendedPartUI
 				}
 			}
 			//
-			sendEvent(display, IChemClipseEvents.TOPIC_CHROMATOGRAM_XXD_UPDATE_SELECTION, chromatogramSelection);
+			ChromatogramUpdateNotifier.update(chromatogramSelection);
 			updateChromatogramSelection();
 		}
 	}
@@ -548,7 +546,7 @@ public class ExtendedPeakScanListUI extends Composite implements IExtendedPartUI
 			/*
 			 * Send update.
 			 */
-			sendEvent(display, IChemClipseEvents.TOPIC_CHROMATOGRAM_XXD_UPDATE_SELECTION, chromatogramSelection);
+			ChromatogramUpdateNotifier.update(chromatogramSelection);
 		}
 	}
 
@@ -571,63 +569,25 @@ public class ExtendedPeakScanListUI extends Composite implements IExtendedPartUI
 					 * Fire updates
 					 */
 					IPeak peak = (IPeak)object;
-					IIdentificationTarget target = IIdentificationTarget.getBestIdentificationTarget(peak.getTargets(), comparator);
+					IIdentificationTarget identificationTarget = IIdentificationTarget.getBestIdentificationTarget(peak.getTargets(), comparator);
 					if(moveRetentionTimeOnPeakSelection) {
 						ChromatogramDataSupport.adjustChromatogramSelection(peak, chromatogramSelection);
 					}
 					//
 					chromatogramSelection.setSelectedPeak(peak);
-					sendEvent(display, IChemClipseEvents.TOPIC_PEAK_XXD_UPDATE_SELECTION, peak);
-					sendEvent(display, IChemClipseEvents.TOPIC_IDENTIFICATION_TARGET_UPDATE, target);
-					//
-					if(peak instanceof IPeakMSD) {
-						/*
-						 * Send the mass spectrum update, e.g. used by the comparison part.
-						 */
-						IPeakMSD peakMSD = (IPeakMSD)peak;
-						Map<String, Object> map = new HashMap<String, Object>();
-						map.put(IChemClipseEvents.PROPERTY_IDENTIFICATION_TARGET_MASS_SPECTRUM_UNKNOWN, peakMSD.getExtractedMassSpectrum());
-						map.put(IChemClipseEvents.PROPERTY_IDENTIFICATION_TARGET_ENTRY, target);
-						sendEvent(display, IChemClipseEvents.TOPIC_IDENTIFICATION_TARGET_MASS_SPECTRUM_UNKNOWN_UPDATE, map);
-					}
+					PeakUpdateNotifier.update(peak);
+					IdentificationTargetUpdateNotifier.update(identificationTarget);
 				} else if(object instanceof IScan) {
 					/*
 					 * Fire updates
 					 */
 					IScan scan = (IScan)object;
-					IIdentificationTarget target = IIdentificationTarget.getBestIdentificationTarget(scan.getTargets(), comparator);
+					IIdentificationTarget identificationTarget = IIdentificationTarget.getBestIdentificationTarget(scan.getTargets(), comparator);
 					//
 					chromatogramSelection.setSelectedIdentifiedScan(scan);
-					sendEvent(display, IChemClipseEvents.TOPIC_SCAN_XXD_UPDATE_SELECTION, scan);
-					sendEvent(display, IChemClipseEvents.TOPIC_IDENTIFICATION_TARGET_UPDATE, target);
-					//
-					if(scan instanceof IScanMSD) {
-						/*
-						 * Send the identification target update to let e.g. the molecule renderer react on an update.
-						 */
-						IScanMSD scanMSD = (IScanMSD)scan;
-						Map<String, Object> map = new HashMap<String, Object>();
-						map.put(IChemClipseEvents.PROPERTY_IDENTIFICATION_TARGET_MASS_SPECTRUM_UNKNOWN, scanMSD);
-						map.put(IChemClipseEvents.PROPERTY_IDENTIFICATION_TARGET_ENTRY, target);
-						sendEvent(display, IChemClipseEvents.TOPIC_IDENTIFICATION_TARGET_MASS_SPECTRUM_UNKNOWN_UPDATE, map);
-					}
+					ScanUpdateNotifier.update(scan);
+					IdentificationTargetUpdateNotifier.update(identificationTarget);
 				}
-			}
-		}
-	}
-
-	private void sendEvent(Display display, String topic, Object data) {
-
-		if(display != null) {
-			if(eventBroker != null) {
-				display.asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-
-						eventBroker.send(topic, data);
-					}
-				});
 			}
 		}
 	}

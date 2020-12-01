@@ -59,7 +59,7 @@ public class ChromatogramEditHistory extends EditHistoryPart {
 
 				public void handleEvent(Event event) {
 
-					IChromatogramSelection<?, ?> chromatogramSelection = (IChromatogramSelection<?, ?>)event.getProperty(IChemClipseEvents.PROPERTY_CHROMATOGRAM_SELECTION);
+					IChromatogramSelection<?, ?> chromatogramSelection = (IChromatogramSelection<?, ?>)event.getProperty(IChemClipseEvents.EVENT_BROKER_DATA);
 					doUpdate(chromatogramSelection);
 				}
 			};
