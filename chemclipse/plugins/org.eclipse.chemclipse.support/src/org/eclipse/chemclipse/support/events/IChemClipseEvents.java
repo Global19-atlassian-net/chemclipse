@@ -35,7 +35,7 @@ public interface IChemClipseEvents {
 	String PROPERTY_SCAN_NMR_OVERVIEW = IEVENTBROKER_DATA;
 	String PROPERTY_SCAN_XIR_OVERVIEW = IEVENTBROKER_DATA;
 	//
-	String PROPERTY_CHROMATOGRAM_SELECTION_XXD = IEVENTBROKER_DATA; // IChromatogramSelection
+	String PROPERTY_CHROMATOGRAM_SELECTION = IEVENTBROKER_DATA; // IChromatogramSelection
 	String PROPERTY_LIBRARY_SELECTION = IEVENTBROKER_DATA; // IMassSpectra
 	String PROPERTY_SCAN_SELECTION = IEVENTBROKER_DATA; // IScanMSD, ...
 	String PROPERTY_PEAK_SELECTION = IEVENTBROKER_DATA; // IPeakMSD, ...
@@ -43,9 +43,7 @@ public interface IChemClipseEvents {
 	String PROPERTY_CHROMATOGRAM_OVERVIEW = "ChromatogramOverview"; // IChromatogramOverview
 	String PROPERTY_CHROMATOGRAM_PEAK_MSD = "ChromatogramPeakMSD"; // IChromatogramPeakMSD
 	String PROPERTY_CHROMATOGRAM_MSD = "ChromatogramMSD"; // IChromatogramMSD
-	String PROPERTY_PEAK_MSD = "PeakMSD"; // IPeakMSD
 	String PROPERTY_PEAKS_MSD = "PeaksMSD"; // IPeaksMSD
-	String PROPERTY_MASSPECTRUM = "MassSpectrum"; // IMassSpectrum
 	//
 	String PROPERTY_CHROMATOGRAM_CSD = "ChromatogramCSD"; // IChromatogramCSD
 	String PROPERTY_CHROMATOGRAM_PEAK_CSD = "ChromatogramPeakCSD"; // IChromatogramPeakCSD
@@ -56,7 +54,6 @@ public interface IChemClipseEvents {
 	String PROPERTY_SELECTED_SCAN = IEVENTBROKER_DATA; // IScan
 	String PROPERTY_SELECTED_PEAK = IEVENTBROKER_DATA; // IPeak
 	//
-	String PROPERTY_FORCE_RELOAD = "ForceReload";
 	String PROPERTY_PROCESSING_INFO = IEVENTBROKER_DATA;
 	//
 	String PROPERTY_IDENTIFICATION_TARGET = IEVENTBROKER_DATA;
@@ -97,9 +94,7 @@ public interface IChemClipseEvents {
 	 */
 	String TOPIC_CHROMATOGRAM_MSD_UPDATE_OVERVIEW = "chromatogram/msd/update/overview";
 	String TOPIC_CHROMATOGRAM_MSD_UPDATE_CHROMATOGRAM = "chromatogram/msd/update/chromatogram";
-	String TOPIC_CHROMATOGRAM_MSD_UPDATE_PEAK = "chromatogram/msd/update/peak";
 	String TOPIC_CHROMATOGRAM_MSD_UPDATE_PEAKS = "chromatogram/msd/update/peaks";
-	String TOPIC_CHROMATOGRAM_MSD_UPDATE_MASSSPECTRUM = "chromatogram/msd/update/massspectrum";
 	String TOPIC_CHROMATOGRAM_MSD_UPDATE_MASSSPECTRA = "chromatogram/msd/update/massspectra";
 	String TOPIC_CHROMATOGRAM_MSD_UPDATE_ION_SELECTION = "chromatogram/msd/update/ionselection";
 	String TOPIC_FILE_MSD_UPDATE_SELECTION = "file/msd/update/selection";
@@ -117,7 +112,6 @@ public interface IChemClipseEvents {
 	 */
 	String TOPIC_CHROMATOGRAM_CSD_UPDATE_OVERVIEW = "chromatogram/csd/update/overview";
 	String TOPIC_CHROMATOGRAM_CSD_UPDATE_CHROMATOGRAM = "chromatogram/csd/update/chromatogram";
-	String TOPIC_CHROMATOGRAM_CSD_UPDATE_PEAK = "chromatogram/csd/update/peak";
 	String TOPIC_CHROMATOGRAM_CSD_UPDATE_PEAKS = "chromatogram/csd/update/peaks";
 	String TOPIC_SCAN_CSD_UPDATE_SELECTION = "scan/csd/update/selection";
 	String TOPIC_PEAK_CSD_UPDATE_SELECTION = "peak/csd/update/selection";
@@ -126,7 +120,6 @@ public interface IChemClipseEvents {
 	 */
 	String TOPIC_CHROMATOGRAM_WSD_UPDATE_OVERVIEW = "chromatogram/wsd/update/overview";
 	String TOPIC_CHROMATOGRAM_WSD_UPDATE_CHROMATOGRAM = "chromatogram/wsd/update/chromatogram";
-	String TOPIC_CHROMATOGRAM_WSD_UPDATE_PEAK = "chromatogram/wsd/update/peak";
 	String TOPIC_CHROMATOGRAM_WSD_UPDATE_PEAKS = "chromatogram/wsd/update/peaks";
 	String TOPIC_SCAN_WSD_UPDATE_SELECTION = "scan/wsd/update/selection";
 	String TOPIC_PEAK_WSD_UPDATE_SELECTION = "peak/wsd/update/selection";

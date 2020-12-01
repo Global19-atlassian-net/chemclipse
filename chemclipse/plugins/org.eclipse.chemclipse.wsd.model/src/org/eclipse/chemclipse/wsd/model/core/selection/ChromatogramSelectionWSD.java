@@ -16,7 +16,7 @@ package org.eclipse.chemclipse.wsd.model.core.selection;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
-import org.eclipse.chemclipse.model.notifier.ChromatogramSelectionUpdateNotifier;
+import org.eclipse.chemclipse.model.notifier.ChromatogramUpdateNotifier;
 import org.eclipse.chemclipse.model.selection.AbstractChromatogramSelection;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramPeakWSD;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
@@ -113,7 +113,7 @@ public class ChromatogramSelectionWSD extends AbstractChromatogramSelection<IChr
 		 * Fire an update.
 		 */
 		if(fireUpdate) {
-			ChromatogramSelectionUpdateNotifier.update(this);
+			ChromatogramUpdateNotifier.update(this);
 		}
 	}
 
@@ -151,7 +151,7 @@ public class ChromatogramSelectionWSD extends AbstractChromatogramSelection<IChr
 			 * Fire update change if necessary.
 			 */
 			if(update) {
-				ChromatogramSelectionUpdateNotifier.update(this);
+				ChromatogramUpdateNotifier.update(this);
 			}
 		}
 	}
@@ -179,7 +179,7 @@ public class ChromatogramSelectionWSD extends AbstractChromatogramSelection<IChr
 	@Override
 	public void fireUpdateChange(boolean forceReload) {
 
-		ChromatogramSelectionUpdateNotifier.update(this);
+		ChromatogramUpdateNotifier.update(this);
 	}
 
 	@Override

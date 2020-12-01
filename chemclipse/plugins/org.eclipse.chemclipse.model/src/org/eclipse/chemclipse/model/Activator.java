@@ -20,6 +20,7 @@ import org.eclipse.chemclipse.support.settings.serialization.JSONSerialization;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -27,34 +28,52 @@ public class Activator implements BundleActivator {
 
 	private static final Logger logger = Logger.getLogger(Activator.class);
 	//
-	private static Activator activator;
+	private static Activator plugin;
 	private IEclipseContext eclipseContext = null;
-	private BundleContext bundleContext;
+	private Bundle bundle;
 
-	public static Activator getDefault() {
+	/**
+	 * The constructor
+	 */
+	public Activator() {
 
-		return activator;
 	}
 
 	@Override
-	public void start(BundleContext bundleContext) throws Exception {
+	public void start(BundleContext context) throws Exception {
 
 		JSONSerialization.addMapping(IProcessMethod.class, ProcessMethod.class);
 		JSONSerialization.addMapping(IProcessEntry.class, ProcessEntry.class);
-		this.bundleContext = bundleContext;
+		plugin = this;
+		this.bundle = context.getBundle();
 	}
 
 	@Override
-	public void stop(BundleContext bundleContext) throws Exception {
+	public void stop(BundleContext context) throws Exception {
 
 		JSONSerialization.removeMapping(IProcessMethod.class, ProcessMethod.class);
 		JSONSerialization.removeMapping(IProcessEntry.class, ProcessEntry.class);
-		this.bundleContext = null;
+		plugin = null;
 	}
 
-	public BundleContext getBundleContext() {
+	/**
+	 * Returns the bundle associated with this plug-in.
+	 *
+	 * @return the associated bundle
+	 */
+	public final Bundle getBundle() {
 
-		return bundleContext;
+		return bundle;
+	}
+
+	/**
+	 * Returns the shared instance
+	 *
+	 * @return the shared instance
+	 */
+	public static Activator getDefault() {
+
+		return plugin;
 	}
 
 	public IEventBroker getEventBroker() {
@@ -69,7 +88,7 @@ public class Activator implements BundleActivator {
 			/*
 			 * Create and initialize the context.
 			 */
-			eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
+			eclipseContext = EclipseContextFactory.getServiceContext(bundle.getBundleContext());
 			eclipseContext.set(Logger.class, logger);
 		}
 		//

@@ -26,7 +26,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
-import org.eclipse.chemclipse.csd.model.core.IPeakCSD;
 import org.eclipse.chemclipse.csd.model.core.selection.IChromatogramSelectionCSD;
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.columns.ISeparationColumn;
@@ -42,7 +41,6 @@ import org.eclipse.chemclipse.model.targets.ITargetDisplaySettings;
 import org.eclipse.chemclipse.model.targets.TargetReference;
 import org.eclipse.chemclipse.model.updates.IChromatogramSelectionUpdateListener;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
-import org.eclipse.chemclipse.msd.model.core.IPeakMSD;
 import org.eclipse.chemclipse.msd.model.core.selection.IChromatogramSelectionMSD;
 import org.eclipse.chemclipse.processing.DataCategory;
 import org.eclipse.chemclipse.processing.core.DefaultProcessingResult;
@@ -102,7 +100,6 @@ import org.eclipse.chemclipse.ux.extension.xxd.ui.support.charts.ScanChartSuppor
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ChromatogramReferencesUI;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ToolbarConfig;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
-import org.eclipse.chemclipse.wsd.model.core.IPeakWSD;
 import org.eclipse.chemclipse.wsd.model.core.selection.IChromatogramSelectionWSD;
 import org.eclipse.chemclipse.xxd.process.comparators.CategoryNameComparator;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -281,16 +278,6 @@ public class ExtendedChromatogramUI extends Composite implements ToolbarConfig {
 		if(chromatogramSelection != null && eventBroker != null && display != null) {
 			final IPeak peak = chromatogramSelection.getSelectedPeak();
 			if(peak != null) {
-				/*
-				 * Will be removed as soon as the topics
-				 * IChemClipseEvents.TOPIC_CHROMATOGRAM_MSD_UPDATE_PEAK
-				 * ...
-				 * are removed.
-				 */
-				if(preferenceStore.getBoolean(PreferenceConstants.P_LEGACY_UPDATE_PEAK_MODUS)) {
-					fireUpdatePeakLegacy(peak, display);
-				}
-				//
 				update = true;
 				display.asyncExec(new Runnable() {
 
@@ -303,37 +290,6 @@ public class ExtendedChromatogramUI extends Composite implements ToolbarConfig {
 			}
 		}
 		return update;
-	}
-
-	private void fireUpdatePeakLegacy(IPeak peak, Display display) {
-
-		if(peak != null && eventBroker != null && display != null) {
-			Map<String, Object> map = new HashMap<>();
-			map.put(IChemClipseEvents.PROPERTY_PEAK_MSD, peak);
-			map.put(IChemClipseEvents.PROPERTY_FORCE_RELOAD, true);
-			String topic;
-			//
-			if(peak instanceof IPeakMSD) {
-				topic = IChemClipseEvents.TOPIC_CHROMATOGRAM_MSD_UPDATE_PEAK;
-			} else if(peak instanceof IPeakCSD) {
-				topic = IChemClipseEvents.TOPIC_CHROMATOGRAM_CSD_UPDATE_PEAK;
-			} else if(peak instanceof IPeakWSD) {
-				topic = IChemClipseEvents.TOPIC_CHROMATOGRAM_WSD_UPDATE_PEAK;
-			} else {
-				topic = null;
-			}
-			//
-			if(topic != null) {
-				display.asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-
-						eventBroker.post(topic, map);
-					}
-				});
-			}
-		}
 	}
 
 	public boolean fireUpdateScan(Display display) {

@@ -46,7 +46,7 @@ public class PreferenceSupplier implements IPreferenceSupplier {
 	@Override
 	public String getPreferenceNode() {
 
-		return Activator.getDefault().getBundleContext().getBundle().getSymbolicName();
+		return Activator.getDefault().getBundle().getSymbolicName();
 	}
 
 	@Override

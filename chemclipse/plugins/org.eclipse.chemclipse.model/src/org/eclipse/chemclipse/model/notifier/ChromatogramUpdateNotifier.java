@@ -16,7 +16,7 @@ import org.eclipse.chemclipse.model.selection.IChromatogramSelection;
 import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
-public class ChromatogramSelectionUpdateNotifier {
+public class ChromatogramUpdateNotifier {
 
 	/**
 	 * Sends an update event. The chromatogram selection could be also null.

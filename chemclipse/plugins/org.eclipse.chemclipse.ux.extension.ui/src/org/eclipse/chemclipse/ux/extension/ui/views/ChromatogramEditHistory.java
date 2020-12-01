@@ -59,9 +59,8 @@ public class ChromatogramEditHistory extends EditHistoryPart {
 
 				public void handleEvent(Event event) {
 
-					IChromatogramSelection<?, ?> chromatogramSelection = (IChromatogramSelection<?, ?>)event.getProperty(IChemClipseEvents.PROPERTY_CHROMATOGRAM_SELECTION_XXD);
-					boolean forceReload = (Boolean)event.getProperty(IChemClipseEvents.PROPERTY_FORCE_RELOAD);
-					doUpdate(chromatogramSelection, forceReload);
+					IChromatogramSelection<?, ?> chromatogramSelection = (IChromatogramSelection<?, ?>)event.getProperty(IChemClipseEvents.PROPERTY_CHROMATOGRAM_SELECTION);
+					doUpdate(chromatogramSelection);
 				}
 			};
 			//
@@ -76,7 +75,7 @@ public class ChromatogramEditHistory extends EditHistoryPart {
 		}
 	}
 
-	private void doUpdate(IChromatogramSelection<?, ?> chromatogramSelection, boolean forceReload) {
+	private void doUpdate(IChromatogramSelection<?, ?> chromatogramSelection) {
 
 		if(isPartVisible() && chromatogramSelection != null && chromatogramSelection.getChromatogram() != null) {
 			IEditHistory editHistory = chromatogramSelection.getChromatogram().getEditHistory();

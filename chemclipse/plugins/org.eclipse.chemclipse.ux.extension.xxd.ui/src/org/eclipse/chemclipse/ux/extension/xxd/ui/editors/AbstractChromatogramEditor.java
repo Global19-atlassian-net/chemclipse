@@ -93,7 +93,7 @@ public abstract class AbstractChromatogramEditor extends AbstractUpdater<Extende
 	public static final String ICON_URI = "platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/chromatogram.gif";
 	public static final String TOOLTIP = "Chromatogram Editor";
 	//
-	private static final String TOPIC = IChemClipseEvents.TOPIC_CHROMATOGRAM_XXD_UPDATE_SELECTION;
+	private static final String TOPIC_CHROMATOGRAM = IChemClipseEvents.TOPIC_CHROMATOGRAM_XXD_UPDATE_SELECTION;
 	private static final String TOPIC_SCAN = IChemClipseEvents.TOPIC_SCAN_XXD_UPDATE_SELECTION;
 	private static final String TOPIC_PEAK = IChemClipseEvents.TOPIC_PEAK_XXD_UPDATE_SELECTION;
 	//
@@ -131,7 +131,7 @@ public abstract class AbstractChromatogramEditor extends AbstractUpdater<Extende
 
 	public AbstractChromatogramEditor(DataType dataType, Composite parent, MPart part, MDirtyable dirtyable, ProcessSupplierContext processSupplierContext, Shell shell) {
 
-		super(TOPIC);
+		super(TOPIC_CHROMATOGRAM);
 		//
 		this.dataType = dataType;
 		this.part = part;
@@ -312,7 +312,7 @@ public abstract class AbstractChromatogramEditor extends AbstractUpdater<Extende
 	@Override
 	protected boolean isUpdateTopic(String topic) {
 
-		return TOPIC.equals(topic) || TOPIC_SCAN.equals(topic) || TOPIC_PEAK.equals(topic);
+		return TOPIC_CHROMATOGRAM.equals(topic) || TOPIC_SCAN.equals(topic) || TOPIC_PEAK.equals(topic);
 	}
 
 	private void processChromatogram(IChromatogramSelection chromatogramSelection) {

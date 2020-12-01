@@ -32,7 +32,7 @@ public class PathResolver {
 	 */
 	public static String getAbsolutePath(String string) {
 
-		Bundle bundle = Platform.getBundle(Activator.getDefault().getBundleContext().getBundle().getSymbolicName());
+		Bundle bundle = Platform.getBundle(Activator.getDefault().getBundle().getSymbolicName());
 		IPath path = new Path(string);
 		URL url = FileLocator.find(bundle, path, null);
 		try {

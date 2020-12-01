@@ -20,10 +20,10 @@ import org.eclipse.chemclipse.model.identifier.IComparisonResult;
 import org.eclipse.chemclipse.model.identifier.IIdentificationTarget;
 import org.eclipse.chemclipse.model.identifier.ILibraryInformation;
 import org.eclipse.chemclipse.model.implementation.IdentificationTarget;
+import org.eclipse.chemclipse.model.notifier.ScanUpdateNotifier;
 import org.eclipse.chemclipse.msd.model.core.IMassSpectra;
 import org.eclipse.chemclipse.msd.model.core.IRegularLibraryMassSpectrum;
 import org.eclipse.chemclipse.msd.model.core.IScanMSD;
-import org.eclipse.chemclipse.msd.model.notifier.MassSpectrumSelectionUpdateNotifier;
 import org.eclipse.chemclipse.msd.swt.ui.components.LibraryModifySupportUI;
 import org.eclipse.chemclipse.msd.swt.ui.components.massspectrum.MassSpectrumListUI;
 import org.eclipse.chemclipse.msd.swt.ui.preferences.PreferencePage;
@@ -350,7 +350,7 @@ public class MassSpectrumLibraryUI extends Composite {
 					 * Fire an update if an identified scan has been selected.
 					 */
 					IScanMSD massSpectrum = (IScanMSD)firstElement;
-					MassSpectrumSelectionUpdateNotifier.fireUpdateChange(massSpectrum, true);
+					ScanUpdateNotifier.update(massSpectrum);
 					//
 					IEventBroker eventBroker = Activator.getDefault().getEventBroker();
 					if(eventBroker != null) {

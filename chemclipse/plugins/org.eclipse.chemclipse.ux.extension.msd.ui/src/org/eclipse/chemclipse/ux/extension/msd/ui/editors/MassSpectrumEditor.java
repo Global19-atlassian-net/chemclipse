@@ -30,6 +30,7 @@ import org.eclipse.chemclipse.converter.exceptions.NoConverterAvailableException
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
 import org.eclipse.chemclipse.model.identifier.ILibraryInformation;
+import org.eclipse.chemclipse.model.notifier.ScanUpdateNotifier;
 import org.eclipse.chemclipse.msd.converter.database.DatabaseConverter;
 import org.eclipse.chemclipse.msd.converter.exceptions.NoMassSpectrumConverterAvailableException;
 import org.eclipse.chemclipse.msd.model.core.IMassSpectra;
@@ -37,7 +38,6 @@ import org.eclipse.chemclipse.msd.model.core.IRegularLibraryMassSpectrum;
 import org.eclipse.chemclipse.msd.model.core.IRegularMassSpectrum;
 import org.eclipse.chemclipse.msd.model.core.IScanMSD;
 import org.eclipse.chemclipse.msd.model.core.IVendorMassSpectrum;
-import org.eclipse.chemclipse.msd.model.notifier.MassSpectrumSelectionUpdateNotifier;
 import org.eclipse.chemclipse.msd.swt.ui.support.DatabaseFileSupport;
 import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
@@ -118,7 +118,7 @@ public class MassSpectrumEditor implements IChemClipseEditor {
 		 */
 		if(massSpectrum != null) {
 			eventBroker.post(IChemClipseEvents.TOPIC_SCAN_MSD_UPDATE_SELECTION, massSpectrum);
-			MassSpectrumSelectionUpdateNotifier.fireUpdateChange(massSpectrum, true);
+			ScanUpdateNotifier.update(massSpectrum);
 		}
 	}
 

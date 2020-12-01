@@ -20,7 +20,7 @@ import org.eclipse.chemclipse.csd.model.core.IScanCSD;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
-import org.eclipse.chemclipse.model.notifier.ChromatogramSelectionUpdateNotifier;
+import org.eclipse.chemclipse.model.notifier.ChromatogramUpdateNotifier;
 import org.eclipse.chemclipse.model.selection.AbstractChromatogramSelection;
 
 public class ChromatogramSelectionCSD extends AbstractChromatogramSelection<IChromatogramPeakCSD, IChromatogramCSD> implements IChromatogramSelectionCSD {
@@ -115,7 +115,7 @@ public class ChromatogramSelectionCSD extends AbstractChromatogramSelection<IChr
 		 * Fire an update.
 		 */
 		if(fireUpdate) {
-			ChromatogramSelectionUpdateNotifier.update(this);
+			ChromatogramUpdateNotifier.update(this);
 		}
 	}
 
@@ -153,7 +153,7 @@ public class ChromatogramSelectionCSD extends AbstractChromatogramSelection<IChr
 			 * Fire update change if necessary.
 			 */
 			if(update) {
-				ChromatogramSelectionUpdateNotifier.update(this);
+				ChromatogramUpdateNotifier.update(this);
 			}
 		}
 	}
@@ -177,7 +177,7 @@ public class ChromatogramSelectionCSD extends AbstractChromatogramSelection<IChr
 			 * Fire update change if neccessary.
 			 */
 			if(update) {
-				ChromatogramSelectionUpdateNotifier.update(this);
+				ChromatogramUpdateNotifier.update(this);
 			}
 		}
 	}
@@ -185,7 +185,7 @@ public class ChromatogramSelectionCSD extends AbstractChromatogramSelection<IChr
 	@Override
 	public void fireUpdateChange(boolean forceReload) {
 
-		ChromatogramSelectionUpdateNotifier.update(this);
+		ChromatogramUpdateNotifier.update(this);
 	}
 
 	@Override
