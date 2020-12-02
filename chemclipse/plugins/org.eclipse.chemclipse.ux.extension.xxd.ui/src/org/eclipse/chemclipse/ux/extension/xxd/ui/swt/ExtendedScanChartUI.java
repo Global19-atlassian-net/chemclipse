@@ -34,6 +34,7 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.ui.workbench.DisplayUtils;
 import org.eclipse.chemclipse.swt.ui.components.InformationUI;
+import org.eclipse.chemclipse.swt.ui.notifier.UpdateNotifierUI;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.calibration.IUpdateListener;
@@ -407,8 +408,7 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 				}
 				//
 				updateScan(scan);
-				fireUpdateScan(display, scan);
-				fireUpdateChromatogramSelection(display, null);
+				UpdateNotifierUI.update(display, scan);
 			}
 		});
 		//
@@ -565,9 +565,9 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 			public void widgetSelected(SelectionEvent e) {
 
 				IScanMSD scanMSD = getScanMSD();
-				if(scanMSD != null) {
+				if(scanMSD != null && scanIdentifierUI != null) {
 					scanIdentifierUI.runIdentification(e.display, scanMSD, false);
-					fireUpdateScan(e.display, scanMSD);
+					UpdateNotifierUI.update(e.display, scanMSD);
 				}
 			}
 		});
@@ -737,20 +737,6 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 		//
 		combo.setItems(items);
 		combo.select(index);
-	}
-
-	private void fireUpdateScan(Display display, IScan scan) {
-
-		display.asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-
-				if(eventBroker != null) {
-					eventBroker.send(IChemClipseEvents.TOPIC_SCAN_XXD_UPDATE_SELECTION, scan);
-				}
-			}
-		});
 	}
 
 	private void fireUpdateChromatogramSelection(Display display, IScan scan) {
