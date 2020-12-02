@@ -12,7 +12,7 @@
 package org.eclipse.chemclipse.msd.swt.ui.components.massspectrum;
 
 import org.eclipse.chemclipse.logging.core.Logger;
-import org.eclipse.chemclipse.model.notifier.ScanUpdateNotifier;
+import org.eclipse.chemclipse.model.notifier.UpdateNotifier;
 import org.eclipse.chemclipse.msd.model.core.IIon;
 import org.eclipse.chemclipse.msd.model.core.IScanMSD;
 import org.eclipse.chemclipse.msd.model.implementation.Ion;
@@ -128,7 +128,7 @@ public class MassSpectrumEditListUI extends Composite {
 							massSpectrum.addIon(ion);
 							textMz.setText("");
 							textIntensity.setText("");
-							ScanUpdateNotifier.update(massSpectrum);
+							UpdateNotifier.update(massSpectrum);
 							enableButtonFields(ACTION_INITIALIZE);
 						}
 					} catch(Exception e1) {

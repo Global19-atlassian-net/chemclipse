@@ -46,14 +46,7 @@ public class ComparisonScanChartPart extends AbstractPart<ExtendedComparisonScan
 		if(isUnloadEvent(topic)) {
 			getControl().clear();
 			return false;
-		} else if(isTargetUpdateEvent(topic)) {
-			Object object = objects.get(0);
-			if(object instanceof IIdentificationTarget) {
-				IIdentificationTarget identificationTarget = (IIdentificationTarget)object;
-				getControl().update(identificationTarget);
-				return true;
-			}
-		} else if(IChemClipseEvents.TOPIC_PEAK_XXD_UPDATE_SELECTION.equals(topic) || IChemClipseEvents.TOPIC_SCAN_XXD_UPDATE_SELECTION.equals(topic)) {
+		} else if(isPeakUpdateEvent(topic) || isScanUpdateEvent(topic)) {
 			Object object = objects.get(0);
 			IScanMSD scan = null;
 			IIdentificationTarget identificationTarget = null;
@@ -73,6 +66,32 @@ public class ComparisonScanChartPart extends AbstractPart<ExtendedComparisonScan
 				getControl().update(scan);
 				return true;
 			}
+		} else if(isScanTargetComparisonEvent(topic)) {
+			Object object = objects.get(0);
+			if(object instanceof Object[]) {
+				Object[] values = (Object[])object;
+				Object object1 = values[0];
+				Object object2 = values[1];
+				//
+				if(object1 instanceof IScanMSD && object2 instanceof IIdentificationTarget) {
+					IScanMSD unknownMassSpectrum = (IScanMSD)object1;
+					IIdentificationTarget identificationTarget = (IIdentificationTarget)object2;
+					getControl().update(unknownMassSpectrum, identificationTarget);
+				}
+			}
+		} else if(isScanReferenceComparisonEvent(topic)) {
+			Object object = objects.get(0);
+			if(object instanceof Object[]) {
+				Object[] values = (Object[])object;
+				Object object1 = values[0];
+				Object object2 = values[1];
+				//
+				if(object1 instanceof IScanMSD && object2 instanceof IScanMSD) {
+					IScanMSD unknownMassSpectrum = (IScanMSD)object1;
+					IScanMSD referenceMassSpectrum = (IScanMSD)object2;
+					getControl().update(unknownMassSpectrum, referenceMassSpectrum);
+				}
+			}
 		}
 		//
 		return false;
@@ -81,7 +100,7 @@ public class ComparisonScanChartPart extends AbstractPart<ExtendedComparisonScan
 	@Override
 	protected boolean isUpdateTopic(String topic) {
 
-		return TOPIC.equals(topic) || isScanUpdateEvent(topic) || isTargetUpdateEvent(topic) || isUnloadEvent(topic);
+		return isPeakUpdateEvent(topic) || isScanUpdateEvent(topic) || isScanTargetComparisonEvent(topic) || isScanReferenceComparisonEvent(topic) || isUnloadEvent(topic);
 	}
 
 	private boolean isScanUpdateEvent(String topic) {
@@ -89,9 +108,19 @@ public class ComparisonScanChartPart extends AbstractPart<ExtendedComparisonScan
 		return IChemClipseEvents.TOPIC_SCAN_XXD_UPDATE_SELECTION.equals(topic);
 	}
 
-	private boolean isTargetUpdateEvent(String topic) {
+	private boolean isPeakUpdateEvent(String topic) {
 
-		return IChemClipseEvents.TOPIC_IDENTIFICATION_TARGET_UPDATE.equals(topic);
+		return IChemClipseEvents.TOPIC_PEAK_XXD_UPDATE_SELECTION.equals(topic);
+	}
+
+	private boolean isScanTargetComparisonEvent(String topic) {
+
+		return IChemClipseEvents.TOPIC_SCAN_TARGET_UPDATE_COMPARISON.equals(topic);
+	}
+
+	private boolean isScanReferenceComparisonEvent(String topic) {
+
+		return IChemClipseEvents.TOPIC_SCAN_REFERENCE_UPDATE_COMPARISON.equals(topic);
 	}
 
 	private boolean isUnloadEvent(String topic) {

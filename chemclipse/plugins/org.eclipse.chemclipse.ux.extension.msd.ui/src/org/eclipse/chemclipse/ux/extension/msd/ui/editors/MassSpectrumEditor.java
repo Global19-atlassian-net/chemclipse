@@ -30,7 +30,7 @@ import org.eclipse.chemclipse.converter.exceptions.NoConverterAvailableException
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
 import org.eclipse.chemclipse.model.identifier.ILibraryInformation;
-import org.eclipse.chemclipse.model.notifier.ScanUpdateNotifier;
+import org.eclipse.chemclipse.model.notifier.UpdateNotifier;
 import org.eclipse.chemclipse.msd.converter.database.DatabaseConverter;
 import org.eclipse.chemclipse.msd.converter.exceptions.NoMassSpectrumConverterAvailableException;
 import org.eclipse.chemclipse.msd.model.core.IMassSpectra;
@@ -117,7 +117,7 @@ public class MassSpectrumEditor implements IChemClipseEditor {
 		 * Fire an update if a loaded mass spectrum has been selected.
 		 */
 		if(massSpectrum != null) {
-			ScanUpdateNotifier.update(massSpectrum);
+			UpdateNotifier.update(massSpectrum);
 		}
 	}
 

@@ -15,7 +15,7 @@ package org.eclipse.chemclipse.support.events;
 public interface IChemClipseEvents {
 
 	// ID copied from IEventBroker to prevent dependency on E4
-	public static String EVENT_BROKER_DATA = "org.eclipse.e4.data";
+	String EVENT_BROKER_DATA = "org.eclipse.e4.data";
 	//
 	String TOPIC_CHROMATOGRAM_MSD_UPDATE_RAWFILE = "chromatogram/msd/update/rawfile";
 	String TOPIC_CHROMATOGRAM_CSD_UPDATE_RAWFILE = "chromatogram/csd/update/rawfile";
@@ -68,29 +68,13 @@ public interface IChemClipseEvents {
 	String TOPIC_QUANT_DB_COMPOUND_UNLOAD = "quantitation/database/compound/unload";
 	//
 	String TOPIC_CHROMATOGRAM_CONVERTER = "chromatogram/update/converter/status";
+	//
+	String TOPIC_SCAN_TARGET_UPDATE_COMPARISON = "target/update/comparison"; // Object[]{scan, identificationTarget}
+	String TOPIC_SCAN_REFERENCE_UPDATE_COMPARISON = "scan/update/comparison"; // Object[]{scan1, scan2}
 	/*
 	 * ---> TODO
 	 */
 	String TOPIC_CHROMATOGRAM_MSD_UPDATE_MASSSPECTRA = "chromatogram/msd/update/massspectra";
-	/*
-	 * Properties
-	 */
-	//
-	String PROPERTY_CHROMATOGRAM_OVERVIEW = "ChromatogramOverview"; // IChromatogramOverview
-	String PROPERTY_CHROMATOGRAM_PEAK_MSD = "ChromatogramPeakMSD"; // IChromatogramPeakMSD
-	String PROPERTY_CHROMATOGRAM_MSD = "ChromatogramMSD"; // IChromatogramMSD
-	String PROPERTY_PEAKS_MSD = "PeaksMSD"; // IPeaksMSD
-	//
-	String PROPERTY_CHROMATOGRAM_CSD = "ChromatogramCSD"; // IChromatogramCSD
-	String PROPERTY_CHROMATOGRAM_PEAK_CSD = "ChromatogramPeakCSD"; // IChromatogramPeakCSD
-	String PROPERTY_PEAK_CSD = "PeakCSD"; // IPeakCSD
-	String PROPERTY_PEAKS_CSD = "PeaksCSD"; // IPeaksCSD
-	//
-	String PROPERTY_SELECTED_ION = EVENT_BROKER_DATA; // double ion
-	//
-	String PROPERTY_PROCESSING_INFO = EVENT_BROKER_DATA;
-	//
-	String PROPERTY_IDENTIFICATION_TARGET_MASS_SPECTRUM_LIBRARY = "MassSpectrumLibrary";
 	/*
 	 * Topics
 	 */
@@ -107,9 +91,6 @@ public interface IChemClipseEvents {
 	String TOPIC_LIBRARY_MSD_UPDATE_SELECTION = "library/msd/update/selection";
 	String TOPIC_LIBRARY_MSD_UNLOAD_SELECTION = "library/msd/unload/selection";
 	//
-	String TOPIC_SCAN_MSD_UPDATE_COMPARISON = "scan/msd/update/comparison";
-	String PROPERTY_REFERENCE_MS = "referenceMS";
-	String PROPERTY_COMPARISON_MS = "comparisonMS";
 	//
 	String TOPIC_PROCESSING_INFO_UPDATE = "processinginfo/update";
 	String TOPIC_IDENTIFICATION_TARGET_MASS_SPECTRUM_LIBRARY_UPDATE = "identification/target/update/massspectrum/library";

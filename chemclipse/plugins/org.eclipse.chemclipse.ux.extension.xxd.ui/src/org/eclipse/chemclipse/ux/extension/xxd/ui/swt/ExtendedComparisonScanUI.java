@@ -163,6 +163,13 @@ public class ExtendedComparisonScanUI extends Composite implements IExtendedPart
 		}
 	}
 
+	public void update(IScanMSD unknownMassSpectrum, IScanMSD referenceMassSpectrum) {
+
+		scan1 = copyScan(unknownMassSpectrum);
+		scan2 = copyScan(referenceMassSpectrum);
+		Display.getDefault().asyncExec(this::updateChart);
+	}
+
 	private void updateIdentificationTarget(IIdentificationTarget identificationTarget) {
 
 		scan1Optimized = null;

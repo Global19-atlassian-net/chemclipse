@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
-import org.eclipse.chemclipse.model.notifier.ChromatogramUpdateNotifier;
+import org.eclipse.chemclipse.model.notifier.UpdateNotifier;
 import org.eclipse.chemclipse.model.selection.AbstractChromatogramSelection;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramPeakMSD;
@@ -283,7 +283,7 @@ public class ChromatogramSelectionMSD extends AbstractChromatogramSelection<IChr
 	public void fireUpdateChange(boolean forceReload) {
 
 		try {
-			ChromatogramUpdateNotifier.update(this);
+			UpdateNotifier.update(this);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

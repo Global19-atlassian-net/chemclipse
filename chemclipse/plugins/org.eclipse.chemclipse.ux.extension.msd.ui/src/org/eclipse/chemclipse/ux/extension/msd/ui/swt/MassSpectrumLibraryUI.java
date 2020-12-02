@@ -20,7 +20,7 @@ import org.eclipse.chemclipse.model.identifier.IComparisonResult;
 import org.eclipse.chemclipse.model.identifier.IIdentificationTarget;
 import org.eclipse.chemclipse.model.identifier.ILibraryInformation;
 import org.eclipse.chemclipse.model.implementation.IdentificationTarget;
-import org.eclipse.chemclipse.model.notifier.ScanUpdateNotifier;
+import org.eclipse.chemclipse.model.notifier.UpdateNotifier;
 import org.eclipse.chemclipse.msd.model.core.IMassSpectra;
 import org.eclipse.chemclipse.msd.model.core.IRegularLibraryMassSpectrum;
 import org.eclipse.chemclipse.msd.model.core.IScanMSD;
@@ -350,13 +350,10 @@ public class MassSpectrumLibraryUI extends Composite {
 					 * Fire an update if an identified scan has been selected.
 					 */
 					IScanMSD massSpectrum = (IScanMSD)firstElement;
-					ScanUpdateNotifier.update(massSpectrum);
+					IIdentificationTarget identificationTarget = getIdentificationTarget(massSpectrum);
 					//
-					IEventBroker eventBroker = Activator.getDefault().getEventBroker();
-					if(eventBroker != null) {
-						IIdentificationTarget identificationTarget = getIdentificationTarget(massSpectrum);
-						eventBroker.send(IChemClipseEvents.TOPIC_IDENTIFICATION_TARGET_UPDATE, identificationTarget);
-					}
+					UpdateNotifier.update(massSpectrum);
+					UpdateNotifier.update(identificationTarget);
 					/*
 					 * It's important to set the focus here.
 					 * The PerspectiveSwitchHandler.focusPerspectiveAndView activates other views and sets the
