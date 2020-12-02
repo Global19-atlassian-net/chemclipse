@@ -59,7 +59,6 @@ import org.eclipse.chemclipse.ux.extension.ui.editors.IScanEditorNMR;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageProcessors;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.DynamicSettingsUI;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.ExtendedMeasurementResultUI;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.NMRMeasurementsUI;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.swt.editors.ExtendedNMRScanUI;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -106,7 +105,6 @@ public class ScanEditorNMR implements IScanEditorNMR {
 	private NMRMeasurementsUI measurementsUI;
 	private final ProcessorFactory filterFactory;
 	private final PartSupport partSupport;
-	private ExtendedMeasurementResultUI extendedMeasurementResultUI;
 	private ProcessSupplierContext processSupplierContext;
 
 	@Inject
@@ -135,7 +133,7 @@ public class ScanEditorNMR implements IScanEditorNMR {
 	@Focus
 	public void setFocus() {
 
-		extendedMeasurementResultUI.setFocus();
+		// TODO
 	}
 
 	@PreDestroy
