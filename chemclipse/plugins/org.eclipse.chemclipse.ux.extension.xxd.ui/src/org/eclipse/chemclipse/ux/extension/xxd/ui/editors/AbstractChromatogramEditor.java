@@ -287,8 +287,9 @@ public abstract class AbstractChromatogramEditor extends AbstractUpdater<Extende
 				return true;
 			} else {
 				if(TOPIC_EDITOR_UPDATE.equals(topic)) {
-					System.out.println("Update the chromatogram editor: " + object);
+					logger.info("Update the chromatogram editor: " + object);
 					extendedChromatogramUI.update();
+					return true;
 				}
 			}
 		}
