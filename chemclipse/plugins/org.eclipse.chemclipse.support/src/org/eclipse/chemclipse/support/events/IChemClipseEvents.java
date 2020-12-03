@@ -22,6 +22,10 @@ public interface IChemClipseEvents {
 	String TOPIC_CHROMATOGRAM_WSD_UPDATE_RAWFILE = "chromatogram/wsd/update/rawfile";
 	String TOPIC_SCAN_XIR_UPDATE_RAWFILE = "scan/xir/update/rawfile";
 	String TOPIC_SCAN_NMR_UPDATE_RAWFILE = "scan/nmr/update/rawfile";
+	String TOPIC_PLATE_PCR_UPDATE_RAWFILE = "plate/pcr/update/rawfile";
+	String TOPIC_SEQUENCE_UPDATE_RAWFILE = "sequence/update/rawfile";
+	String TOPIC_METHOD_UPDATE_RAWFILE = "method/update/rawfile";
+	String TOPIC_QUANTIATION_DATABASE_UPDATE_RAWFILE = "quantitation/database/update/rawfile";
 	String TOPIC_CHROMATOGRAM_XXD_UPDATE_NONE = "chromatogram/xxd/update/none";
 	//
 	String TOPIC_CHROMATOGRAM_MSD_UPDATE_OVERVIEW = "chromatogram/msd/update/overview";
@@ -29,13 +33,21 @@ public interface IChemClipseEvents {
 	String TOPIC_CHROMATOGRAM_WSD_UPDATE_OVERVIEW = "chromatogram/wsd/update/overview";
 	String TOPIC_SCAN_NMR_UPDATE_OVERVIEW = "scan/nmr/update/overview";
 	String TOPIC_SCAN_XIR_UPDATE_OVERVIEW = "scan/xir/update/overview";
+	String TOPIC_SEQUENCE_UPDATE_OVERVIEW = "sequence/update/overview";
+	String TOPIC_METHOD_UPDATE_OVERVIEW = "method/update/overview";
+	String TOPIC_QUANTIATION_DATABASE_UPDATE_OVERVIEW = "quantitation/database/update/overview";
 	//
 	String TOPIC_CHROMATOGRAM_XXD_UPDATE_SELECTION = "chromatogram/xxd/load/chromatogramselection";
 	String TOPIC_SCAN_XXD_UPDATE_SELECTION = "scan/xxd/update/selection";
 	String TOPIC_PEAK_XXD_UPDATE_SELECTION = "peak/xxd/update/selection";
+	String TOPIC_SCAN_XIR_UPDATE_SELECTION = "scan/xir/update/selection";
+	String TOPIC_SCAN_NMR_UPDATE_SELECTION = "scan/nmr/update/selection";
+	//
 	String TOPIC_CHROMATOGRAM_XXD_UNLOAD_SELECTION = "chromatogram/xxd/unload/chromatogramselection";
 	String TOPIC_SCAN_XXD_UNLOAD_SELECTION = "scan/xxd/unload/selection";
 	String TOPIC_PEAK_XXD_UNLOAD_SELECTION = "peak/xxd/unload/selection";
+	String TOPIC_SCAN_XIR_UNLOAD_SELECTION = "scan/xir/unload/selection";
+	String TOPIC_SCAN_NMR_UNLOAD_SELECTION = "scan/nmr/unload/selection";
 	//
 	String TOPIC_APPLICATION_SELECT_PERSPECTIVE = "application/select/perspective";
 	String TOPIC_APPLICATION_SELECT_VIEW = "application/select/view";
@@ -71,42 +83,10 @@ public interface IChemClipseEvents {
 	//
 	String TOPIC_SCAN_TARGET_UPDATE_COMPARISON = "target/update/comparison"; // Object[]{scan, identificationTarget}
 	String TOPIC_SCAN_REFERENCE_UPDATE_COMPARISON = "scan/update/comparison"; // Object[]{scan1, scan2}
-	/*
-	 * ---> TODO
-	 */
-	String TOPIC_CHROMATOGRAM_MSD_UPDATE_MASSSPECTRA = "chromatogram/msd/update/massspectra";
-	/*
-	 * Topics
-	 */
-	String TOPIC_PLATE_PCR_UPDATE_RAWFILE = "plate/pcr/update/rawfile";
-	String TOPIC_SEQUENCE_UPDATE_RAWFILE = "sequence/update/rawfile";
-	String TOPIC_METHOD_UPDATE_RAWFILE = "method/update/rawfile";
-	String TOPIC_QUANTIATION_DATABASE_UPDATE_RAWFILE = "quantitation/database/update/rawfile";
-	/*
-	 * Detector: MSD
-	 */
-	String TOPIC_CHROMATOGRAM_MSD_UPDATE_ION_SELECTION = "chromatogram/msd/update/ionselection";
-	String TOPIC_FILE_MSD_UPDATE_SELECTION = "file/msd/update/selection";
-	String TOPIC_FILE_MSD_UNLOAD_SELECTION = "file/msd/unload/selection";
+	//
 	String TOPIC_LIBRARY_MSD_UPDATE_SELECTION = "library/msd/update/selection";
 	String TOPIC_LIBRARY_MSD_UNLOAD_SELECTION = "library/msd/unload/selection";
 	//
-	//
 	String TOPIC_PROCESSING_INFO_UPDATE = "processinginfo/update";
-	String TOPIC_IDENTIFICATION_TARGET_MASS_SPECTRUM_LIBRARY_UPDATE = "identification/target/update/massspectrum/library";
-	/*
-	 * FTIR, NMR, PCR
-	 */
-	String TOPIC_SCAN_XIR_UPDATE_SELECTION = "scan/xir/update/selection";
-	String TOPIC_SCAN_NMR_UPDATE_SELECTION = "scan/nmr/update/selection";
-	String TOPIC_SCAN_XIR_UNLOAD_SELECTION = "scan/xir/unload/selection";
-	String TOPIC_SCAN_NMR_UNLOAD_SELECTION = "scan/nmr/unload/selection";
-	String TOPIC_SEQUENCE_UPDATE_OVERVIEW = "sequence/update/overview";
-	String TOPIC_METHOD_UPDATE_OVERVIEW = "method/update/overview";
-	String TOPIC_QUANTIATION_DATABASE_UPDATE_OVERVIEW = "quantitation/database/update/overview";
-	/*
-	 * Event Broker: Edit History
-	 */
-	String PROPERTY_EDIT_HISTORY = EVENT_BROKER_DATA; // IEditHistory
 	String TOPIC_EDIT_HISTORY_UPDATE = "edithistory/update"; // $NON-NLS-1$
 }

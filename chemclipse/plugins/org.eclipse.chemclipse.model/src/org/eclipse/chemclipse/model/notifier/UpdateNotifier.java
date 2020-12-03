@@ -17,6 +17,7 @@ import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.identifier.IIdentificationTarget;
 import org.eclipse.chemclipse.model.selection.IChromatogramSelection;
 import org.eclipse.chemclipse.support.events.IChemClipseEvents;
+import org.eclipse.chemclipse.support.history.IEditHistory;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 public class UpdateNotifier {
@@ -83,6 +84,16 @@ public class UpdateNotifier {
 		if(eventBroker != null) {
 			if(scan1 != null && scan2 != null) {
 				eventBroker.send(IChemClipseEvents.TOPIC_SCAN_REFERENCE_UPDATE_COMPARISON, new Object[]{scan1, scan2});
+			}
+		}
+	}
+
+	public static void update(IEditHistory editHistory) {
+
+		IEventBroker eventBroker = Activator.getDefault().getEventBroker();
+		if(eventBroker != null) {
+			if(editHistory != null) {
+				eventBroker.send(IChemClipseEvents.TOPIC_EDIT_HISTORY_UPDATE, editHistory);
 			}
 		}
 	}

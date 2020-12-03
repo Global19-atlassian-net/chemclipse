@@ -126,9 +126,14 @@ public class Activator extends AbstractActivatorUI {
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_CHROMATOGRAM_XXD_UPDATE_SELECTION, IChemClipseEvents.EVENT_BROKER_DATA);
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_SCAN_XXD_UPDATE_SELECTION, IChemClipseEvents.EVENT_BROKER_DATA);
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_PEAK_XXD_UPDATE_SELECTION, IChemClipseEvents.EVENT_BROKER_DATA);
+		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_SCAN_XIR_UPDATE_SELECTION, IChemClipseEvents.EVENT_BROKER_DATA);
+		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_SCAN_NMR_UPDATE_SELECTION, IChemClipseEvents.EVENT_BROKER_DATA);
+		//
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_CHROMATOGRAM_XXD_UNLOAD_SELECTION, IChemClipseEvents.EVENT_BROKER_DATA);
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_SCAN_XXD_UNLOAD_SELECTION, IChemClipseEvents.EVENT_BROKER_DATA);
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_PEAK_XXD_UNLOAD_SELECTION, IChemClipseEvents.EVENT_BROKER_DATA);
+		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_SCAN_XIR_UNLOAD_SELECTION, IChemClipseEvents.EVENT_BROKER_DATA);
+		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_SCAN_NMR_UNLOAD_SELECTION, IChemClipseEvents.EVENT_BROKER_DATA);
 		//
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_APPLICATION_SELECT_PERSPECTIVE, IChemClipseEvents.EVENT_BROKER_DATA);
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_PART_CLOSED, IChemClipseEvents.EVENT_BROKER_DATA);
@@ -148,6 +153,8 @@ public class Activator extends AbstractActivatorUI {
 		//
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_SCAN_TARGET_UPDATE_COMPARISON, IChemClipseEvents.EVENT_BROKER_DATA);
 		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_SCAN_REFERENCE_UPDATE_COMPARISON, IChemClipseEvents.EVENT_BROKER_DATA);
+		//
+		dataUpdateSupport.subscribe(IChemClipseEvents.TOPIC_EDIT_HISTORY_UPDATE, IChemClipseEvents.EVENT_BROKER_DATA);
 	}
 
 	private void initializePreferenceStoreSubtract(IPreferenceSupplier preferenceSupplier) {

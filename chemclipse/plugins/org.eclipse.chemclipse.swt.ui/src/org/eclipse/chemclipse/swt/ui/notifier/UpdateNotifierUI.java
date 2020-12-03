@@ -16,6 +16,7 @@ import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.identifier.IIdentificationTarget;
 import org.eclipse.chemclipse.model.notifier.UpdateNotifier;
 import org.eclipse.chemclipse.model.selection.IChromatogramSelection;
+import org.eclipse.chemclipse.support.history.IEditHistory;
 import org.eclipse.swt.widgets.Display;
 
 public class UpdateNotifierUI {
@@ -88,6 +89,18 @@ public class UpdateNotifierUI {
 			public void run() {
 
 				UpdateNotifier.update(scan1, scan2);
+			}
+		});
+	}
+
+	public static void update(Display display, IEditHistory editHistory) {
+
+		display.asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+
+				UpdateNotifier.update(editHistory);
 			}
 		});
 	}

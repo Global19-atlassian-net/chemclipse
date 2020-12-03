@@ -37,6 +37,7 @@ import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.events.IPerspectiveAndViewIds;
 import org.eclipse.chemclipse.support.ui.workbench.DisplayUtils;
 import org.eclipse.chemclipse.support.ui.workbench.EditorSupport;
+import org.eclipse.chemclipse.ux.extension.msd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.msd.ui.internal.support.DatabaseImportRunnable;
 import org.eclipse.chemclipse.ux.extension.msd.ui.swt.MassSpectrumLibraryUI;
 import org.eclipse.chemclipse.ux.extension.ui.editors.IChemClipseEditor;
@@ -78,8 +79,6 @@ public class DatabaseEditor implements IChemClipseEditor {
 	private MApplication application;
 	@Inject
 	private EModelService modelService;
-	@Inject
-	private IEventBroker eventBroker;
 	/*
 	 * Mass spectrum selection and the GUI element.
 	 */
@@ -101,7 +100,12 @@ public class DatabaseEditor implements IChemClipseEditor {
 	@Focus
 	public void setFocus() {
 
-		eventBroker.post(IChemClipseEvents.TOPIC_LIBRARY_MSD_UPDATE_SELECTION, massSpectra);
+		IEventBroker eventBroker = Activator.getDefault().getEventBroker();
+		if(eventBroker != null) {
+			if(massSpectra != null) {
+				eventBroker.send(IChemClipseEvents.TOPIC_LIBRARY_MSD_UPDATE_SELECTION, massSpectra);
+			}
+		}
 	}
 
 	@PreDestroy
@@ -110,7 +114,10 @@ public class DatabaseEditor implements IChemClipseEditor {
 		/*
 		 * Remove the editor from the listed parts.
 		 */
-		eventBroker.post(IChemClipseEvents.TOPIC_LIBRARY_MSD_UNLOAD_SELECTION, null);
+		IEventBroker eventBroker = Activator.getDefault().getEventBroker();
+		if(eventBroker != null) {
+			eventBroker.post(IChemClipseEvents.TOPIC_LIBRARY_MSD_UNLOAD_SELECTION, null);
+		}
 		//
 		if(modelService != null) {
 			MPartStack partStack = (MPartStack)modelService.find(IPerspectiveAndViewIds.EDITOR_PART_STACK_ID, application);
