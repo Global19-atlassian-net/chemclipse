@@ -361,7 +361,7 @@ public class ExtendedRetentionIndexListUI extends Composite implements IExtended
 		retentionIndexUI.setUpdateListener(new IUpdateListener() {
 
 			@Override
-			public void update() {
+			public void update(Display display) {
 
 				updateLabel();
 			}

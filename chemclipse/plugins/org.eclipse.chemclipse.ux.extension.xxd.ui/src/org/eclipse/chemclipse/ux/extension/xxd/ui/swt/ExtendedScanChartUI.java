@@ -381,7 +381,7 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 		scanFilterUI.setUpdateListener(new IUpdateListener() {
 
 			@Override
-			public void update() {
+			public void update(Display display) {
 
 				updateScan(scan);
 			}
@@ -397,10 +397,8 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 		scanIdentifierUI.setUpdateListener(new IUpdateListener() {
 
 			@Override
-			public void update() {
+			public void update(Display display) {
 
-				Display display = scanIdentifierUI.getDisplay();
-				//
 				if(preferenceStore.getBoolean(PreferenceConstants.P_LEAVE_EDIT_AFTER_IDENTIFICATION)) {
 					setEditToolbarStatus(false);
 					setSubtractModus(display, false, false);
@@ -409,6 +407,7 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 				//
 				updateScan(scan);
 				UpdateNotifierUI.update(display, scan);
+				UpdateNotifierUI.update(display, IChemClipseEvents.TOPIC_EDITOR_CHROMATOGRAM_UPDATE, "Scan Chart identification has been performed.");
 			}
 		});
 		//
@@ -565,9 +564,8 @@ public class ExtendedScanChartUI extends Composite implements IExtendedPartUI {
 			public void widgetSelected(SelectionEvent e) {
 
 				IScanMSD scanMSD = getScanMSD();
-				if(scanMSD != null && scanIdentifierUI != null) {
-					scanIdentifierUI.runIdentification(e.display, scanMSD, false);
-					UpdateNotifierUI.update(e.display, scanMSD);
+				if(scanMSD != null) {
+					scanIdentifierUI.runIdentification(e.display, scanMSD, true);
 				}
 			}
 		});

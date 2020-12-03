@@ -96,6 +96,7 @@ public abstract class AbstractChromatogramEditor extends AbstractUpdater<Extende
 	private static final String TOPIC_CHROMATOGRAM = IChemClipseEvents.TOPIC_CHROMATOGRAM_XXD_UPDATE_SELECTION;
 	private static final String TOPIC_SCAN = IChemClipseEvents.TOPIC_SCAN_XXD_UPDATE_SELECTION;
 	private static final String TOPIC_PEAK = IChemClipseEvents.TOPIC_PEAK_XXD_UPDATE_SELECTION;
+	private static final String TOPIC_EDITOR_UPDATE = IChemClipseEvents.TOPIC_EDITOR_CHROMATOGRAM_UPDATE;
 	//
 	private final DataType dataType;
 	private final MPart part;
@@ -284,6 +285,11 @@ public abstract class AbstractChromatogramEditor extends AbstractUpdater<Extende
 			} else if(object instanceof IPeak) {
 				extendedChromatogramUI.updateSelectedPeak();
 				return true;
+			} else {
+				if(TOPIC_EDITOR_UPDATE.equals(topic)) {
+					System.out.println("Update the chromatogram editor: " + object);
+					extendedChromatogramUI.update();
+				}
 			}
 		}
 		//
@@ -293,7 +299,7 @@ public abstract class AbstractChromatogramEditor extends AbstractUpdater<Extende
 	@Override
 	protected boolean isUpdateTopic(String topic) {
 
-		return TOPIC_CHROMATOGRAM.equals(topic) || TOPIC_SCAN.equals(topic) || TOPIC_PEAK.equals(topic);
+		return TOPIC_CHROMATOGRAM.equals(topic) || TOPIC_SCAN.equals(topic) || TOPIC_PEAK.equals(topic) || TOPIC_EDITOR_UPDATE.equals(topic);
 	}
 
 	private void processChromatogram(IChromatogramSelection chromatogramSelection) {
