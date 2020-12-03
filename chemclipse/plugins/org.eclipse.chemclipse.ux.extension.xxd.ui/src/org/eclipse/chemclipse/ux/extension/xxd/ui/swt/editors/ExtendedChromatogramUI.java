@@ -484,26 +484,34 @@ public class ExtendedChromatogramUI extends Composite implements ToolbarConfig {
 			if(settings == null) {
 				return;
 			}
+			//
 			processChromatogram(new IRunnableWithProgress() {
 
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
-					DefaultProcessingResult<Object> msgs = new DefaultProcessingResult<>();
-					IProcessSupplier.applyProcessor(settings, IChromatogramSelectionProcessSupplier.createConsumer(getChromatogramSelection()), new ProcessExecutionContext(monitor, msgs, processSupplierContext));
-					updateResult(shell, msgs);
+					DefaultProcessingResult<Object> processingInfo = new DefaultProcessingResult<>();
+					IProcessSupplier.applyProcessor(settings, IChromatogramSelectionProcessSupplier.createConsumer(getChromatogramSelection()), new ProcessExecutionContext(monitor, processingInfo, processSupplierContext));
+					updateResult(processingInfo);
 				}
 			}, shell);
 		} catch(IOException e) {
-			DefaultProcessingResult<Object> result = new DefaultProcessingResult<>();
-			result.addErrorMessage(processSupplier.getName(), "can't process settings", e);
-			updateResult(shell, result);
+			DefaultProcessingResult<Object> processingInfo = new DefaultProcessingResult<>();
+			processingInfo.addErrorMessage(processSupplier.getName(), "The process method can't be applied.", e);
+			updateResult(processingInfo);
 		}
 	}
 
-	public void updateResult(Shell shell, MessageProvider result) {
+	public void updateResult(MessageProvider processingInfo) {
 
-		ProcessingInfoPartSupport.getInstance().update(result, true);
+		getDisplay().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+
+				ProcessingInfoPartSupport.getInstance().update(processingInfo, true);
+			}
+		});
 	}
 
 	private boolean isValidSupplier(IProcessSupplier<?> supplier) {
@@ -925,10 +933,10 @@ public class ExtendedChromatogramUI extends Composite implements ToolbarConfig {
 			public void execute(IProcessMethod processMethod, IProgressMonitor monitor) {
 
 				IProcessingInfo<?> processingInfo = new ProcessingInfo<>();
-				IChromatogramSelection selection = getChromatogramSelection();
-				ProcessEntryContainer.applyProcessEntries(processMethod, new ProcessExecutionContext(monitor, processingInfo, processTypeSupport), IChromatogramSelectionProcessSupplier.createConsumer(selection));
-				selection.update(false);
-				updateResult(parent.getShell(), processingInfo);
+				IChromatogramSelection chromatogramSelection = getChromatogramSelection();
+				ProcessEntryContainer.applyProcessEntries(processMethod, new ProcessExecutionContext(monitor, processingInfo, processTypeSupport), IChromatogramSelectionProcessSupplier.createConsumer(chromatogramSelection));
+				chromatogramSelection.update(false);
+				updateResult(processingInfo);
 			}
 		});
 		toolbarMain.addPreferencePages(() -> Arrays.asList(methodSupportUI.getPreferencePages()), methodSupportUI::applySettings);

@@ -477,7 +477,7 @@ public class MethodSupportUI extends Composite implements PreferencesConfig {
 		if(methodListener != null && processMethod != null) {
 			try {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
-				dialog.run(false, false, new IRunnableWithProgress() {
+				dialog.run(true, false, new IRunnableWithProgress() {
 
 					@Override
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
