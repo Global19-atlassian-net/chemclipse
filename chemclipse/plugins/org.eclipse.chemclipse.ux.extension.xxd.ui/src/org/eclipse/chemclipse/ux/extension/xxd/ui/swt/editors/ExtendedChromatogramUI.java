@@ -58,12 +58,12 @@ import org.eclipse.chemclipse.processing.ui.support.ProcessingInfoPartSupport;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.comparator.SortOrder;
-import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.ui.provider.AbstractLabelProvider;
 import org.eclipse.chemclipse.support.ui.swt.EditorToolBar;
 import org.eclipse.chemclipse.support.ui.swt.ProcessorToolbar;
 import org.eclipse.chemclipse.support.ui.workbench.DisplayUtils;
 import org.eclipse.chemclipse.swt.ui.components.IMethodListener;
+import org.eclipse.chemclipse.swt.ui.notifier.UpdateNotifierUI;
 import org.eclipse.chemclipse.swt.ui.preferences.PreferencePageSystem;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
 import org.eclipse.chemclipse.swt.ui.support.Fonts;
@@ -258,15 +258,8 @@ public class ExtendedChromatogramUI extends Composite implements ToolbarConfig {
 	public boolean fireUpdateChromatogram(Display display) {
 
 		IChromatogramSelection chromatogramSelection = getChromatogramSelection();
-		if(chromatogramSelection != null && eventBroker != null && display != null) {
-			display.asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-
-					eventBroker.send(IChemClipseEvents.TOPIC_CHROMATOGRAM_XXD_UPDATE_SELECTION, chromatogramSelection);
-				}
-			});
+		if(chromatogramSelection != null && eventBroker != null) {
+			UpdateNotifierUI.update(display, chromatogramSelection);
 		}
 		return chromatogramSelection != null ? true : false;
 	}
@@ -275,18 +268,11 @@ public class ExtendedChromatogramUI extends Composite implements ToolbarConfig {
 
 		boolean update = false;
 		IChromatogramSelection chromatogramSelection = getChromatogramSelection();
-		if(chromatogramSelection != null && eventBroker != null && display != null) {
+		if(chromatogramSelection != null && eventBroker != null) {
 			final IPeak peak = chromatogramSelection.getSelectedPeak();
 			if(peak != null) {
 				update = true;
-				display.asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-
-						eventBroker.send(IChemClipseEvents.TOPIC_PEAK_XXD_UPDATE_SELECTION, peak);
-					}
-				});
+				UpdateNotifierUI.update(display, peak);
 			}
 		}
 		return update;
@@ -296,18 +282,11 @@ public class ExtendedChromatogramUI extends Composite implements ToolbarConfig {
 
 		boolean update = false;
 		IChromatogramSelection chromatogramSelection = getChromatogramSelection();
-		if(chromatogramSelection != null && eventBroker != null && display != null) {
+		if(chromatogramSelection != null && eventBroker != null) {
 			final IScan scan = chromatogramSelection.getSelectedScan();
 			if(scan != null) {
 				update = true;
-				display.asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-
-						eventBroker.post(IChemClipseEvents.TOPIC_SCAN_XXD_UPDATE_SELECTION, scan);
-					}
-				});
+				UpdateNotifierUI.update(display, scan);
 			}
 		}
 		return update;
@@ -365,19 +344,7 @@ public class ExtendedChromatogramUI extends Composite implements ToolbarConfig {
 			 */
 			processorToolbar.update();
 			if(chromatogramSelection != null) {
-				IEventBroker eventBroker = Activator.getDefault().getEventBroker();
-				if(eventBroker != null) {
-					try {
-						/*
-						 * Use send!
-						 */
-						eventBroker.send(IChemClipseEvents.TOPIC_CHROMATOGRAM_XXD_UPDATE_SELECTION, chromatogramSelection);
-						// eventBroker.post(IChemClipseEvents.TOPIC_PEAK_XXD_UPDATE_SELECTION, chromatogramSelection.getSelectedPeak());
-						// eventBroker.post(IChemClipseEvents.TOPIC_SCAN_XXD_UPDATE_SELECTION, chromatogramSelection.getSelectedScan());
-					} catch(Exception e) {
-						logger.warn(e);
-					}
-				}
+				UpdateNotifierUI.update(getDisplay(), chromatogramSelection);
 			}
 		}
 	}

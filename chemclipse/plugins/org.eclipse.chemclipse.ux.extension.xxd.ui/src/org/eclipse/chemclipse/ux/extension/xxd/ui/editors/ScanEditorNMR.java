@@ -55,6 +55,7 @@ import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.ui.swt.EditorToolBar;
 import org.eclipse.chemclipse.support.ui.workbench.EditorSupport;
 import org.eclipse.chemclipse.support.ui.workbench.PartSupport;
+import org.eclipse.chemclipse.swt.ui.notifier.UpdateNotifierUI;
 import org.eclipse.chemclipse.ux.extension.ui.editors.IScanEditorNMR;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.Activator;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.preferences.PreferencePageProcessors;
@@ -139,7 +140,7 @@ public class ScanEditorNMR implements IScanEditorNMR {
 	@PreDestroy
 	protected void preDestroy() {
 
-		eventBroker.send(IChemClipseEvents.TOPIC_SCAN_NMR_UNLOAD_SELECTION, null);
+		UpdateNotifierUI.update(Display.getDefault(), IChemClipseEvents.TOPIC_SCAN_NMR_UNLOAD_SELECTION, null);
 	}
 
 	@Persist

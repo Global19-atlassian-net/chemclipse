@@ -14,13 +14,23 @@ package org.eclipse.chemclipse.model.notifier;
 import org.eclipse.chemclipse.model.Activator;
 import org.eclipse.chemclipse.model.core.IPeak;
 import org.eclipse.chemclipse.model.core.IScan;
+import org.eclipse.chemclipse.model.core.ITargetSupplier;
 import org.eclipse.chemclipse.model.identifier.IIdentificationTarget;
+import org.eclipse.chemclipse.model.quantitation.IQuantitationCompound;
 import org.eclipse.chemclipse.model.selection.IChromatogramSelection;
 import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.history.IEditHistory;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 public class UpdateNotifier {
+
+	public static void update(String topic, Object object) {
+
+		IEventBroker eventBroker = Activator.getDefault().getEventBroker();
+		if(eventBroker != null) {
+			eventBroker.send(topic, object);
+		}
+	}
 
 	public static void update(IChromatogramSelection<?, ?> chromatogramSelection) {
 
@@ -68,6 +78,16 @@ public class UpdateNotifier {
 		}
 	}
 
+	public static void update(ITargetSupplier targetSupplier) {
+
+		IEventBroker eventBroker = Activator.getDefault().getEventBroker();
+		if(eventBroker != null) {
+			if(targetSupplier != null) {
+				eventBroker.send(IChemClipseEvents.TOPIC_IDENTIFICATION_TARGETS_UPDATE_SELECTION, targetSupplier);
+			}
+		}
+	}
+
 	public static void update(IScan scan1, IIdentificationTarget identificationTarget) {
 
 		IEventBroker eventBroker = Activator.getDefault().getEventBroker();
@@ -94,6 +114,16 @@ public class UpdateNotifier {
 		if(eventBroker != null) {
 			if(editHistory != null) {
 				eventBroker.send(IChemClipseEvents.TOPIC_EDIT_HISTORY_UPDATE, editHistory);
+			}
+		}
+	}
+
+	public static void update(IQuantitationCompound quantitationCompound) {
+
+		IEventBroker eventBroker = Activator.getDefault().getEventBroker();
+		if(eventBroker != null) {
+			if(quantitationCompound != null) {
+				eventBroker.send(IChemClipseEvents.TOPIC_QUANT_DB_COMPOUND_UPDATE, quantitationCompound);
 			}
 		}
 	}

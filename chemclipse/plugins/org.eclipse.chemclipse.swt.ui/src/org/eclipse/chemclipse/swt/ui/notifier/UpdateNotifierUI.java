@@ -13,95 +13,153 @@ package org.eclipse.chemclipse.swt.ui.notifier;
 
 import org.eclipse.chemclipse.model.core.IPeak;
 import org.eclipse.chemclipse.model.core.IScan;
+import org.eclipse.chemclipse.model.core.ITargetSupplier;
 import org.eclipse.chemclipse.model.identifier.IIdentificationTarget;
 import org.eclipse.chemclipse.model.notifier.UpdateNotifier;
+import org.eclipse.chemclipse.model.quantitation.IQuantitationCompound;
 import org.eclipse.chemclipse.model.selection.IChromatogramSelection;
 import org.eclipse.chemclipse.support.history.IEditHistory;
 import org.eclipse.swt.widgets.Display;
 
 public class UpdateNotifierUI {
 
+	public static void update(Display display, String topic, Object object) {
+
+		if(display != null) {
+			display.asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+
+					UpdateNotifier.update(topic, object);
+				}
+			});
+		}
+	}
+
 	public static void update(Display display, IChromatogramSelection<?, ?> chromatogramSelection) {
 
-		display.asyncExec(new Runnable() {
+		if(display != null) {
+			display.asyncExec(new Runnable() {
 
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
-				UpdateNotifier.update(chromatogramSelection);
-			}
-		});
+					UpdateNotifier.update(chromatogramSelection);
+				}
+			});
+		}
 	}
 
 	public static void update(Display display, IPeak peak) {
 
-		display.asyncExec(new Runnable() {
+		if(display != null) {
+			display.asyncExec(new Runnable() {
 
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
-				UpdateNotifier.update(peak);
-			}
-		});
+					UpdateNotifier.update(peak);
+				}
+			});
+		}
 	}
 
 	public static void update(Display display, IScan scan) {
 
-		display.asyncExec(new Runnable() {
+		if(display != null) {
+			display.asyncExec(new Runnable() {
 
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
-				UpdateNotifier.update(scan);
-			}
-		});
+					UpdateNotifier.update(scan);
+				}
+			});
+		}
 	}
 
 	public static void update(Display display, IIdentificationTarget identificationTarget) {
 
-		display.asyncExec(new Runnable() {
+		if(display != null) {
+			display.asyncExec(new Runnable() {
 
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
-				UpdateNotifier.update(identificationTarget);
-			}
-		});
+					UpdateNotifier.update(identificationTarget);
+				}
+			});
+		}
 	}
 
 	public static void update(Display display, IScan scan1, IIdentificationTarget identificationTarget) {
 
-		display.asyncExec(new Runnable() {
+		if(display != null) {
+			display.asyncExec(new Runnable() {
 
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
-				UpdateNotifier.update(scan1, identificationTarget);
-			}
-		});
+					UpdateNotifier.update(scan1, identificationTarget);
+				}
+			});
+		}
 	}
 
 	public static void update(Display display, IScan scan1, IScan scan2) {
 
-		display.asyncExec(new Runnable() {
+		if(display != null) {
+			display.asyncExec(new Runnable() {
 
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
-				UpdateNotifier.update(scan1, scan2);
-			}
-		});
+					UpdateNotifier.update(scan1, scan2);
+				}
+			});
+		}
 	}
 
 	public static void update(Display display, IEditHistory editHistory) {
 
-		display.asyncExec(new Runnable() {
+		if(display != null) {
+			display.asyncExec(new Runnable() {
 
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
-				UpdateNotifier.update(editHistory);
-			}
-		});
+					UpdateNotifier.update(editHistory);
+				}
+			});
+		}
+	}
+
+	public static void update(Display display, IQuantitationCompound quantitationCompound) {
+
+		if(display != null) {
+			display.asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+
+					UpdateNotifier.update(quantitationCompound);
+				}
+			});
+		}
+	}
+
+	public static void update(Display display, ITargetSupplier targetSupplier) {
+
+		if(display != null) {
+			display.asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+
+					UpdateNotifier.update(targetSupplier);
+				}
+			});
+		}
 	}
 }

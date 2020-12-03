@@ -28,6 +28,7 @@ import org.eclipse.chemclipse.converter.exceptions.FileIsNotReadableException;
 import org.eclipse.chemclipse.converter.exceptions.NoChromatogramConverterAvailableException;
 import org.eclipse.chemclipse.converter.exceptions.NoConverterAvailableException;
 import org.eclipse.chemclipse.logging.core.Logger;
+import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
 import org.eclipse.chemclipse.model.identifier.ILibraryInformation;
 import org.eclipse.chemclipse.model.notifier.UpdateNotifier;
@@ -45,6 +46,7 @@ import org.eclipse.chemclipse.support.events.IChemClipseEvents;
 import org.eclipse.chemclipse.support.events.IPerspectiveAndViewIds;
 import org.eclipse.chemclipse.support.ui.workbench.DisplayUtils;
 import org.eclipse.chemclipse.support.ui.workbench.EditorSupport;
+import org.eclipse.chemclipse.swt.ui.notifier.UpdateNotifierUI;
 import org.eclipse.chemclipse.ux.extension.msd.ui.internal.support.MassSpectrumImportRunnable;
 import org.eclipse.chemclipse.ux.extension.msd.ui.preferences.PreferenceSupplier;
 import org.eclipse.chemclipse.ux.extension.msd.ui.swt.IMassSpectrumChart;
@@ -65,6 +67,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.event.Event;
@@ -124,7 +127,8 @@ public class MassSpectrumEditor implements IChemClipseEditor {
 	@PreDestroy
 	private void preDestroy() {
 
-		eventBroker.post(IChemClipseEvents.TOPIC_SCAN_XXD_UNLOAD_SELECTION, null);
+		IScan scan = null;
+		UpdateNotifierUI.update(Display.getDefault(), scan);
 		/*
 		 * Remove the editor from the listed parts.
 		 */
